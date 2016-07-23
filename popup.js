@@ -7,7 +7,8 @@
 
 var allLinks = [];
 var visibleLinks = [];
-
+var contactopened = false;
+var tabid;
 // Display all visible links.
 function showLinks() {
   var linksTable = document.getElementById('links');
@@ -25,26 +26,39 @@ function showLinks() {
     row.appendChild(col1);
     linksTable.appendChild(row);
   }
+    chrome.tabs.remove(tabid, function() { });
 }
 
 // Add links to allLinks and visibleLinks, sort and show them.  send_links.js is
 // injected into all frames of the active tab, so this listener may be called
 // multiple times.
+
+
+
 chrome.extension.onRequest.addListener(function(links) {
-  for (var index in links) {
-    allLinks.push(links[index]);
+  if(typeof links === 'string' && !contactopened){
+
+    chrome.tabs.create({ url: links, active:false },function(tab){
+      chrome.tabs.executeScript(tab.id, {file: 'contactPageScript.js', allFrames: true});
+      tabid = tab.id;
+    });
+    contactopened=true;
   }
-  allLinks.sort();
-  visibleLinks = allLinks;
-  showLinks();
+  else{
+    for (var index in links) {
+      allLinks.push(links[index]);
+    }
+    allLinks.sort();
+    visibleLinks = allLinks;
+    showLinks();
+  }
 });
 
 // Set up event handlers and inject send_links.js into all frames in the active
 // tab.
 window.onload = function() {
   chrome.windows.getCurrent(function (currentWindow) {
-    chrome.tabs.query({active: true, windowId: currentWindow.id},
-                      function(activeTabs) {
+    chrome.tabs.query({active: true, windowId: currentWindow.id},function(activeTabs) {
       chrome.tabs.executeScript(
         activeTabs[0].id, {file: 'send_links.js', allFrames: true});
     });
