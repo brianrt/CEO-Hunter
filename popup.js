@@ -5,62 +5,91 @@
 // This extension demonstrates using chrome.downloads.download() to
 // download URLs.
 
-var allLinks = [];
-var visibleLinks = [];
+var allContacts = [];
+var visibleContacts = [];
 var contactopened = false;
 var tabid;
-// Display all visible links.
-function showLinks() {
-  var linksTable = document.getElementById('links');
-  while (linksTable.children.length > 1) {
-    linksTable.removeChild(linksTable.children[linksTable.children.length - 1])
+
+// Remove duplicates and invalid URLs.
+function cleanList(){
+  var kBadPrefix = 'javascript';
+  var phoneExists=false;
+  var changeflag = false;
+  for (var i = 0; i < visibleContacts.length;) {
+    if (phoneExists||((i > 0) && (visibleContacts[i] == visibleContacts[i - 1])) ||
+        (visibleContacts[i] == '') ||
+        (kBadPrefix == visibleContacts[i].toLowerCase().substr(0, kBadPrefix.length))) {
+      visibleContacts.splice(i, 1);
+    }
+    else {
+      var element = visibleContacts[i];
+      if(element.includes("Phone")){
+        phoneExists=true;
+      }
+      ++i;
+    }
   }
-  for (var i = 0; i < visibleLinks.length; ++i) {
+}
+
+//Takes all contact information in visibleContacts
+function showContacts() {
+  cleanList();
+  var contactsTable = document.getElementById('contacts');
+  while (contactsTable.children.length > 1) {
+    contactsTable.removeChild(contactsTable.children[contactsTable.children.length - 1])
+  }
+  for (var i = 0; i < visibleContacts.length; ++i) {
     var row = document.createElement('tr');
     var col1 = document.createElement('td');
-    col1.innerText = visibleLinks[i];
+    col1.innerText = visibleContacts[i];
     col1.style.whiteSpace = 'nowrap';
     col1.onclick = function() {
       checkbox.checked = !checkbox.checked;
     }
     row.appendChild(col1);
-    linksTable.appendChild(row);
+    contactsTable.appendChild(row);
   }
-    chrome.tabs.remove(tabid, function() { });
+  chrome.tabs.remove(tabid, function() { });
 }
 
-// Add links to allLinks and visibleLinks, sort and show them.  send_links.js is
+// Add contacts to allContacts and visibleContacts, sort and show them.  send_contacts.js is
 // injected into all frames of the active tab, so this listener may be called
 // multiple times.
-
-
-
-chrome.extension.onRequest.addListener(function(links) {
-  if(typeof links === 'string' && !contactopened){
-
-    chrome.tabs.create({ url: links, active:false },function(tab){
-      chrome.tabs.executeScript(tab.id, {file: 'contactPageScript.js', allFrames: true});
-      tabid = tab.id;
-    });
-    contactopened=true;
+chrome.extension.onRequest.addListener(function(contacts) {
+  if(typeof contacts === 'string'){
+    if(!contactopened){
+      chrome.tabs.create({ url: contacts, active:false },function(tab){
+        chrome.tabs.executeScript(tab.id, {file: 'contactPageScript.js', allFrames: true});
+        tabid = tab.id;
+      });
+      contactopened=true;
+    }
   }
   else{
-    for (var index in links) {
-      allLinks.push(links[index]);
+    if(contacts.length>0)
+      visibleContacts=[];
+    for (var index in contacts) {
+      allContacts.push(contacts[index]);
     }
-    allLinks.sort();
-    visibleLinks = allLinks;
-    showLinks();
+    allContacts.sort();
+    visibleContacts = allContacts;
+
+    showContacts();
   }
 });
 
-// Set up event handlers and inject send_links.js into all frames in the active
+// Set up event handlers and inject send_contacts.js into all frames in the active
 // tab.
 window.onload = function() {
   chrome.windows.getCurrent(function (currentWindow) {
+    var script = 'send_contacts.js';
+    chrome.tabs.getSelected(null,function(tab) {
+      if(tab.url.toLowerCase().includes("contact"))
+        script = 'contactPageScript.js';
+    });
     chrome.tabs.query({active: true, windowId: currentWindow.id},function(activeTabs) {
       chrome.tabs.executeScript(
-        activeTabs[0].id, {file: 'send_links.js', allFrames: true});
+        activeTabs[0].id, {file: script, allFrames: true});
     });
   });
 };

@@ -1,7 +1,7 @@
 // Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-var links;
+var contacts;
 var foundPhone = false;
 function getEmail(text){
   var emailRe = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -21,19 +21,17 @@ function getPhoneNumber(text){
 function openContactUsURL(){
   urls = [].slice.apply(document.querySelectorAll('a'));
   for(var i = 0; i < urls.length; i++){
-    if(urls[i].href.includes("contact")){
+    if(urls[i].innerText.toLowerCase().includes("contact")){
       chrome.extension.sendRequest(urls[i].href);
+      console.log(urls[i].innerText);
     }
   }
 }
 
 // Send back to the popup a sorted deduped list of valid link URLs on this page.
 // The popup injects this script into all frames in the active tab.
-
-
-
-links = [].slice.apply(document.querySelectorAll('p,li,a,div'));
-links = links.map(function(element) {
+contacts = [].slice.apply(document.querySelectorAll('p,li,a,div'));
+contacts = contacts.map(function(element) {
   // console.log(element);
   var text = element.innerText;
   var html = element.innerHTML;
@@ -50,18 +48,8 @@ links = links.map(function(element) {
   }
   return "";
 });
-openContactUsURL();
-links.sort();
 
-// Remove duplicates and invalid URLs.
-var kBadPrefix = 'javascript';
-for (var i = 0; i < links.length;) {
-  if (((i > 0) && (links[i] == links[i - 1])) ||
-      (links[i] == '') ||
-      (kBadPrefix == links[i].toLowerCase().substr(0, kBadPrefix.length))) {
-    links.splice(i, 1);
-  } else {
-    ++i;
-  }
-}
-chrome.extension.sendRequest(links);
+openContactUsURL();
+contacts.sort();
+
+chrome.extension.sendRequest(contacts);

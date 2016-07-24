@@ -1,7 +1,7 @@
 // Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-var Llinks;
+var contacts;
 var foundPhone = false;
 function getEmail(text){
   var emailRe = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -24,12 +24,12 @@ function getPhoneNumber(text){
 
 
 
-Llinks = [].slice.apply(document.querySelectorAll('p,li,a,div'));
-Llinks = Llinks.map(function(element) {
-  // console.log(element);
-  var text = element.innerText;
-  var html = element.innerHTML;
-  var phone = getPhoneNumber(text)
+contacts = [].slice.apply(document.querySelectorAll('p,li,a,div'));
+contacts = contacts.map(function(element) {
+// console.log(element);
+var text = element.innerText;
+var html = element.innerHTML;
+var phone = getPhoneNumber(text)
 if(!foundPhone){
     var phone = getPhoneNumber(text)
     if(phone.length>0){
@@ -39,23 +39,12 @@ if(!foundPhone){
   }
   var email = getEmail(text)
   if(email.length>0){
-  	console.log(email);
+  	// console.log(email);
     return "Email: "+email;
   }
-  console.log(text);
+  // console.log(text);
   return "";
 });
-Llinks.sort();
+contacts.sort();
 
-// Remove duplicates and invalid URLs.
-var kBadPrefix = 'javascript';
-for (var i = 0; i < Llinks.length;) {
-  if (((i > 0) && (Llinks[i] == Llinks[i - 1])) ||
-      (Llinks[i] == '') ||
-      (kBadPrefix == Llinks[i].toLowerCase().substr(0, kBadPrefix.length))) {
-    Llinks.splice(i, 1);
-  } else {
-    ++i;
-  }
-}
-chrome.extension.sendRequest(Llinks);
+chrome.extension.sendRequest(contacts);
