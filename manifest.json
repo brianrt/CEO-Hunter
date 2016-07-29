@@ -1,10 +1,14 @@
 {
   "name": "CEO Hunter",
+  "background": {
+    "scripts": ["background.js"]
+  },
   "description": "Finds contact information and displays it.",
   "version": "0.1",
   "minimum_chrome_version": "16.0.884",
-  "permissions": ["downloads", "<all_urls>","tabs"],
+  "permissions": ["downloads", "<all_urls>","tabs","identity"],
   "optional_permissions": ["tabs"],
   "browser_action": {"default_popup": "popup.html"},
-  "manifest_version": 2
+  "manifest_version": 2,
+  "content_security_policy":"script-src 'self' https://platform.linkedin.com/in.js https://www.linkedin.com/uas/js/userspace?v=0.0.1195-RC8.57159-1429&apiKey=771qad4rlidbzm&onLoad=LinkedIn&authorize=false&secure=1&; object-src 'self'"
 }

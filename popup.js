@@ -31,6 +31,17 @@ function cleanList(){
   }
 }
 
+function LinkedIn(){
+  console.log("in linkedin function");
+  chrome.identity.launchWebAuthFlow(
+    {'url': 'https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=771qad4rlidbzm&redirect_uri=https://aiamlfbdpnglpcnhhgbmjnhlijhcalml.chromiumapp.org&state=DCEeFWf45A53sdfKef424&scope=r_basicprofile', 'interactive': true},
+    function(redirect_url) { /* Extract token from redirect_url */ 
+      console.log("in callback");
+      console.log(redirect_url);
+      console.log(redirect_url.state);
+    });
+}
+
 //Takes all contact information in visibleContacts
 function showContacts() {
   cleanList();
@@ -55,6 +66,9 @@ function showContacts() {
 // Add contacts to allContacts and visibleContacts, sort and show them.  send_contacts.js is
 // injected into all frames of the active tab, so this listener may be called
 // multiple times.
+
+
+
 chrome.extension.onRequest.addListener(function(contacts) {
   if(typeof contacts === 'string'){
     if(!contactopened){
@@ -73,7 +87,7 @@ chrome.extension.onRequest.addListener(function(contacts) {
     }
     allContacts.sort();
     visibleContacts = allContacts;
-
+    LinkedIn();
     showContacts();
   }
 });
@@ -81,6 +95,7 @@ chrome.extension.onRequest.addListener(function(contacts) {
 // Set up event handlers and inject send_contacts.js into all frames in the active
 // tab.
 window.onload = function() {
+ console.log("finally");
   chrome.windows.getCurrent(function (currentWindow) {
     var script = 'send_contacts.js';
     chrome.tabs.getSelected(null,function(tab) {

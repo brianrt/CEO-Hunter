@@ -23,10 +23,11 @@ function openContactUsURL(){
   for(var i = 0; i < urls.length; i++){
     if(urls[i].innerText.toLowerCase().includes("contact")){
       chrome.extension.sendRequest(urls[i].href);
-      console.log(urls[i].innerText);
+      // console.log(urls[i].innerText);
     }
   }
 }
+
 
 // Send back to the popup a sorted deduped list of valid link URLs on this page.
 // The popup injects this script into all frames in the active tab.
