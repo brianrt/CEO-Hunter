@@ -8,7 +8,7 @@
 var allContacts = [];
 var visibleContacts = [];
 var contactopened = false;
-var tabid;
+var tabid="";
 
 // Remove duplicates and invalid URLs.
 function cleanList(){
@@ -33,12 +33,44 @@ function cleanList(){
 
 function LinkedIn(){
   console.log("in linkedin function");
+  var state_start = "DJFAKdj839jiw829llmsj";
   chrome.identity.launchWebAuthFlow(
-    {'url': 'https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=771qad4rlidbzm&redirect_uri=https://aiamlfbdpnglpcnhhgbmjnhlijhcalml.chromiumapp.org&state=DCEeFWf45A53sdfKef424&scope=r_basicprofile', 'interactive': true},
+    {'url': 'https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=771qad4rlidbzm&redirect_uri=https://aiamlfbdpnglpcnhhgbmjnhlijhcalml.chromiumapp.org&state='+state_start+'&scope=r_basicprofile', 'interactive': true},
     function(redirect_url) { /* Extract token from redirect_url */ 
-      console.log("in callback");
-      console.log(redirect_url);
-      console.log(redirect_url.state);
+      
+      var start = redirect_url.indexOf("?code=")+6;
+      var end = redirect_url.indexOf("&state=");
+      var code = redirect_url.substring(start, end);
+      var state_returned = redirect_url.substring(end+7);
+      if(state_start==state_returned){
+        console.log("state: "+state_returned);
+        console.log("code: "+code);
+        console.log(redirect_url);
+
+        // POST /oauth/v2/accessToken HTTP/1.1
+        // Host: www.linkedin.com
+        // Content-Type: application/x-www-form-urlencoded
+
+        // grant_type=authorization_code&code=987654321&redirect_uri=https%3A%2F%2Fwww.myapp.com%2Fauth%2Flinkedin&client_id=123456789&client_secret=shhdonottell
+
+        var red_url = 'https%3A%2F%2Faiamlfbdpnglpcnhhgbmjnhlijhcalml.chromiumapp.org';
+        var url = "https://www.linkedin.com/oauth/v2/accessToken?grant_type=authorization_code&code="+code+"&redirect_uri="+red_url+"&client_id=771qad4rlidbzm&client_secret=WlkcAe34iAPU9dqj";
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', url, true);
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhr.send();
+         
+        xhr.onreadystatechange = processRequest;
+         
+        function processRequest(e) {
+          if (xhr.readyState == 4 && xhr.status == 200) {
+            var response = JSON.parse(xhr.responseText);
+            console.log("access token: "+response["access_token"]);
+          }
+        }
+
+
+      }
     });
 }
 
@@ -60,7 +92,8 @@ function showContacts() {
     row.appendChild(col1);
     contactsTable.appendChild(row);
   }
-  chrome.tabs.remove(tabid, function() { });
+  if(tabid!="")
+    chrome.tabs.remove(tabid, function() { });
 }
 
 // Add contacts to allContacts and visibleContacts, sort and show them.  send_contacts.js is
@@ -87,7 +120,6 @@ chrome.extension.onRequest.addListener(function(contacts) {
     }
     allContacts.sort();
     visibleContacts = allContacts;
-    LinkedIn();
     showContacts();
   }
 });
@@ -95,6 +127,7 @@ chrome.extension.onRequest.addListener(function(contacts) {
 // Set up event handlers and inject send_contacts.js into all frames in the active
 // tab.
 window.onload = function() {
+ LinkedIn();
  console.log("finally");
   chrome.windows.getCurrent(function (currentWindow) {
     var script = 'send_contacts.js';

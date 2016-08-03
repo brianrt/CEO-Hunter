@@ -9,6 +9,5 @@
   "permissions": ["downloads", "<all_urls>","tabs","identity"],
   "optional_permissions": ["tabs"],
   "browser_action": {"default_popup": "popup.html"},
-  "manifest_version": 2,
-  "content_security_policy":"script-src 'self' https://platform.linkedin.com/in.js https://www.linkedin.com/uas/js/userspace?v=0.0.1195-RC8.57159-1429&apiKey=771qad4rlidbzm&onLoad=LinkedIn&authorize=false&secure=1&; object-src 'self'"
+  "manifest_version": 2
 }
