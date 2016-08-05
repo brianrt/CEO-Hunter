@@ -66,6 +66,21 @@ function LinkedIn(){
           if (xhr.readyState == 4 && xhr.status == 200) {
             var response = JSON.parse(xhr.responseText);
             console.log("access token: "+response["access_token"]);
+
+          xhr = new XMLHttpRequest();  
+            xhr.open('GET', "https://api.linkedin.com/v1/people/~?format=json", true);  
+            xhr.setRequestHeader('Authorization', 'Bearer '+response["access_token"]);  
+            xhr.send();  
+            xhr.onreadystatechange = processRequest;
+         
+            function processRequest(f) {
+              var response = JSON.parse(xhr.responseText);
+              console.log(response);
+              document.getElementById("LinkedIn").innerHTML=response["firstName"]+"'s title: "+response["headline"];
+            }
+
+
+
           }
         }
 
