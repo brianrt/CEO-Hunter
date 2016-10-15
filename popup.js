@@ -8,15 +8,18 @@
 var allContacts = [];
 var visibleContacts = [];
 var contactopened = false;
+var companyname;
 var tabid="";
+var linkedintab;
 
 // Remove duplicates and invalid URLs.
 function cleanList(){
   var kBadPrefix = 'javascript';
   var phoneExists=false;
+  var emailExists=false;
   var changeflag = false;
   for (var i = 0; i < visibleContacts.length;) {
-    if (phoneExists||((i > 0) && (visibleContacts[i] == visibleContacts[i - 1])) ||
+    if (emailExists || phoneExists||((i > 0) && (visibleContacts[i] == visibleContacts[i - 1])) ||
         (visibleContacts[i] == '') ||
         (kBadPrefix == visibleContacts[i].toLowerCase().substr(0, kBadPrefix.length))) {
       visibleContacts.splice(i, 1);
@@ -26,67 +29,66 @@ function cleanList(){
       if(element.includes("Phone")){
         phoneExists=true;
       }
+      if(element.includes("Email")){
+        emailExists=true;
+      }
       ++i;
     }
   }
 }
 
+//Todo: finish implimenting this
+function getCompanyName(){
+  var url = "";
+  chrome.tabs.query({'active': true, 'windowId': chrome.windows.WINDOW_ID_CURRENT}, function(tabs){
+    url = tabs[0].url;
+    console.log(url);
+  });
+  
+  if(url.includes("www.")){
+    url = url.substring(url.indexOf("www.")+4,url.length);
+  }
+  if(url.includes("://")){
+      url = url.substring(url.indexOf("://")+3,url.length);
+  }
+  return url.substring(0,url.indexOf("."));
+
+}
+
 function LinkedIn(){
   console.log("in linkedin function");
-  var state_start = "DJFAKdj839jiw829llmsj";
-  chrome.identity.launchWebAuthFlow(
-    {'url': 'https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=771qad4rlidbzm&redirect_uri=https://aiamlfbdpnglpcnhhgbmjnhlijhcalml.chromiumapp.org&state='+state_start+'&scope=r_basicprofile', 'interactive': true},
-    function(redirect_url) { /* Extract token from redirect_url */ 
-      
-      var start = redirect_url.indexOf("?code=")+6;
-      var end = redirect_url.indexOf("&state=");
-      var code = redirect_url.substring(start, end);
-      var state_returned = redirect_url.substring(end+7);
-      if(state_start==state_returned){
-        console.log("state: "+state_returned);
-        console.log("code: "+code);
-        console.log(redirect_url);
-
-        // POST /oauth/v2/accessToken HTTP/1.1
-        // Host: www.linkedin.com
-        // Content-Type: application/x-www-form-urlencoded
-
-        // grant_type=authorization_code&code=987654321&redirect_uri=https%3A%2F%2Fwww.myapp.com%2Fauth%2Flinkedin&client_id=123456789&client_secret=shhdonottell
-
-        var red_url = 'https%3A%2F%2Faiamlfbdpnglpcnhhgbmjnhlijhcalml.chromiumapp.org';
-        var url = "https://www.linkedin.com/oauth/v2/accessToken?grant_type=authorization_code&code="+code+"&redirect_uri="+red_url+"&client_id=771qad4rlidbzm&client_secret=WlkcAe34iAPU9dqj";
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', url, true);
-        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhr.send();
-         
-        xhr.onreadystatechange = processRequest;
-         
-        function processRequest(e) {
-          if (xhr.readyState == 4 && xhr.status == 200) {
-            var response = JSON.parse(xhr.responseText);
-            console.log("access token: "+response["access_token"]);
-
-          xhr = new XMLHttpRequest();  
-            xhr.open('GET', "https://api.linkedin.com/v1/people/~?format=json", true);  
-            xhr.setRequestHeader('Authorization', 'Bearer '+response["access_token"]);  
-            xhr.send();  
-            xhr.onreadystatechange = processRequest;
-         
-            function processRequest(f) {
-              var response = JSON.parse(xhr.responseText);
-              console.log(response);
-              document.getElementById("LinkedIn").innerHTML=response["firstName"]+"'s title: "+response["headline"];
+  chrome.tabs.create({ url: "https://www.linkedin.com/", active:false },function(tab){
+        linkedintab=tab.id;
+        chrome.tabs.executeScript(tab.id, {file: 'LinkedInScraper.js', allFrames: true}, function(){
+          chrome.tabs.query({'active': true, 'windowId': chrome.windows.WINDOW_ID_CURRENT}, function(tabs){
+            var url = tabs[0].url;
+            if(url.includes("www.")){
+              url = url.substring(url.indexOf("www.")+4,url.length);
             }
+            if(url.includes("://")){
+              url = url.substring(url.indexOf("://")+3,url.length);
+            }
+            url = url.substring(0,url.indexOf("."));
+            console.log("sending message");
+            chrome.tabs.sendMessage(tab.id, {greeting: url}, function(response) {
+              if(response.farewell=="done"){
+                setTimeout(function(){ 
+                  chrome.tabs.query({'url': "https://www.linkedin.com/vsearch/*"},function(tabss){
+                  console.log(tabss[0]);
+                  try{
+                    chrome.tabs.executeScript(tabss[0].id,{file: 'searchResult.js',allFrames: true},function(){
+                    });
+                  }
+                  catch(e){
 
-
-
-          }
-        }
-
-
-      }
-    });
+                  }
+                });
+                }, 2000); 
+              }
+            });
+          });
+        });
+  });
 }
 
 //Takes all contact information in visibleContacts
@@ -119,7 +121,11 @@ function showContacts() {
 
 chrome.extension.onRequest.addListener(function(contacts) {
   if(typeof contacts === 'string'){
-    if(!contactopened){
+    if(contacts.includes("name")){
+      document.getElementById("LinkedIn").innerHTML=contacts.substring(4);
+      chrome.tabs.remove(linkedintab, function() { });
+    }
+    else if(!contactopened){
       chrome.tabs.create({ url: contacts, active:false },function(tab){
         chrome.tabs.executeScript(tab.id, {file: 'contactPageScript.js', allFrames: true});
         tabid = tab.id;
@@ -143,7 +149,6 @@ chrome.extension.onRequest.addListener(function(contacts) {
 // tab.
 window.onload = function() {
  LinkedIn();
- console.log("finally");
   chrome.windows.getCurrent(function (currentWindow) {
     var script = 'send_contacts.js';
     chrome.tabs.getSelected(null,function(tab) {

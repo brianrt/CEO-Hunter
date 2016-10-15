@@ -11,11 +11,9 @@ setTimeout(function(){
          							chrome.extension.sendRequest("name"+name+"<br>"+description);
          							break;
          						}
-         						console.log(name);
-         						console.log(description);
          					} 
          				}
-					 }, 3000); 
+					 }, 000); 
 
 
 
