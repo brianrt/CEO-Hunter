@@ -133,7 +133,7 @@ chrome.extension.onRequest.addListener(function(contacts) {
       contactopened=true;
     }
   }
-  else{
+  else if(contacts.constructor === Array){
     if(contacts.length>0)
       visibleContacts=[];
     for (var index in contacts) {
