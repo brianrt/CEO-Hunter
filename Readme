@@ -1,7 +1,7 @@
-Installation and use:
-1. Click "Clone or download"
-2. Go to Chrome->Menu (triple lines)->More Tools->Extensions
-3. Click Load unpacked extension
-4. Select CEO-Hunter-master folder
-5. Visit a webpage with link to a phone number or email (For now try financial-cents.biz)
-6. Click on the icon with a "C" to the right of the url bar
+Installation:
+1.  Click the "Clone or download" button near the top of this page -> then click “Download Zip”
+2.  Open up a Google Chrome browser
+3.  Go to the Google Chrome Menu (triple lines) on the top right of the browser -> Select "More Tools" -> Select "Extensions" 
+4.  Enable developer mode at the top of the extension page
+5.  Click “Load Unpacked Extension” -> Find the “CEO-Hunter-Master” file you downloaded in Step 2 and select it (If the file is not clickable try moving it to your Desktop or Documents Folder)
+6.  You have officially installed the plugin to use it click on the plugin (the "C" Icon to the right of the URL bar) when you are on the target company’s website
