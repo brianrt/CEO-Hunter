@@ -29,6 +29,7 @@ setTimeout(function(){
          					if(e.className.includes("people")){
          						var name = e.getElementsByClassName("title main-headline")[0].innerHTML;
          						var description = e.getElementsByClassName("snippet")[0];
+                           console.log(description);
          						description = description.getElementsByClassName("title")[0].innerHTML;
          						if(isCEO(description)){
          							chrome.extension.sendRequest("name"+name+"<br>"+description);

@@ -11,6 +11,7 @@ var contactopened = false;
 var companyname;
 var tabid="";
 var linkedintab;
+var tabsToClose = [];
 
 // Remove duplicates and invalid URLs.
 function cleanList(){
@@ -55,40 +56,61 @@ function getCompanyName(){
 
 }
 
+function closeTabs(){
+    chrome.tabs.remove(tabsToClose, function() { });
+}
+
+function getCompanyName(url){
+  if(url.includes("www.")){
+    url = url.substring(url.indexOf("www.")+4,url.length);
+  }
+  if(url.includes("://")){
+    url = url.substring(url.indexOf("://")+3,url.length);
+  }
+  url = url.substring(0,url.indexOf("."));
+  return url;
+}
+
 function LinkedIn(){
   console.log("in linkedin function");
-  chrome.tabs.create({ url: "https://www.linkedin.com/", active:false },function(tab){
-        linkedintab=tab.id;
-        chrome.tabs.executeScript(tab.id, {file: 'LinkedInScraper.js', allFrames: true}, function(){
-          chrome.tabs.query({'active': true, 'windowId': chrome.windows.WINDOW_ID_CURRENT}, function(tabs){
+  var url;
+  chrome.tabs.query({'active': true, 'windowId': chrome.windows.WINDOW_ID_CURRENT}, function(tabs){
             var url = tabs[0].url;
-            if(url.includes("www.")){
-              url = url.substring(url.indexOf("www.")+4,url.length);
-            }
-            if(url.includes("://")){
-              url = url.substring(url.indexOf("://")+3,url.length);
-            }
-            url = url.substring(0,url.indexOf("."));
-            console.log("sending message");
-            chrome.tabs.sendMessage(tab.id, {greeting: url}, function(response) {
-              if(response.farewell=="done"){
-                setTimeout(function(){ 
-                  chrome.tabs.query({'url': "https://www.linkedin.com/vsearch/*"},function(tabss){
-                  console.log(tabss[0]);
-                  try{
-                    chrome.tabs.executeScript(tabss[0].id,{file: 'searchResult.js',allFrames: true},function(){
-                    });
-                  }
-                  catch(e){
+            var query = "https://www.google.com/#q="+url+"+LinkedIn";
+            chrome.tabs.create({ url: query, active:false },function(tab){
+              tabsToClose.push(tab.id);
+              setTimeout(function(){ 
+                  chrome.tabs.query({'url': "https://www.google.com/*"},function(tab){
+                    try{
+                      chrome.tabs.executeScript(tab[0].id,{file: 'googleResults.js',allFrames: true},function(){
+                        chrome.tabs.sendMessage(tab[0].id, {greeting: url}, function(response) {
+                          var linkedinUrl = response.farewell;
+                          chrome.tabs.create({ url: linkedinUrl, active:false },function(tab){
+                            tabsToClose.push(tab.id);
+                            chrome.tabs.executeScript(tab.id, {file: 'LinkedInScraper.js', allFrames: true}, function(){
+                              chrome.tabs.sendMessage(tab.id, {greeting: url}, function(response) {
+                                var companyUrl = response.farewell;
+                                chrome.tabs.create({ url: companyUrl, active:false },function(tab){
+                                  tabsToClose.push(tab.id);
+                                  chrome.tabs.executeScript(tab.id,{file: 'searchResult.js',allFrames: true},function(){
+                  
+                                  });
+                                });
+                              });
+                            });
+                          });
+                        });
+                      });
+                    }
+                    catch(e){
 
-                  }
-                });
-                }, 2000); 
-              }
+                    }
+                  });
+              }, 2000); 
             });
+
           });
-        });
-  });
+
 }
 
 //Takes all contact information in visibleContacts
@@ -123,7 +145,7 @@ chrome.extension.onRequest.addListener(function(contacts) {
   if(typeof contacts === 'string'){
     if(contacts.includes("name")){
       document.getElementById("LinkedIn").innerHTML=contacts.substring(4);
-      chrome.tabs.remove(linkedintab, function() { });
+      closeTabs();
     }
     else if(!contactopened){
       chrome.tabs.create({ url: contacts, active:false },function(tab){
