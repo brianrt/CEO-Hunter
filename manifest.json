@@ -6,8 +6,15 @@
   "description": "Finds contact information and displays it.",
   "version": "0.1",
   "minimum_chrome_version": "16.0.884",
+  "content_scripts": [
+    {
+      "run_at": "document_end",
+      "matches": ["<all_urls>"],
+      "js": ["googleResults.js", "LinkedInScraper.js"]
+    }
+  ],
   "permissions": ["downloads", "<all_urls>","tabs","identity"],
   "optional_permissions": ["tabs"],
   "browser_action": {"default_popup": "popup.html"},
-  "manifest_version": 2
+  "manifest_version": 2,
 }
