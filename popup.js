@@ -91,13 +91,15 @@ function LinkedIn(){
                                 var companyUrl = response.farewell;
                                 chrome.tabs.create({ url: companyUrl, active:false },function(tab){
                                     tabsToClose.push(tab.id);
-                                    chrome.tabs.executeScript(tab.id,{file: 'searchResult.js',allFrames: true},function(){
+                                    setTimeout(function(){ 
+                                      chrome.tabs.executeScript(tab.id,{file: 'searchResult.js',allFrames: true},function(){
                                         
-                                    });
+                                      });
+                                    }, 4000);
                                 });
                             });
                         });
-                        }, 3000);
+                        }, 4000);
                         
                     });
                 });
