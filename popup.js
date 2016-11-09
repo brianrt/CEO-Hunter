@@ -8,37 +8,12 @@
 var allContacts = [];
 var visibleContacts = [];
 var contactopened = false;
-var companyName;
+var companyUrl;
 var companyDomain;
 var tabid="";
 var linkedintab;
 var tabsToClose = [];
 var ceoEmail = {};
-
-// Remove duplicates and invalid URLs.
-function cleanList(){
-  var kBadPrefix = 'javascript';
-  var phoneExists=false;
-  var emailExists=false;
-  var changeflag = false;
-  for (var i = 0; i < visibleContacts.length;) {
-    if (emailExists || phoneExists||((i > 0) && (visibleContacts[i] == visibleContacts[i - 1])) ||
-        (visibleContacts[i] == '') ||
-        (kBadPrefix == visibleContacts[i].toLowerCase().substr(0, kBadPrefix.length))) {
-      visibleContacts.splice(i, 1);
-    }
-    else {
-      var element = visibleContacts[i];
-      if(element.includes("Phone")){
-        phoneExists=true;
-      }
-      if(element.includes("Email")){
-        emailExists=true;
-      }
-      ++i;
-    }
-  }
-}
 
 //Todo: finish implimenting this
 function setCompany(url){
@@ -75,7 +50,8 @@ function verifyEmail(email_address){
           ceoEmail.email = email_address;
           ceoEmail.score = parseFloat(resp.score);
           console.log("Valid email: "+email_address + " with confidence " + resp.score*100+"%");
-          document.getElementById("Email").innerHTML=ceoEmail.email+"<br>Confidence: "+ceoEmail.score*100+"%";
+          document.getElementById("personalEmail").innerHTML=ceoEmail.email;
+          document.getElementById("confidence").innerHTML=ceoEmail.score*100+"% Confidence";
         }
       }
     }
@@ -103,6 +79,7 @@ function LinkedIn(){
   chrome.tabs.query({'active': true, 'windowId': chrome.windows.WINDOW_ID_CURRENT}, function(tabs){
       var url = tabs[0].url;
       setCompany(url);
+      document.getElementById("url").innerHTML="www."+companyDomain;
       var query = "https://www.google.com/#q="+url+"+LinkedIn";
       chrome.tabs.create({ url: query, active:false },function(tab){
           tabsToClose.push(tab.id);
@@ -141,44 +118,27 @@ function LinkedIn(){
   });
 }
 
-//Takes all contact information in visibleContacts
-function showContacts() {
-  cleanList();
-  var contactsTable = document.getElementById('contacts');
-  while (contactsTable.children.length > 1) {
-    contactsTable.removeChild(contactsTable.children[contactsTable.children.length - 1])
-  }
-  for (var i = 0; i < visibleContacts.length; ++i) {
-    var row = document.createElement('tr');
-    var col1 = document.createElement('td');
-    col1.innerText = visibleContacts[i];
-    col1.style.whiteSpace = 'nowrap';
-    col1.onclick = function() {
-      checkbox.checked = !checkbox.checked;
-    }
-    row.appendChild(col1);
-    contactsTable.appendChild(row);
-  }
-  if(tabid!="")
-    chrome.tabs.remove(tabid, function() { });
-}
-
-// Add contacts to allContacts and visibleContacts, sort and show them.  send_contacts.js is
-// injected into all frames of the active tab, so this listener may be called
-// multiple times.
-
-
 
 chrome.extension.onRequest.addListener(function(contacts) {
   if(typeof contacts === 'string'){
+    var needtoclose = false;
     if(contacts.includes("name")){
-      document.getElementById("LinkedIn").innerHTML=contacts.substring(4);
+      document.getElementById("LinkedInName").innerHTML=contacts.substring(4);
+      needtoclose=true;
+    }
+    if(contacts.includes("description")){
+      document.getElementById("LinkedInDescription").innerHTML=contacts.substring(11);
+      needtoclose=true;
+    }
+    if(needtoclose){
       closeTabs();
+      needtoclose=false;
     }
     else if(!contactopened){
       chrome.tabs.create({ url: contacts, active:false },function(tab){
         chrome.tabs.executeScript(tab.id, {file: 'contactPageScript.js', allFrames: true});
         tabid = tab.id;
+        tabsToClose.push(tabid);
       });
       contactopened=true;
     }
@@ -187,7 +147,13 @@ chrome.extension.onRequest.addListener(function(contacts) {
     if(contacts.length>0)
       visibleContacts=[];
     for (var index in contacts) {
-      allContacts.push(contacts[index]);
+      var element=contacts[index];
+      console.log(element);
+      if(element.includes("Email"))
+        document.getElementById("companyEmail").innerHTML=element.substring(7);
+      else if(element.includes("Phone"))
+        document.getElementById("companyPhone").innerHTML=element.substring(7);
+      // allContacts.push(contacts[index]);
     }
     allContacts.sort();
     visibleContacts = allContacts;

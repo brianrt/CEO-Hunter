@@ -42,7 +42,8 @@ function search(){
          description = description.getElementsByClassName("title")[0].innerHTML;
          // console.log(description);
          if(isCEO(description)){
-            chrome.extension.sendRequest("name"+name+"<br>"+description);
+            chrome.extension.sendRequest("name"+name);
+            chrome.extension.sendRequest("description"+description);
             return name;
          }
       }
@@ -55,7 +56,8 @@ function search(){
          description = description.getElementsByClassName("title")[0].innerHTML;
          // console.log(description);
          if(isOther(description)){
-            chrome.extension.sendRequest("name"+name+"<br>"+description);
+            chrome.extension.sendRequest("name"+name);
+            chrome.extension.sendRequest("description"+description);
             return name;
          }
       } 
