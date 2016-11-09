@@ -8,10 +8,12 @@
 var allContacts = [];
 var visibleContacts = [];
 var contactopened = false;
-var companyname;
+var companyName;
+var companyDomain;
 var tabid="";
 var linkedintab;
 var tabsToClose = [];
+var ceoEmail = {};
 
 // Remove duplicates and invalid URLs.
 function cleanList(){
@@ -39,67 +41,60 @@ function cleanList(){
 }
 
 //Todo: finish implimenting this
-function getCompanyName(){
-  var url = "";
-  chrome.tabs.query({'active': true, 'windowId': chrome.windows.WINDOW_ID_CURRENT}, function(tabs){
-    url = tabs[0].url;
-    console.log(url);
-  });
-  
+function setCompany(url){
   if(url.includes("www.")){
     url = url.substring(url.indexOf("www.")+4,url.length);
   }
   if(url.includes("://")){
       url = url.substring(url.indexOf("://")+3,url.length);
   }
-  return url.substring(0,url.indexOf("."));
-
+  companyDomain = url.substring(0,url.indexOf("/"))
+  companyName = url.substring(0,url.indexOf("."));
+  console.log("domain: "+companyDomain);
+  console.log("name: "+companyName);
 }
 
 function closeTabs(){
     chrome.tabs.remove(tabsToClose, function() { });
 }
 
-function getCompanyName(url){
-  if(url.includes("www.")){
-    url = url.substring(url.indexOf("www.")+4,url.length);
-  }
-  if(url.includes("://")){
-    url = url.substring(url.indexOf("://")+3,url.length);
-  }
-  url = url.substring(0,url.indexOf("."));
-  return url;
-}
-
-function verifyEmail(email){
-  console.log(email);
+function verifyEmail(email_address){
+  console.log(email_address);
 
   // set endpoint and your access key
-  var access_key = 'YOUR_ACCESS_KEY';
-  var email_address = 'support@apilayer.com';
-
-  // verify email address via AJAX call
-  $.ajax({
-      url: 'http://apilayer.net/api/check?access_key=' + access_key + '&email=' + email_address,   
-      dataType: 'jsonp',
-      success: function(json) {
-
-      // Access and use your preferred validation result objects
-      console.log(json.format_valid);
-      console.log(json.smtp_check);
-      console.log(json.score);
-                  
+  var access_key = 'df707e20dd449f6e3e72a33230ff5de1';
+  var url = 'http://apilayer.net/api/check?access_key=' + access_key + '&email=' + email_address;
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", url, true);
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4) {
+      console.log(xhr);
+      var resp = JSON.parse(xhr.responseText);
+      if(resp.smtp_check && resp.format_valid && resp.score>0.5){
+        if(resp.score > ceoEmail.score){
+          ceoEmail.email = email_address;
+          ceoEmail.score = parseFloat(resp.score);
+          console.log("Valid email: "+email_address + " with confidence " + resp.score*100+"%");
+          document.getElementById("Email").innerHTML=ceoEmail.email+"<br>Confidence: "+ceoEmail.score*100+"%";
+        }
       }
-  });
-
-
+    }
+  }
+  xhr.send();
 }
 
 function generateEmails(ceo){
   var possibleEmails = []
-  var emailAttempt = "bthomp2000@gmail.com";
-  possibleEmails.push(emailAttempt);
-  verifyEmail(possibleEmails[0]);
+  var tokens = ceo.split(" ");
+  var name = {first:tokens[0],last:tokens[tokens.length-1]}
+  possibleEmails.push(name.first+"@"+companyDomain);
+  possibleEmails.push(name.first.charAt(0)+name.last.toLowerCase()+"@"+companyDomain);
+  possibleEmails.push(name.first+"."+name.last.toLowerCase()+"@"+companyDomain);
+
+  for(var i = 0; i < possibleEmails.length;i++){
+    console.log(possibleEmails[i]);
+    verifyEmail(possibleEmails[i]);
+  }
 }
 
 function LinkedIn(){
@@ -107,6 +102,7 @@ function LinkedIn(){
   var url;
   chrome.tabs.query({'active': true, 'windowId': chrome.windows.WINDOW_ID_CURRENT}, function(tabs){
       var url = tabs[0].url;
+      setCompany(url);
       var query = "https://www.google.com/#q="+url+"+LinkedIn";
       chrome.tabs.create({ url: query, active:false },function(tab){
           tabsToClose.push(tab.id);
@@ -203,6 +199,7 @@ chrome.extension.onRequest.addListener(function(contacts) {
 // tab.
 window.onload = function() {
  LinkedIn();
+ ceoEmail = { email:"Not found", score:-1.0};
   chrome.windows.getCurrent(function (currentWindow) {
     var script = 'send_contacts.js';
     chrome.tabs.getSelected(null,function(tab) {

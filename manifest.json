@@ -4,7 +4,7 @@
     "scripts": ["background.js"]
   },
   "icons": {
-    "128": "CEOHunterHead.png"
+    "128": "MainIcon.png"
   },
   "description": "Finds contact information and displays it.",
   "version": "0.1",
