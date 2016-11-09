@@ -3,6 +3,9 @@
   "background": {
     "scripts": ["background.js"]
   },
+  "icons": {
+    "128": "CEOHunterHead.png"
+  },
   "description": "Finds contact information and displays it.",
   "version": "0.1",
   "minimum_chrome_version": "16.0.884",

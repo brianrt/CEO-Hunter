@@ -71,6 +71,37 @@ function getCompanyName(url){
   return url;
 }
 
+function verifyEmail(email){
+  console.log(email);
+
+  // set endpoint and your access key
+  var access_key = 'YOUR_ACCESS_KEY';
+  var email_address = 'support@apilayer.com';
+
+  // verify email address via AJAX call
+  $.ajax({
+      url: 'http://apilayer.net/api/check?access_key=' + access_key + '&email=' + email_address,   
+      dataType: 'jsonp',
+      success: function(json) {
+
+      // Access and use your preferred validation result objects
+      console.log(json.format_valid);
+      console.log(json.smtp_check);
+      console.log(json.score);
+                  
+      }
+  });
+
+
+}
+
+function generateEmails(ceo){
+  var possibleEmails = []
+  var emailAttempt = "bthomp2000@gmail.com";
+  possibleEmails.push(emailAttempt);
+  verifyEmail(possibleEmails[0]);
+}
+
 function LinkedIn(){
   console.log("in linkedin function");
   var url;
@@ -93,7 +124,11 @@ function LinkedIn(){
                                     tabsToClose.push(tab.id);
                                     setTimeout(function(){ 
                                       chrome.tabs.executeScript(tab.id,{file: 'searchResult.js',allFrames: true},function(){
-                                        
+                                          chrome.tabs.sendMessage(tab.id, {greeting: "url"}, function(response) {
+                                            var ceo = response.farewell;
+                                            console.log(ceo);
+                                            generateEmails(ceo);
+                                          });
                                       });
                                     }, 4000);
                                 });
