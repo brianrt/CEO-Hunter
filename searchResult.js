@@ -5,7 +5,7 @@ chrome.runtime.onMessage.addListener(
    sendResponse({farewell: ceo});
 });
 
-function isCEO(description){
+function firstPass(description){
    description = description.toLowerCase();
    // console.log(description);
    if(description.includes("ceo"))
@@ -17,7 +17,7 @@ function isCEO(description){
    return false;
 }
 
-function isOther(description){
+function secondPass(description){
    description = description.toLowerCase();
    console.log(description);
    if(description.includes("owner"))
@@ -31,7 +31,18 @@ function isOther(description){
    return false
 }
 
+function thirdPass(description){
+   description = description.toLowerCase();
+   console.log(description);
+   if(description.includes("partner"))
+      return true;
+   else if(description.includes("director"))
+      return true;
+   return false
+}
+
 function search(){
+   console.log("in search");
    var results = document.getElementById("results");
    var employees = results.getElementsByTagName("li");
    for(i=0;i<employees.length;i++){
@@ -41,7 +52,7 @@ function search(){
          var description = e.getElementsByClassName("snippet")[0];
          description = description.getElementsByClassName("title")[0].innerHTML;
          // console.log(description);
-         if(isCEO(description)){
+         if(firstPass(description)){
             chrome.extension.sendRequest("name"+name);
             chrome.extension.sendRequest("description"+description);
             return name;
@@ -55,7 +66,21 @@ function search(){
          var description = e.getElementsByClassName("snippet")[0];
          description = description.getElementsByClassName("title")[0].innerHTML;
          // console.log(description);
-         if(isOther(description)){
+         if(secondPass(description)){
+            chrome.extension.sendRequest("name"+name);
+            chrome.extension.sendRequest("description"+description);
+            return name;
+         }
+      } 
+   }
+   for(i=0;i<employees.length;i++){//This is for if they weren't the CEO, but we want to find other higher ups
+      var e = employees[i];
+      if(e.className.includes("people")){
+         var name = e.getElementsByClassName("title main-headline")[0].innerHTML;
+         var description = e.getElementsByClassName("snippet")[0];
+         description = description.getElementsByClassName("title")[0].innerHTML;
+         // console.log(description);
+         if(thirdPass(description)){
             chrome.extension.sendRequest("name"+name);
             chrome.extension.sendRequest("description"+description);
             return name;

@@ -14,6 +14,7 @@ var tabid="";
 var linkedintab;
 var tabsToClose = [];
 var ceoEmail = {};
+var verified=false;
 
 //Todo: finish implimenting this
 function setCompany(url){
@@ -33,12 +34,12 @@ function closeTabs(){
     chrome.tabs.remove(tabsToClose, function() { });
 }
 
-function verifyEmail(email_address){
+function verifyEmail(name,email_address){
   console.log(email_address);
-
+  var catch_all = false;
   // set endpoint and your access key
   var access_key = 'df707e20dd449f6e3e72a33230ff5de1';
-  var url = 'http://apilayer.net/api/check?access_key=' + access_key + '&email=' + email_address;
+  var url = 'http://apilayer.net/api/check?access_key=' + access_key + '&email=' + email_address+'&catch_all=1';
   var xhr = new XMLHttpRequest();
   xhr.open("GET", url, true);
   xhr.onreadystatechange = function() {
@@ -47,14 +48,28 @@ function verifyEmail(email_address){
       var resp = JSON.parse(xhr.responseText);
       if(resp.smtp_check && resp.format_valid && resp.score>0.5){
         if(resp.score > ceoEmail.score){
+          verified=true;
           ceoEmail.email = email_address;
           ceoEmail.score = parseFloat(resp.score);
           console.log("Valid email: "+email_address + " with confidence " + resp.score*100+"%");
-          document.getElementById("personalEmail").innerHTML=ceoEmail.email;
-          document.getElementById("confidence").innerHTML=ceoEmail.score*100+"% Confidence";
+          if(resp.catch_all==false){
+            document.getElementById("personalEmail").innerHTML=ceoEmail.email;
+            document.getElementById("confidence").innerHTML="Verified";
+          }
+          else{
+            catch_all = true;
+            document.getElementById("personalEmail").innerHTML=name.first.charAt(0)+name.last.toLowerCase()+"@"+companyDomain;
+            document.getElementById("confidence").innerHTML="Risky";
+          }
         }
       }
     }
+    else if(!verified){
+      document.getElementById("personalEmail").innerHTML=name.first.charAt(0)+name.last.toLowerCase()+"@"+companyDomain;
+      document.getElementById("confidence").innerHTML="Not Likely";
+    }
+    return catch_all;
+
   }
   xhr.send();
 }
@@ -69,7 +84,9 @@ function generateEmails(ceo){
 
   for(var i = 0; i < possibleEmails.length;i++){
     console.log(possibleEmails[i]);
-    verifyEmail(possibleEmails[i]);
+    var catch_all = verifyEmail(name,possibleEmails[i]);
+    if(catch_all)
+      break;
   }
 }
 
@@ -80,7 +97,7 @@ function LinkedIn(){
       var url = tabs[0].url;
       setCompany(url);
       document.getElementById("url").innerHTML="www."+companyDomain;
-      var query = "https://www.google.com/#q="+url+"+LinkedIn";
+      var query = "https://www.google.com/#q="+companyDomain+"+LinkedIn";
       chrome.tabs.create({ url: query, active:false },function(tab){
           tabsToClose.push(tab.id);
           setTimeout(function(){ 
@@ -98,9 +115,8 @@ function LinkedIn(){
                                     setTimeout(function(){ 
                                       chrome.tabs.executeScript(tab.id,{file: 'searchResult.js',allFrames: true},function(){
                                           chrome.tabs.sendMessage(tab.id, {greeting: "url"}, function(response) {
-                                            var ceo = response.farewell;
-                                            console.log(ceo);
-                                            generateEmails(ceo);
+                                              var ceo = response.farewell;
+                                              generateEmails(ceo);
                                           });
                                       });
                                     }, 4000);
@@ -118,6 +134,10 @@ function LinkedIn(){
   });
 }
 
+function setFailedFields(){
+  if(document.getElementById('LinkedInDescription').innerHTML=="Loading CEO Description...")
+    document.getElementById('LinkedInDescription').innerHTML="CEO description not found";
+}
 
 chrome.extension.onRequest.addListener(function(contacts) {
   if(typeof contacts === 'string'){
@@ -153,11 +173,7 @@ chrome.extension.onRequest.addListener(function(contacts) {
         document.getElementById("companyEmail").innerHTML=element.substring(7);
       else if(element.includes("Phone"))
         document.getElementById("companyPhone").innerHTML=element.substring(7);
-      // allContacts.push(contacts[index]);
     }
-    allContacts.sort();
-    visibleContacts = allContacts;
-    showContacts();
   }
 });
 
