@@ -110,6 +110,10 @@ function LinkedIn(){
                             chrome.tabs.executeScript(tab.id, {file: 'LinkedInScraper.js', allFrames: true}, function(){
                             chrome.tabs.sendMessage(tab.id, {greeting: url}, function(response) {
                                 var companyUrl = response.farewell;
+                                console.log(companyUrl);
+                                // if(companyUrl=="failure"){
+                                //   console.log("Please sign in to Linked-in. Then go back to the original webpage and try again.");
+                                // }
                                 chrome.tabs.create({ url: companyUrl, active:false },function(tab){
                                     tabsToClose.push(tab.id);
                                     setTimeout(function(){ 
