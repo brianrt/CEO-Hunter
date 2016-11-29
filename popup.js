@@ -58,7 +58,7 @@ function verifyEmail(name,email_address){
           }
           else{
             catch_all = true;
-            document.getElementById("personalEmail").innerHTML=name.first.charAt(0)+name.last.toLowerCase()+"@"+companyDomain;
+            document.getElementById("personalEmail").innerHTML="<u>Possible Options:</u><br>"+name.first+"@"+companyDomain+"\n"+name.first.charAt(0)+name.last.toLowerCase()+"@"+companyDomain+"\n"+name.first+"."+name.last.toLowerCase()+"@"+companyDomain;
             document.getElementById("confidence").innerHTML="Risky";
           }
         }
@@ -111,9 +111,6 @@ function LinkedIn(){
                             chrome.tabs.sendMessage(tab.id, {greeting: url}, function(response) {
                                 var companyUrl = response.farewell;
                                 console.log(companyUrl);
-                                // if(companyUrl=="failure"){
-                                //   console.log("Please sign in to Linked-in. Then go back to the original webpage and try again.");
-                                // }
                                 chrome.tabs.create({ url: companyUrl, active:false },function(tab){
                                     tabsToClose.push(tab.id);
                                     setTimeout(function(){ 

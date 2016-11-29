@@ -52,7 +52,7 @@ function search(){
          var description = e.getElementsByClassName("snippet")[0];
          description = description.getElementsByClassName("title")[0].innerHTML;
          // console.log(description);
-         if(firstPass(description)){
+         if(firstPass(description) && name!="LinkedIn Member"){
             chrome.extension.sendRequest("name"+name);
             chrome.extension.sendRequest("description"+description);
             return name;
@@ -66,7 +66,7 @@ function search(){
          var description = e.getElementsByClassName("snippet")[0];
          description = description.getElementsByClassName("title")[0].innerHTML;
          // console.log(description);
-         if(secondPass(description)){
+         if(secondPass(description) && name!="LinkedIn Member"){
             chrome.extension.sendRequest("name"+name);
             chrome.extension.sendRequest("description"+description);
             return name;
@@ -80,7 +80,7 @@ function search(){
          var description = e.getElementsByClassName("snippet")[0];
          description = description.getElementsByClassName("title")[0].innerHTML;
          // console.log(description);
-         if(thirdPass(description)){
+         if(thirdPass(description) && name!="LinkedIn Member"){
             chrome.extension.sendRequest("name"+name);
             chrome.extension.sendRequest("description"+description);
             return name;
