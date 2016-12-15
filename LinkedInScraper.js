@@ -12,7 +12,7 @@ setTimeout(function(){
 	}
 },0000);
 
-var result = document.getElementsByClassName("more")[0];
+var result = document.getElementsByClassName("snackbar-description-see-all-link")[0];
 url = result.getAttribute("href");
 
 chrome.runtime.onMessage.addListener(
