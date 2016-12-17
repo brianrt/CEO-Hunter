@@ -124,12 +124,12 @@ function LinkedIn(){
                                 });
                             });
                         });
-                        }, 4000);
+                        }, 4500);
                         
                     });
                 });
             });
-          }, 3000);
+          }, 5000);
 
       });
   });
@@ -181,7 +181,36 @@ chrome.extension.onRequest.addListener(function(contacts) {
 // Set up event handlers and inject send_contacts.js into all frames in the active
 // tab.
 window.onload = function() {
- LinkedIn();
+   LinkedIn();
+    setTimeout(function(){
+      //<p id=LinkedInDescription class=title>Loading CEO Description...</p>
+      //<p id=LinkedInName class=info>Loading CEO Name...</p>
+      //<p id=personalEmail class=info>Loading Email...</p>
+  // <p id=companyEmail class=info>Loading company email...</p>
+  //<p id=companyPhone class=info>Loading phone...</p>
+      if(document.getElementById("LinkedInDescription").innerHTML == "Loading CEO Description..."){
+        document.getElementById("LinkedInDescription").innerHTML = "Not found"
+      }
+      if(document.getElementById("LinkedInName").innerHTML == "Loading CEO Name..."){
+        document.getElementById("LinkedInName").innerHTML = "Not found";
+      }
+      if(document.getElementById("personalEmail").innerHTML == "Loading Email..."){
+        document.getElementById("personalEmail").innerHTML = "Not found";
+      }
+      if(document.getElementById("companyEmail").innerHTML == "Loading company email..."){
+        document.getElementById("companyEmail").innerHTML = "Not found";
+      }
+      if(document.getElementById("companyPhone").innerHTML == "Loading phone..."){
+        document.getElementById("companyPhone").innerHTML = "Not found";
+      }
+      closeTabs();
+    // chrome.runtime.sendMessage({
+    //   greeting: "hello"
+    // },
+    // function(response) {
+    //   console.log(response.msg);
+    // });
+ },15000);
  ceoEmail = { email:"Not found", score:-1.0};
   chrome.windows.getCurrent(function (currentWindow) {
     var script = 'send_contacts.js';
