@@ -1,10 +1,3 @@
-chrome.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
-   var ceo = "Not found";
-   ceo = search();
-   sendResponse({farewell: ceo});
-});
-
 function firstPass(description){
    description = description.toLowerCase();
    // console.log(description);
@@ -53,9 +46,7 @@ function search(){
          description = description.getElementsByClassName("title")[0].innerHTML;
          // console.log(description);
          if(firstPass(description) && name!="LinkedIn Member"){
-            chrome.extension.sendRequest("name"+name);
-            chrome.extension.sendRequest("description"+description);
-            return name;
+            return [name,description];
          }
       }
    }
@@ -67,9 +58,7 @@ function search(){
          description = description.getElementsByClassName("title")[0].innerHTML;
          // console.log(description);
          if(secondPass(description) && name!="LinkedIn Member"){
-            chrome.extension.sendRequest("name"+name);
-            chrome.extension.sendRequest("description"+description);
-            return name;
+            return [name,description];
          }
       } 
    }
@@ -81,13 +70,19 @@ function search(){
          description = description.getElementsByClassName("title")[0].innerHTML;
          // console.log(description);
          if(thirdPass(description) && name!="LinkedIn Member"){
-            chrome.extension.sendRequest("name"+name);
-            chrome.extension.sendRequest("description"+description);
-            return name;
+            return [name,description];
          }
       } 
    }
 }
 
+
+var result = search();
+chrome.runtime.sendMessage({
+   greeting: "ceo",
+   message_ceo: result[0],
+   message_description: result[1]
+});
+window.close();
 
 

@@ -22,8 +22,10 @@ function openContactUsURL(){
   urls = [].slice.apply(document.querySelectorAll('a'));
   for(var i = 0; i < urls.length; i++){
     if(urls[i].innerText.toLowerCase().includes("contact")){
-      chrome.extension.sendRequest(urls[i].href);
-      // console.log(urls[i].innerText);
+      chrome.runtime.sendMessage({
+        greeting: "contact urls",
+        message: urls[i].href
+      });
     }
   }
 }
@@ -52,5 +54,8 @@ contacts = contacts.map(function(element) {
 
 openContactUsURL();
 contacts.sort();
-
-chrome.extension.sendRequest(contacts);
+// console.log(contacts);
+chrome.runtime.sendMessage({
+  greeting: "contacts",
+  message: contacts
+});

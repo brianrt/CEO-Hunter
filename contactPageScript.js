@@ -23,7 +23,6 @@ function getPhoneNumber(text){
 // The popup injects this script into all frames in the active tab.
 
 
-
 contacts = [].slice.apply(document.querySelectorAll('p,li,a,div'));
 contacts = contacts.map(function(element) {
 // console.log(element);
@@ -46,5 +45,7 @@ if(!foundPhone){
   return "";
 });
 contacts.sort();
-
-chrome.extension.sendRequest(contacts);
+chrome.runtime.sendMessage({
+  greeting: "contacts",
+  message: contacts
+});

@@ -1,7 +1,7 @@
 {
   "name": "CEO Hunter",
   "background": {
-    "scripts": ["background.js"]
+    "page": "background.html"
   },
   "icons": {
     "128": "MainIcon.png"
@@ -9,8 +9,8 @@
   "description": "Finds contact information and displays it.",
   "version": "0.1",
   "minimum_chrome_version": "16.0.884",
-  "permissions": ["downloads", "<all_urls>","tabs","identity"],
+  "permissions": ["downloads", "<all_urls>","tabs","identity","*://*/*"],
   "optional_permissions": ["tabs"],
-  "browser_action": {"default_popup": "popup.html"},
+  "browser_action": {},
   "manifest_version": 2
 }
