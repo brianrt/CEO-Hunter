@@ -37,7 +37,6 @@ function listenerCallback(request,sender,sendResponse){
   		document.getElementById("LinkedInDescription").innerHTML=ceo_description;
   		generateEmails(ceo_name);
   		console.log(document.getElementById("body"));
-  		chrome.tabs.sendMessage(tab_id, {greeting: "update data",message:document.getElementById("ceo_hunter").innerHTML});
   	}
     else if (request.greeting == "company linkedin page" && !employeepage){
     	employeepage = true;
@@ -177,6 +176,8 @@ chrome.browserAction.onClicked.addListener(function(tab) {
       first=true;
     }
   }
+  if(tab.url != companyURL)
+    first=true;
   if(first){
     document.getElementById("body").innerHTML=templateHTML;
     chrome.runtime.onMessage.addListener(listenerCallback);
