@@ -10,6 +10,7 @@ var employeepage = false;
 var toggle = true;
 var first = true;
 var toggle_dict = {};
+var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>CEO Hunter</h1><t id=url></t><br><br><t id=LinkedInDescription class=title>Loading CEO Description...</t><br><t id=LinkedInName class=info>Loading CEO Name...</t><br><br><t class=title>Personal Email Address</t><br><t id=personalEmail class=info>Loading Email...</t><br><t id=confidence></t><br><br><t class=title>Company Email Address</t><br><t id=companyEmail class=info>Loading company email...</t><br><br><t class=title>Company Phone #</t><br><t id=companyPhone class=info>Loading phone...</t><br><br><a href="http://www.ceohunter.io/feedback/" style="color:blue;">Report bugs and request new features</a><br><br></div>';
 
 function getEmail(text){
   var emailRe = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -45,7 +46,7 @@ function listenerCallback(request,sender,sendResponse){
     }
     else if (request.greeting == "search result" && !company){
     	company = true;
-        openCompanyPage(request.message);
+      openCompanyPage(request.message);
     }
     else if (request.greeting == "contacts"){
     	contact = true;
@@ -159,6 +160,7 @@ function launchSequence(){
     employeepage = false;
     companyWindowCreated = false;
     employeeWindowCreated = false;
+    googleWindowCreated = false;
     getContactInfo();
     LinkedIn();
 }
@@ -176,13 +178,13 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     }
   }
   if(first){
-    document.getElementById("body").innerHTML=' <div id="main_ceo_hunter"><h1 id=mainHeader>CEO Hunter</h1><p id=url></p><hr><p id=LinkedInDescription class=title>Loading CEO Description...</p><p id=LinkedInName class=info>Loading CEO Name...</p><br><p class=title>Personal Email Address</p><p id=personalEmail class=info>Loading Email...</p><p id=confidence></p><br><p class=title>Company Email Address</p><p id=companyEmail class=info>Loading company email...</p><br><p class=title>Company Phone #</p><p id=companyPhone class=info>Loading phone...</p><br></div>';
+    document.getElementById("body").innerHTML=templateHTML;
     chrome.runtime.onMessage.addListener(listenerCallback);
     initialize();
     launchSequence();
   }
   else if(toggle){
-    document.getElementById("body").innerHTML=' <div id="main_ceo_hunter"><h1 id=mainHeader>CEO Hunter</h1><p id=url></p><hr><p id=LinkedInDescription class=title>Loading CEO Description...</p><p id=LinkedInName class=info>Loading CEO Name...</p><br><p class=title>Personal Email Address</p><p id=personalEmail class=info>Loading Email...</p><p id=confidence></p><br><p class=title>Company Email Address</p><p id=companyEmail class=info>Loading company email...</p><br><p class=title>Company Phone #</p><p id=companyPhone class=info>Loading phone...</p><br></div>';
+    document.getElementById("body").innerHTML=templateHTML;
     chrome.tabs.sendMessage(tab_id, {greeting: "toggle on",message:document.getElementById("ceo_hunter").innerHTML});
     launchSequence();
   }

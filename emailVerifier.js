@@ -18,12 +18,14 @@ function verifyEmail(name,email_address){
             console.log("verified true");
             document.getElementById("personalEmail").innerHTML=email_address;
             document.getElementById("confidence").innerHTML="Verified";
+            document.getElementById("confidence").style.color="green";
             done = true;
             return;
           }
           else{
             document.getElementById("personalEmail").innerHTML="<u>Possible Options:</u><br>"+name.first+"@"+companyDomain+"<br>"+name.first.charAt(0)+name.last.toLowerCase()+"@"+companyDomain+"<br>"+name.first+"."+name.last.toLowerCase()+"@"+companyDomain;
             document.getElementById("confidence").innerHTML="Risky";
+            document.getElementById("confidence").style.color="#cccc00";
             done = true;
             return;
           }
@@ -31,6 +33,7 @@ function verifyEmail(name,email_address){
       else{
         document.getElementById("personalEmail").innerHTML=name.first.charAt(0)+name.last.toLowerCase()+"@"+companyDomain;
         document.getElementById("confidence").innerHTML="Not Likely";
+        document.getElementById("confidence").style.color="red";
       }
     }
   }
