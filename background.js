@@ -190,7 +190,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     launchSequence();
   }
   else{
-      console.log("literally calling the off function");
+      // console.log("literally calling the off function");
       chrome.tabs.sendMessage(tab_id, {greeting: "toggle off",message:document.getElementById("ceo_hunter").innerHTML});
       toggle = true;
       toggle_dict[tab_id]=toggle;
