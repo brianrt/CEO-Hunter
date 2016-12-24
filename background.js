@@ -133,7 +133,7 @@ function setTerminatingConditions(){
         }
       chrome.tabs.sendMessage(tab_id, {greeting: "update data",message:document.getElementById("ceo_hunter").innerHTML});
         // closeTabs();
-   },12000);
+   },15000);
 }
 
 function initialize(){
