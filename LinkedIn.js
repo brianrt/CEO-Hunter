@@ -82,7 +82,7 @@ function openGooglePage(url){
           currWindowId = currentWindow.id;
             setTimeout(function(){
               chrome.tabs.executeScript(newTab.id, {"file": "googleResults.js", allFrames: true});
-            },3000);
+            },5000);
             chrome.windows.update(currentWindow.id, {focused:true});
         });
       });
