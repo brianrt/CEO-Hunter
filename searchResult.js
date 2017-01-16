@@ -36,53 +36,69 @@ function thirdPass(description){
 
 function search(){
    console.log("in search");
-   var results = document.getElementById("results");
-   var employees = results.getElementsByTagName("li");
-   for(i=0;i<employees.length;i++){
-      var e = employees[i];
-      if(e.className.includes("people")){
-         var name = e.getElementsByClassName("title main-headline")[0].innerHTML;
-         var description = e.getElementsByClassName("snippet")[0];
-         description = description.getElementsByClassName("title")[0].innerHTML;
-         // console.log(description);
-         if(firstPass(description) && name!="LinkedIn Member"){
-            return [name,description];
+//    try {
+//     adddlert("Welcome guest!");
+// }
+// catch(err) {
+//     document.getElementById("demo").innerHTML = err.message;
+// }
+   try{
+      var results = document.getElementById("results");
+      var employees = results.getElementsByTagName("li");
+      for(i=0;i<employees.length;i++){
+         var e = employees[i];
+         if(e.className.includes("people")){
+            var name = e.getElementsByClassName("title main-headline")[0].innerHTML;
+            var description = e.getElementsByClassName("snippet")[0];
+            description = description.getElementsByClassName("title")[0].innerHTML;
+            // console.log(description);
+            if(firstPass(description) && name!="LinkedIn Member"){
+               return [name,description];
+            }
          }
       }
+      for(i=0;i<employees.length;i++){//This is for if they weren't the CEO, but we want to find other higher ups
+         var e = employees[i];
+         if(e.className.includes("people")){
+            var name = e.getElementsByClassName("title main-headline")[0].innerHTML;
+            var description = e.getElementsByClassName("snippet")[0];
+            description = description.getElementsByClassName("title")[0].innerHTML;
+            // console.log(description);
+            if(secondPass(description) && name!="LinkedIn Member"){
+               return [name,description];
+            }
+         } 
+      }
+      for(i=0;i<employees.length;i++){//This is for if they weren't the CEO, but we want to find other higher ups
+         var e = employees[i];
+         if(e.className.includes("people")){
+            var name = e.getElementsByClassName("title main-headline")[0].innerHTML;
+            var description = e.getElementsByClassName("snippet")[0];
+            description = description.getElementsByClassName("title")[0].innerHTML;
+            // console.log(description);
+            if(thirdPass(description) && name!="LinkedIn Member"){
+               return [name,description];
+            }
+         } 
+      }
    }
-   for(i=0;i<employees.length;i++){//This is for if they weren't the CEO, but we want to find other higher ups
-      var e = employees[i];
-      if(e.className.includes("people")){
-         var name = e.getElementsByClassName("title main-headline")[0].innerHTML;
-         var description = e.getElementsByClassName("snippet")[0];
-         description = description.getElementsByClassName("title")[0].innerHTML;
-         // console.log(description);
-         if(secondPass(description) && name!="LinkedIn Member"){
-            return [name,description];
-         }
-      } 
-   }
-   for(i=0;i<employees.length;i++){//This is for if they weren't the CEO, but we want to find other higher ups
-      var e = employees[i];
-      if(e.className.includes("people")){
-         var name = e.getElementsByClassName("title main-headline")[0].innerHTML;
-         var description = e.getElementsByClassName("snippet")[0];
-         description = description.getElementsByClassName("title")[0].innerHTML;
-         // console.log(description);
-         if(thirdPass(description) && name!="LinkedIn Member"){
-            return [name,description];
-         }
-      } 
+   catch(err){
+      console.log("there was an error: "+err.message);
    }
 }
 
 
 var result = search();
-chrome.runtime.sendMessage({
-   greeting: "ceo",
-   message_ceo: result[0],
-   message_description: result[1]
-});
+try{
+   chrome.runtime.sendMessage({
+      greeting: "ceo",
+      message_ceo: result[0],
+      message_description: result[1]
+   });
+}
+catch(err){
+   console.log("there was an error: "+err.message);
+}
 window.close();
 
 

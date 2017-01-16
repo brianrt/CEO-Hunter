@@ -17,6 +17,9 @@ if(result==undefined){
 	console.log(result);
 }
 var url = result.getAttribute("href");
+if(result==undefined){
+	window.close();
+}
 chrome.runtime.sendMessage({
 	greeting: "company linkedin page",
 	message: url

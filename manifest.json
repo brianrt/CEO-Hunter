@@ -6,7 +6,7 @@
   "icons": {
     "128": "MainIcon.png"
   },
-  "description": "Find the CEO and his/her email address with just one click, anywhere on the web.",
+  "description": "Find any CEO and his email in seconds",
   "version": "1.0",
   "minimum_chrome_version": "16.0.884",
   "permissions": ["downloads", "<all_urls>","tabs","identity","*://*/*"],
