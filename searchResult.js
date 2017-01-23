@@ -140,6 +140,6 @@ try{
 catch(err){
    console.log("there was an error: "+err.message);
 }
-// window.close();
+window.close();
 
 
