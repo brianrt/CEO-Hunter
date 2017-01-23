@@ -36,12 +36,6 @@ function thirdPass(description){
 
 function search(){
    console.log("in search");
-//    try {
-//     adddlert("Welcome guest!");
-// }
-// catch(err) {
-//     document.getElementById("demo").innerHTML = err.message;
-// }
    try{
       var results = document.getElementById("results");
       var employees = results.getElementsByTagName("li");
@@ -84,6 +78,53 @@ function search(){
    }
    catch(err){
       console.log("there was an error: "+err.message);
+
+
+      //Reattempting with new linkedin style - literally impossible
+
+      try{
+         var result = document.getElementsByClassName("authentication-outlet")[0];
+         var employees = result.getElementsByClassName("search-results-container neptune-grid two-column ");
+         console.log("result: "+employees);
+         console.log(employees.length);
+         for(i=0;i<employees.length;i++){
+            console.log("index "+i+": "+employees[i].innerHTML);
+         }
+         for(i=0;i<employees.length;i++){
+            var e = employees[i];
+            var name = e.getElementsByClassName("name")[0].innerHTML;
+            var description = e.getElementsByClassName("subline-level-1 Sans-15px-black-85% search-result__truncate")[0];
+            // description = description.getElementsByClassName("title")[0].innerHTML;
+            // console.log(description);
+            if(firstPass(description) && name!="LinkedIn Member"){
+               return [name,description];
+            }
+         }
+         for(i=0;i<employees.length;i++){//This is for if they weren't the CEO, but we want to find other higher ups
+            var e = employees[i];
+            var name = e.getElementsByClassName("name")[0].innerHTML;
+            var description = e.getElementsByClassName("subline-level-1 Sans-15px-black-85% search-result__truncate")[0];
+            // description = description.getElementsByClassName("title")[0].innerHTML;
+            // console.log(description);
+            if(secondPass(description) && name!="LinkedIn Member"){
+               return [name,description];
+            }
+         }
+         for(i=0;i<employees.length;i++){//This is for if they weren't the CEO, but we want to find other higher ups
+            var e = employees[i];
+            var name = e.getElementsByClassName("name")[0].innerHTML;
+            var description = e.getElementsByClassName("subline-level-1 Sans-15px-black-85% search-result__truncate")[0];
+            // description = description.getElementsByClassName("title")[0].innerHTML;
+            // console.log(description);
+            if(thirdPass(description) && name!="LinkedIn Member"){
+               return [name,description];
+            }
+         }
+      }
+      catch(err){
+         console.log("there was an error: "+err.message);
+      }
+
    }
 }
 
@@ -99,6 +140,6 @@ try{
 catch(err){
    console.log("there was an error: "+err.message);
 }
-window.close();
+// window.close();
 
 
