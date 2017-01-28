@@ -114,14 +114,53 @@ function getContactInfo(){
     });
 }
 
-function setTerminatingConditions(){
-  setTimeout(function(){
+function lastResortGoogleAttempt(){
+  var query = companyName+"+ceo";
+  var access_key = 'AIzaSyBcBsQy0IOp-R2bZOi_hq6omvVVaA1Z1hA';
+  var engine_id = '005408335780428068463:obi6mjahzr4';
+  var url = "https://www.googleapis.com/customsearch/v1?key="+access_key+"&cx="+engine_id+"&q="+query+"&siteSearch=wikipedia.org";
+  console.log(url);
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", url, true);
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4) {
+      var resp = JSON.parse(xhr.responseText);
+      var hcard = resp.items[0].pagemap.hcard;
+      console.log(hcard);
+      if (hcard!=undefined){
+        hcard = hcard[0]
+        if(hcard.role!=undefined || hcard.nickname!=undefined){
+          console.log("inside");
+          var role = "CEO";
+          var ceo  = hcard.fn
+          if(hcard.role!=undefined){
+            role = hcard.role;
+          }
+          listenerCallback({
+            greeting: "ceo",
+            message_ceo: ceo,
+            message_description: role
+          });
+        }
+      }
+      else{
         if(document.getElementById("LinkedInDescription").innerHTML == "Loading CEO Description..."){
           document.getElementById("LinkedInDescription").innerHTML = "Not found"
         }
         if(document.getElementById("LinkedInName").innerHTML == "Loading CEO Name..."){
           document.getElementById("LinkedInName").innerHTML = "Not found";
         }
+      }
+    }
+  }
+  xhr.send();
+
+}
+
+
+function setTerminatingConditions(){
+  setTimeout(function(){
+        lastResortGoogleAttempt();
         if(document.getElementById("personalEmail").innerHTML == "Loading Email..."){
           document.getElementById("personalEmail").innerHTML = "Not found";
         }
