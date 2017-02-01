@@ -10,7 +10,7 @@ var employeepage = false;
 var toggle = true;
 var first = true;
 var toggle_dict = {};
-var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>CEO Hunter</h1><t id=url></t><br><br><t id=LinkedInDescription class=title>Loading CEO Description...</t><br><t id=LinkedInName class=info>Loading CEO Name...</t><br><br><t class=title>Personal Email Address</t><br><t id=personalEmail class=info>Loading Email...</t><br><t id=confidence></t><br><br><t class=title>Company Email Address</t><br><t id=companyEmail class=info>Loading company email...</t><br><br><t class=title>Company Phone #</t><br><t id=companyPhone class=info>Loading phone...</t><br><br><a href="http://www.ceohunter.io/feedback/" style="color:blue;">Report bugs and request new features</a><br><br></div>';
+var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>CEO Hunter (BETA)</h1><t id=url></t><br><br><t id=LinkedInDescription class=title>Loading CEO Description...</t><br><t id=LinkedInName class=info>Loading CEO Name...</t><br><br><t class=title>Personal Email Address</t><br><t id=personalEmail class=info>Loading Email...</t><br><t id=confidence></t><br><br><t class=title>Company Email Address</t><br><t id=companyEmail class=info>Loading company email...</t><br><br><t class=title>Company Phone #</t><br><t id=companyPhone class=info>Loading phone...</t><br><br><a href="http://www.ceohunter.io/feedback/" style="color:blue;">Report bugs and request new features</a><br><br></div>';
 
 function getEmail(text){
   var emailRe = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -120,6 +120,7 @@ function lastResortGoogleAttempt(){
   var engine_id = '005408335780428068463:obi6mjahzr4';
   var url = "https://www.googleapis.com/customsearch/v1?key="+access_key+"&cx="+engine_id+"&q="+query+"&siteSearch=wikipedia.org";
   console.log(url);
+  var found = false;
   var xhr = new XMLHttpRequest();
   xhr.open("GET", url, true);
   xhr.onreadystatechange = function() {
@@ -130,6 +131,7 @@ function lastResortGoogleAttempt(){
       if (hcard!=undefined){
         hcard = hcard[0]
         if(hcard.role!=undefined || hcard.nickname!=undefined){
+          found = true;
           console.log("inside");
           var role = "CEO";
           var ceo  = hcard.fn
@@ -143,13 +145,9 @@ function lastResortGoogleAttempt(){
           });
         }
       }
-      else{
-        if(document.getElementById("LinkedInDescription").innerHTML == "Loading CEO Description..."){
-          document.getElementById("LinkedInDescription").innerHTML = "Not found"
-        }
-        if(document.getElementById("LinkedInName").innerHTML == "Loading CEO Name..."){
-          document.getElementById("LinkedInName").innerHTML = "Not found";
-        }
+      if (!found){
+        document.getElementById("LinkedInName").innerHTML = "Not found";
+        chrome.tabs.sendMessage(tab_id, {greeting: "update data",message:document.getElementById("ceo_hunter").innerHTML});
       }
     }
   }
@@ -160,7 +158,12 @@ function lastResortGoogleAttempt(){
 
 function setTerminatingConditions(){
   setTimeout(function(){
-        lastResortGoogleAttempt();
+        if(document.getElementById("LinkedInDescription").innerHTML == "Loading CEO Description..."){
+          document.getElementById("LinkedInDescription").innerHTML = "Not found"
+        }
+        if(document.getElementById("LinkedInName").innerHTML == "Loading CEO Name..."){
+          lastResortGoogleAttempt();
+        }
         if(document.getElementById("personalEmail").innerHTML == "Loading Email..."){
           document.getElementById("personalEmail").innerHTML = "Not found";
         }
@@ -172,10 +175,28 @@ function setTerminatingConditions(){
         }
       chrome.tabs.sendMessage(tab_id, {greeting: "update data",message:document.getElementById("ceo_hunter").innerHTML});
         // closeTabs();
-   },11000);
+   },12000);
+}
+
+function ajax_page(query){
+  console.log(query);
+  $.ajax
+  (
+      { 
+          url: query,
+          success: function(data) {
+              var d = document.createElement('div');
+              d.innerHTML = data;
+              console.log(d);
+
+          }
+      }
+  );
 }
 
 function initialize(){
+  var query = "https://mattermark.com/companies/zenplanner.com";
+  ajax_page(query);
 	chrome.windows.getCurrent(function (currentWindow) {
         chrome.tabs.query({active: true, windowId: currentWindow.id},function(activeTabs) {
         	tab_id = activeTabs[0].id;

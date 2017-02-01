@@ -1,5 +1,5 @@
 {
-  "name": "CEO Hunter",
+  "name": "CEO Hunter (BETA)",
   "background": {
     "page": "background.html"
   },
@@ -7,7 +7,7 @@
     "128": "MainIcon.png"
   },
   "description": "Find any CEO and his email in seconds",
-  "version": "1.2",
+  "version": "1.5",
   "minimum_chrome_version": "16.0.884",
   "permissions": ["downloads", "<all_urls>","tabs","identity","*://*/*"],
   "optional_permissions": ["tabs"],

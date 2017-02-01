@@ -78,6 +78,58 @@ function search(){
    }
    catch(err){
       console.log("there was an error: "+err.message);
+      //Trying agian
+      var i = 0;
+      setTimeout(function(){
+         var results = document.getElementsByClassName("search-result--person");
+         // console.log(results);
+         for(i=0;i<results.length;i++){
+            var description = results[i].getElementsByClassName("search-result__truncate")[0].innerHTML;
+            console.log(description);
+            var name = results[i].getElementsByTagName("span")[1].innerHTML;
+            if(firstPass(description) && name!="LinkedIn Member"){
+               chrome.runtime.sendMessage({
+                  greeting: "ceo",
+                  message_ceo: name,
+                  message_description: description
+               });
+            }
+         }
+      },2000);
+      setTimeout(function(){
+         var results = document.getElementsByClassName("search-result--person");
+         // console.log(results);
+         for(i=0;i<results.length;i++){
+            var description = results[i].getElementsByClassName("search-result__truncate")[0].innerHTML;
+            console.log(description);
+            var name = results[i].getElementsByTagName("span")[1].innerHTML;
+            if(secondPass(description) && name!="LinkedIn Member"){
+               chrome.runtime.sendMessage({
+                  greeting: "ceo",
+                  message_ceo: name,
+                  message_description: description
+               });
+            }
+         }
+      },2000);
+      setTimeout(function(){
+         var results = document.getElementsByClassName("search-result--person");
+         // console.log(results);
+         for(i=0;i<results.length;i++){
+            var description = results[i].getElementsByClassName("search-result__truncate")[0].innerHTML;
+            console.log(description);
+            var name = results[i].getElementsByTagName("span")[1].innerHTML;
+            if(thirdPass(description) && name!="LinkedIn Member"){
+               chrome.runtime.sendMessage({
+                  greeting: "ceo",
+                  message_ceo: name,
+                  message_description: description
+               });
+            }
+         }
+      },2000);
+      
+
    }
 }
 
@@ -93,6 +145,6 @@ try{
 catch(err){
    console.log("there was an error: "+err.message);
 }
-window.close();
+// window.close();
 
 
