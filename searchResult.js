@@ -47,7 +47,12 @@ function search(){
             description = description.getElementsByClassName("title")[0].innerHTML;
             // console.log(description);
             if(firstPass(description) && name!="LinkedIn Member"){
-               return [name,description];
+               chrome.runtime.sendMessage({
+                  greeting: "ceo",
+                  message_ceo: result[0],
+                  message_description: result[1]
+               });
+               window.close();
             }
          }
       }
@@ -59,7 +64,12 @@ function search(){
             description = description.getElementsByClassName("title")[0].innerHTML;
             // console.log(description);
             if(secondPass(description) && name!="LinkedIn Member"){
-               return [name,description];
+               chrome.runtime.sendMessage({
+                  greeting: "ceo",
+                  message_ceo: result[0],
+                  message_description: result[1]
+               });
+               window.close();
             }
          } 
       }
@@ -71,63 +81,78 @@ function search(){
             description = description.getElementsByClassName("title")[0].innerHTML;
             // console.log(description);
             if(thirdPass(description) && name!="LinkedIn Member"){
-               return [name,description];
+               chrome.runtime.sendMessage({
+                  greeting: "ceo",
+                  message_ceo: result[0],
+                  message_description: result[1]
+               });
+               window.close();
             }
          } 
       }
    }
    catch(err){
       console.log("there was an error: "+err.message);
-      //Trying agian
-      var i = 0;
-      setTimeout(function(){
-         var results = document.getElementsByClassName("search-result--person");
-         // console.log(results);
-         for(i=0;i<results.length;i++){
-            var description = results[i].getElementsByClassName("search-result__truncate")[0].innerHTML;
-            console.log(description);
-            var name = results[i].getElementsByTagName("span")[1].innerHTML;
-            if(firstPass(description) && name!="LinkedIn Member"){
-               chrome.runtime.sendMessage({
-                  greeting: "ceo",
-                  message_ceo: name,
-                  message_description: description
-               });
+
+      try{
+         //Trying agian
+         var i = 0;
+         setTimeout(function(){
+            var results = document.getElementsByClassName("search-result--person");
+            // console.log(results);
+            for(i=0;i<results.length;i++){
+               var description = results[i].getElementsByClassName("search-result__truncate")[0].innerHTML;
+               console.log(description);
+               var name = results[i].getElementsByTagName("span")[1].innerHTML;
+               if(firstPass(description) && name!="LinkedIn Member"){
+                  chrome.runtime.sendMessage({
+                     greeting: "ceo",
+                     message_ceo: name,
+                     message_description: description
+                  });
+                  window.close();
+               }
             }
-         }
-      },2000);
-      setTimeout(function(){
-         var results = document.getElementsByClassName("search-result--person");
-         // console.log(results);
-         for(i=0;i<results.length;i++){
-            var description = results[i].getElementsByClassName("search-result__truncate")[0].innerHTML;
-            console.log(description);
-            var name = results[i].getElementsByTagName("span")[1].innerHTML;
-            if(secondPass(description) && name!="LinkedIn Member"){
-               chrome.runtime.sendMessage({
-                  greeting: "ceo",
-                  message_ceo: name,
-                  message_description: description
-               });
+         },2000);
+         setTimeout(function(){
+            var results = document.getElementsByClassName("search-result--person");
+            // console.log(results);
+            for(i=0;i<results.length;i++){
+               var description = results[i].getElementsByClassName("search-result__truncate")[0].innerHTML;
+               console.log(description);
+               var name = results[i].getElementsByTagName("span")[1].innerHTML;
+               if(secondPass(description) && name!="LinkedIn Member"){
+                  chrome.runtime.sendMessage({
+                     greeting: "ceo",
+                     message_ceo: name,
+                     message_description: description
+                  });
+                  window.close();
+               }
             }
-         }
-      },2000);
-      setTimeout(function(){
-         var results = document.getElementsByClassName("search-result--person");
-         // console.log(results);
-         for(i=0;i<results.length;i++){
-            var description = results[i].getElementsByClassName("search-result__truncate")[0].innerHTML;
-            console.log(description);
-            var name = results[i].getElementsByTagName("span")[1].innerHTML;
-            if(thirdPass(description) && name!="LinkedIn Member"){
-               chrome.runtime.sendMessage({
-                  greeting: "ceo",
-                  message_ceo: name,
-                  message_description: description
-               });
+         },2000);
+         setTimeout(function(){
+            var results = document.getElementsByClassName("search-result--person");
+            // console.log(results);
+            for(i=0;i<results.length;i++){
+               var description = results[i].getElementsByClassName("search-result__truncate")[0].innerHTML;
+               console.log(description);
+               var name = results[i].getElementsByTagName("span")[1].innerHTML;
+               if(thirdPass(description) && name!="LinkedIn Member"){
+                  chrome.runtime.sendMessage({
+                     greeting: "ceo",
+                     message_ceo: name,
+                     message_description: description
+                  });
+                  window.close();
+               }
             }
-         }
-      },2000);
+         },2000);
+      }
+      catch(err){
+         console.log("there was another error: "+err.message);
+         window.close();
+      }
       
 
    }
@@ -135,16 +160,5 @@ function search(){
 
 
 var result = search();
-try{
-   chrome.runtime.sendMessage({
-      greeting: "ceo",
-      message_ceo: result[0],
-      message_description: result[1]
-   });
-}
-catch(err){
-   console.log("there was an error: "+err.message);
-}
-// window.close();
 
 
