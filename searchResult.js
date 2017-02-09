@@ -109,6 +109,7 @@ function search(){
                   window.close();
                }
             }
+            window.close();
          },2000);
       }
       catch(err){
