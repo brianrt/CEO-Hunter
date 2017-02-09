@@ -114,140 +114,86 @@ function getContactInfo(){
     });
 }
 
-function lastResortGoogleAttempt(){
-  var query = companyName+"+ceo";
-  var access_key = 'AIzaSyBcBsQy0IOp-R2bZOi_hq6omvVVaA1Z1hA';
-  var engine_id = '005408335780428068463:obi6mjahzr4';
-  var url = "https://www.googleapis.com/customsearch/v1?key="+access_key+"&cx="+engine_id+"&q="+query+"&siteSearch=wikipedia.org";
-  console.log(url);
-  var found = false;
-  var xhr = new XMLHttpRequest();
-  xhr.open("GET", url, true);
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState == 4) {
-      var resp = JSON.parse(xhr.responseText);
-      if(resp.items==undefined){
-        // document.getElementById("LinkedInName").innerHTML = "Not found";
-        // chrome.tabs.sendMessage(tab_id, {greeting: "update data",message:document.getElementById("ceo_hunter").innerHTML});
-        var query = "https://mattermark.com/companies/"+companyDomain;
-        ajax_page(query,mattermarkCallBack);
-        return;
-      }
-      var hcard = resp.items[0].pagemap.hcard;
-      console.log(hcard);
-      if (hcard!=undefined){
-        hcard = hcard[0]
-        if(hcard.role!=undefined || hcard.nickname!=undefined){
-          found = true;
-          console.log("inside");
-          var role = "CEO";
-          var ceo  = hcard.fn
-          if(hcard.role!=undefined){
-            role = hcard.role;
-          }
-          listenerCallback({
-            greeting: "ceo",
-            message_ceo: ceo,
-            message_description: role
-          });
+function lastResortMantaAttempt(){
+
+}
+
+function cleanName(name){
+  var names = name.split(" ");
+  var result = "";
+  for(var i = 0; i < names.length; i++){
+    if(!(names[i].includes("."))){
+      result+=names[i]+" ";
+    }
+  }
+  result = result.substring(0,result.length-1);
+  return result;
+}
+
+function Bloomberg(){
+  chrome.tabs.query({active:true,windowType:"normal", currentWindow: true},function(tabs){
+    
+    //set global company information
+    var url = tabs[0].url;
+    setCompany(url);
+
+    //Google search url using the bloomberg custom search engine
+    var access_key = 'AIzaSyBcBsQy0IOp-R2bZOi_hq6omvVVaA1Z1hA';
+    var engine_id = '005408335780428068463:cfom544x5cg';
+    var url = "https://www.googleapis.com/customsearch/v1?key="+access_key+"&cx="+engine_id+"&q="+companyDomain;
+    console.log("Bloomberg google search: "+url);
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == 4) {
+        var resp = JSON.parse(xhr.responseText);
+        if(resp.searchInformation.totalResults==0){
+          console.log("bloomberg google query failed, trying linkedin");
+          LinkedIn();
+          return;
         }
-      }
-      if (!found){
-        var query = "https://mattermark.com/companies/"+companyDomain;
-        ajax_page(query,mattermarkCallBack);
-        // document.getElementById("LinkedInName").innerHTML = "Not found";
-        // chrome.tabs.sendMessage(tab_id, {greeting: "update data",message:document.getElementById("ceo_hunter").innerHTML});
+        var result = resp.items[0].link;
+        console.log("bloomberg link: "+result);
+        ajax_page(result,bloombergCallback);
       }
     }
-  }
-  xhr.send();
-
+    xhr.send();
+    });
 }
 
-function mattermarkCallBack(htmlData){
-  var results = htmlData.getElementsByClassName("person");
-  var i=0;
-  for(i=0;i<results.length;i++){
-    // console.log(results[i]);
-    var spans = results[i].getElementsByTagName('span');
-    var name = spans[1].innerHTML;
-    var description = spans[2].innerHTML;
-    if(firstPass(description)){
-      listenerCallback({
-        greeting: "ceo",
-        message_ceo: name,
-        message_description: description
-      });
-      return;
-    }
+function bloombergCallback(htmlData){
+  console.log("bloomberg ajax result");
+  console.log(htmlData);
+  var bloomberg_company_url = "";
+  try{
+    bloomberg_company_url = htmlData.getElementsByClassName("link_sb")[0].getAttribute("href");
+  }catch(error){
+    console.log("bloomberg failed, trying linkedin");
+    LinkedIn();
+    return;
   }
-  for(i=0;i<results.length;i++){
-    // console.log(results[i]);
-    var spans = results[i].getElementsByTagName('span');
-    var name = spans[1].innerHTML;
-    var description = spans[2].innerHTML;
-    if(secondPass(description)){
-      listenerCallback({
-        greeting: "ceo",
-        message_ceo: name,
-        message_description: description
-      });
-      return;
-    }
+  console.log("url: "+bloomberg_company_url);
+  if(bloomberg_company_url.includes(companyName)){
+    console.log("bloomberg success");
+    var name = htmlData.getElementsByClassName("link_sb")[1].innerHTML;
+    name = cleanName(name);
+    console.log("name from bloomberg: "+ name);
+    var description = htmlData.getElementsByClassName("officerInner")[0].getElementsByTagName("div")[1].innerHTML;
+    console.log("description from bloomberg: "+ description);
+
+    //send results to callback function
+    listenerCallback({
+      greeting: "ceo",
+      message_ceo: name,
+      message_description: description
+    });
+
   }
-  for(i=0;i<results.length;i++){
-    // console.log(results[i]);
-    var spans = results[i].getElementsByTagName('span');
-    var name = spans[1].innerHTML;
-    var description = spans[2].innerHTML;
-    if(thirdPass(description)){
-      listenerCallback({
-        greeting: "ceo",
-        message_ceo: name,
-        message_description: description
-      });
-      return;
-    }
+  else{
+    console.log("incorrect company on bloomberg, trying linkedin");
+    LinkedIn();
+    return;
   }
-
-      document.getElementById("LinkedInName").innerHTML = "Not found";
-      chrome.tabs.sendMessage(tab_id, {greeting: "update data",message:document.getElementById("ceo_hunter").innerHTML});
-}
-
-function firstPass(description){
-   description = description.toLowerCase();
-   // console.log(description);
-   if(description.includes("ceo"))
-      return true;
-   else if(description.includes("chief executive officer"))
-      return true;
-   else if(description.includes("president") && !(description.includes("vice")))
-      return true;
-   return false;
-}
-
-function secondPass(description){
-   description = description.toLowerCase();
-   console.log(description);
-   if(description.includes("owner"))
-      return true;
-   else if(description.includes("founder"))
-      return true;
-   else if(description.includes("principal"))
-      return true;
-   else if(description.includes("president"))
-      return true;
-   return false
-}
-
-function thirdPass(description){
-   description = description.toLowerCase();
-   console.log(description);
-   if(description.includes("partner"))
-      return true;
-   else if(description.includes("director"))
-      return true;
-   return false
 }
 
 function setTerminatingConditions(){
@@ -256,7 +202,7 @@ function setTerminatingConditions(){
           document.getElementById("LinkedInDescription").innerHTML = "Not found"
         }
         if(document.getElementById("LinkedInName").innerHTML == "Loading CEO Name..."){
-          lastResortGoogleAttempt();
+          lastResortMantaAttempt();
         }
         if(document.getElementById("personalEmail").innerHTML == "Loading Email..."){
           document.getElementById("personalEmail").innerHTML = "Not found";
@@ -289,8 +235,6 @@ function ajax_page(query,callback){
 }
 
 function initialize(){
-  // var query = "https://mattermark.com/companies/zenplanner.com";
-  // ajax_page(query);
 	chrome.windows.getCurrent(function (currentWindow) {
         chrome.tabs.query({active: true, windowId: currentWindow.id},function(activeTabs) {
         	tab_id = activeTabs[0].id;
@@ -315,7 +259,8 @@ function launchSequence(){
     employeeWindowCreated = false;
     googleWindowCreated = false;
     getContactInfo();
-    LinkedIn();
+    //Need to call setcompany before bloomberg call
+    Bloomberg();
 }
 
 chrome.browserAction.onClicked.addListener(function(tab) {

@@ -23,7 +23,6 @@ function setCompany(url){
 function LinkedIn(){
   chrome.tabs.query({active:true,windowType:"normal", currentWindow: true},function(tabs){
         var url = tabs[0].url;
-        setCompany(url);
         document.getElementById("url").innerHTML="www."+companyDomain;
         document.getElementById("url").style.textDecoration = "underline";
         console.log(companyDomain);
