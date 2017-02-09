@@ -14,6 +14,9 @@ if(sign_in_two!=undefined && sign_in_two.innerHTML=="Make the most of your profe
 var result = document.getElementsByClassName("more")[0];
 if(result==undefined){
 	result = document.getElementsByClassName("snackbar-description-see-all-link")[0];
+	if(result==undefined){
+		window.close();
+	}
 	console.log(result);
 }
 var url = result.getAttribute("href");
