@@ -176,7 +176,7 @@ function bingCallback(htmlData){
     title = title.toLowerCase();
     title = title.replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"")
     console.log(title);
-    if(title.includes(companyName)){
+    if(title.includes("bloomberg")){
       var link = search_results[i].getElementsByTagName("a")[0];
       link = link.getAttribute("href");
       console.log(link);
