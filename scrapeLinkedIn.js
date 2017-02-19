@@ -11,6 +11,11 @@ if(sign_in_two!=undefined && sign_in_two.innerHTML=="Make the most of your profe
 	alert("Please sign in to LinkedIn in a new tab. Then go back to the original webpage and try again.");
 	window.close();
 }
+var sign_in_three = document.getElementsByClassName("join-linkedin-form float-label-form")[0];
+if(sign_in_three!=undefined){
+	alert("Please sign in to LinkedIn in a new tab. Then go back to the original webpage and try again.");
+	window.close();
+}
 var result = document.getElementsByClassName("more")[0];
 if(result==undefined){
 	result = document.getElementsByClassName("snackbar-description-see-all-link")[0];
