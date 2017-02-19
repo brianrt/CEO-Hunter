@@ -35,7 +35,7 @@ function ZoomInfo() {
 function zoomInfoCallBack(htmlData){
 	console.log(htmlData);
 	var result = htmlData.getElementsByClassName("similar_column");
-	if(results==undefined){
+	if(result==undefined){
 		CrunchBase();
 		return;
 	}

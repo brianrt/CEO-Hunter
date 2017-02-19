@@ -2,7 +2,7 @@ function CrunchBase() {
 	//Google search url using the bloomberg custom search engine
     var access_key = 'AIzaSyBcBsQy0IOp-R2bZOi_hq6omvVVaA1Z1hA';
     var engine_id = '005408335780428068463:obi6mjahzr4';
-    var query = "crunchbase+" + companyURL;
+    var query = "crunchbase+" + companyDomain;
     var url = "https://www.googleapis.com/customsearch/v1?key="+access_key+"&cx="+engine_id+"&q="+query;
     console.log("Crunchbase google search: "+url);
 
@@ -39,7 +39,7 @@ function crunchBaseCallBack(htmlData){
 	var results = htmlData.getElementsByClassName("base info-tab people")[0];
 	if(results==undefined){
 		//next function
-		console.log("for some fucking reason, it couldn't find it");
+		console.log("Could not find");
 		LinkedIn();
 		return;
 	}
