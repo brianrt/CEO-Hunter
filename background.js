@@ -115,32 +115,37 @@ function getContactInfo(){
 }
 
 function lastResortMantaAttempt(){
-  document.getElementById("LinkedInName").innerHTML = "Not Found";
-  chrome.tabs.sendMessage(tab_id, {greeting: "update data",message:document.getElementById("ceo_hunter").innerHTML});
 }
 
 
 
 function setTerminatingConditions(){
   setTimeout(function(){
-        if(document.getElementById("LinkedInDescription").innerHTML == "Loading CEO Description..."){
-          document.getElementById("LinkedInDescription").innerHTML = "Not found"
-        }
-        if(document.getElementById("LinkedInName").innerHTML == "Loading CEO Name..."){
-          lastResortMantaAttempt();
-        }
-        if(document.getElementById("personalEmail").innerHTML == "Loading Email..."){
-          document.getElementById("personalEmail").innerHTML = "Not found";
-        }
-        if(document.getElementById("companyEmail").innerHTML == "Loading company email..."){
-          document.getElementById("companyEmail").innerHTML = "Not found";
-        }
-        if(document.getElementById("companyPhone").innerHTML == "Loading phone..."){
-          document.getElementById("companyPhone").innerHTML = "Not found";
-        }
-      chrome.tabs.sendMessage(tab_id, {greeting: "update data",message:document.getElementById("ceo_hunter").innerHTML});
-        // closeTabs();
-   },12000);
+    if(document.getElementById("LinkedInName").innerHTML == "Loading CEO Name..."){
+      WhoIs();
+    }else{
+      displayNotFound();
+    }
+  },12000);
+}
+
+function displayNotFound(){         
+  if(document.getElementById("LinkedInDescription").innerHTML == "Loading CEO Description..."){
+    document.getElementById("LinkedInDescription").innerHTML = "Not found"
+  }
+  if(document.getElementById("LinkedInName").innerHTML == "Loading CEO Name..."){  
+    document.getElementById("LinkedInName").innerHTML = "Not Found";
+  }
+  if(document.getElementById("personalEmail").innerHTML == "Loading Email..."){
+    document.getElementById("personalEmail").innerHTML = "Not found";
+  }
+  if(document.getElementById("companyEmail").innerHTML == "Loading company email..."){
+    document.getElementById("companyEmail").innerHTML = "Not found";
+  }
+  if(document.getElementById("companyPhone").innerHTML == "Loading phone..."){
+    document.getElementById("companyPhone").innerHTML = "Not found";
+  }
+  chrome.tabs.sendMessage(tab_id, {greeting: "update data",message:document.getElementById("ceo_hunter").innerHTML});
 }
 
 function ajax_page(query,callback){

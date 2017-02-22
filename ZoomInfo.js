@@ -1,5 +1,5 @@
 function ZoomInfo() {
-	//Google search url using the bloomberg custom search engine
+	//Google search url using the zoominfo custom search engine
     var access_key = 'AIzaSyBcBsQy0IOp-R2bZOi_hq6omvVVaA1Z1hA';
     var engine_id = '005408335780428068463:cfom544x5cg';
     var query = companyDomain + "+Company+profile+zoominfo.com";
@@ -17,6 +17,7 @@ function ZoomInfo() {
 	          return;
 	      }
 	      var title = resp.items[0].title;
+	      title = title.replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
 	      title = title.toLowerCase();
 	      if(!(title.includes(companyName))){
 	      	console.log("wrong zoominfo page");

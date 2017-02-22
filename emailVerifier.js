@@ -1,4 +1,5 @@
 var done = false;
+var whoIsUsed = false
 function verifyEmail(name,email_address){
   console.log(email_address);
   // set endpoint and your access key

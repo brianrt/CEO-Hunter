@@ -17,7 +17,7 @@ function secondPass(description){
       return true;
    else if(description.includes("principal"))
       return true;
-   else if(description.includes("partner"))
+   else if(description.includes("partner") && !description.includes("partnership"))
       return true;
    return false
 }
