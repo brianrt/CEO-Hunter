@@ -4,7 +4,7 @@ function Bloomberg(){
     //set global company information
     var url = tabs[0].url;
     setCompany(url);
-      var query = "http://www.bing.com/search?q="+companyDomain+"+private+company+information+bloomberg";
+      var query = "http://www.bing.com/search?q="+companyName+"+private+company+information+bloomberg";
       ajax_page(query,bingCallback);
     });
 }

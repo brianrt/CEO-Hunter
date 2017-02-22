@@ -52,6 +52,10 @@ function whoIsCallBack(htmlData){
 
 function verifyName(name){
 	name = name.toLowerCase();
+	if(name.includes("network"))
+		return false;
+	if(name.includes("services"))
+		return false;
 	if(name.includes("domain"))
 		return false;
 	if(name.includes("technologies"))
