@@ -27,7 +27,7 @@ function whoIsCallBack(htmlData){
 		listenerCallback({
 	        greeting: "ceo",
 	        message_ceo: name,
-	        message_description: "CEO"
+	        message_description: "Chief Executive Officer"
 	    });
 	}
 	else{
@@ -45,7 +45,7 @@ function whoIsCallBack(htmlData){
 		listenerCallback({
 	        greeting: "ceo",
 	        message_ceo: name,
-	        message_description: "CEO"
+	        message_description: "Chief Executive Officer"
 	    });
 	}
 }
