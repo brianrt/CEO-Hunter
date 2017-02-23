@@ -4,7 +4,32 @@ function Bloomberg(){
     //set global company information
     var url = tabs[0].url;
     setCompany(url);
-      var query = "http://www.bing.com/search?q="+companyName+"+private+company+information+bloomberg";
+    // //Google search url using the bloomberg custom search engine
+    // var access_key = 'AIzaSyBcBsQy0IOp-R2bZOi_hq6omvVVaA1Z1hA';
+    // var engine_id = '005408335780428068463:cfom544x5cg';
+    // var url = "https://www.googleapis.com/customsearch/v1?key="+access_key+"&cx="+engine_id+"&q="+companyDomain;
+    // console.log("Bloomberg google search: "+url);
+    // var xhr = new XMLHttpRequest();
+    // xhr.open("GET", url, true);
+    // xhr.onreadystatechange = function() {
+    //   if (xhr.readyState == 4) {
+    //     var resp = JSON.parse(xhr.responseText);
+    //     if(resp.searchInformation.totalResults==0){
+    //       console.log("bloomberg google query failed, trying ZoomInfo");
+    //       LinkedIn();
+    //       return;
+    //     }
+    //     var result = resp.items[0].link;
+    //     console.log("bloomberg link: "+result);
+    //     ajax_page(result,bloombergCallback);
+    //   }
+    // }
+    // xhr.send();
+    // });
+
+      //Let's try using bing
+      //The search will need to be "'Company URL' private company information bloomberg"
+      var query = "http://www.bing.com/search?q="+companyDomain+"+private+company+information+bloomberg";
       ajax_page(query,bingCallback);
     });
 }
@@ -16,9 +41,9 @@ function bingCallback(htmlData){
     var title = search_results[i].getElementsByTagName("a")[0].innerHTML;
     title = title.toLowerCase();
     title = title.replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
-    var strippedCompanyName = companyName.replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
     console.log(title);
-    if(title.includes("privatecompany") && (title.includes(strippedCompanyName))){
+    trimmedCompanyName = companyName.replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
+    if(title.includes("privatecompany") && (title.includes(trimmedCompanyName) || trimmedCompanyName.includes(title))){
       var link = search_results[i].getElementsByTagName("a")[0];
       link = link.getAttribute("href");
       console.log(link);
@@ -40,10 +65,9 @@ function bloombergCallback(htmlData){
     ZoomInfo();
     return;
   }
-  bloomberg_company_url = bloomberg_company_url.replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
+  // bloomberg_company_url = bloomberg_company_url.replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
   console.log("url: "+bloomberg_company_url);
-  var strippedCompanyName = companyName.replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
-  if(bloomberg_company_url.includes(strippedCompanyName)){
+  if(bloomberg_company_url.includes(companyDomain)){
     console.log("bloomberg success");
     try{
       var name = htmlData.getElementsByClassName("link_sb")[1].innerHTML;
