@@ -69,25 +69,52 @@ function search(){
          var i = 0;
          setTimeout(function(){
             var results = document.getElementsByClassName("search-result--person");
-            // console.log(results);
-            for(i=0;i<results.length;i++){
-               var description = "";
-               try{
-                  description = results[i].getElementsByClassName("search-result__snippets")[0].innerHTML.substring(9);
-               }catch(error){
-                  description = results[i].getElementsByClassName("search-result__truncate")[0].innerHTML;
-               }
-               console.log(description);
-               var name = results[i].getElementsByTagName("span")[1].innerHTML;
-               if(firstPass(description) && name!="LinkedIn Member"){
-                  chrome.runtime.sendMessage({
-                     greeting: "ceo",
-                     message_ceo: name,
-                     message_description: description
-                  });
-                  // window.close();
+            if(results.length!=0){
+                  // console.log(results);
+               for(i=0;i<results.length;i++){
+                  var description = "";
+                  try{
+                     description = results[i].getElementsByClassName("search-result__snippets")[0].innerHTML.substring(9);
+                  }catch(error){
+                     description = results[i].getElementsByClassName("search-result__truncate")[0].innerHTML;
+                  }
+                  console.log(description);
+                  var name = results[i].getElementsByTagName("span")[1].innerHTML;
+                  if(firstPass(description) && name!="LinkedIn Member"){
+                     chrome.runtime.sendMessage({
+                        greeting: "ceo",
+                        message_ceo: name,
+                        message_description: description
+                     });
+                     // window.close();
+                  }
                }
             }
+            else{
+               var results = document.getElementsByClassName("search-result__wrapper");
+               if(results.length==0){
+                     console.log("no, this still failed");
+               }
+               for(i=0;i<results.length;i++){
+                  var description = "";
+                  try{
+                     description = results[i].getElementsByClassName("search-result__snippets")[0].innerHTML.substring(9);
+                  }catch(error){
+                     description = results[i].getElementsByClassName("search-result__truncate")[0].innerHTML;
+                  }
+                  console.log(description);
+                  var name = results[i].getElementsByTagName("span")[1].innerHTML;
+                  if(firstPass(description) && name!="LinkedIn Member"){
+                     chrome.runtime.sendMessage({
+                        greeting: "ceo",
+                        message_ceo: name,
+                        message_description: description
+                     });
+                     // window.close();
+                  }
+               }
+            }
+            
          },2000);
          setTimeout(function(){
             var results = document.getElementsByClassName("search-result--person");
