@@ -165,6 +165,27 @@ function ajax_page(query,callback){
   );
 }
 
+function setCompanyURL(){
+  chrome.tabs.query({active:true,windowType:"normal", currentWindow: true},function(tabs){
+      
+    //set global company information
+    var url = tabs[0].url;
+    companyURL = url;
+    if(url.includes("www.")){
+      url = url.substring(url.indexOf("www.")+4,url.length);
+    }
+    if(url.includes("://")){
+        url = url.substring(url.indexOf("://")+3,url.length);
+    }
+    companyDomain = url.substring(0,url.indexOf("/"))
+    companyName = url.substring(0,url.indexOf("."));
+    console.log("domain: "+companyDomain);
+    console.log("name: "+companyName);
+
+    GoogleSearch();
+    });
+}
+
 function initialize(){
 	chrome.windows.getCurrent(function (currentWindow) {
         chrome.tabs.query({active: true, windowId: currentWindow.id},function(activeTabs) {
@@ -189,8 +210,9 @@ function launchSequence(){
     companyWindowCreated = false;
     employeeWindowCreated = false;
     googleWindowCreated = false;
+    whoIsUsed=false;
     getContactInfo();
-    Bloomberg();
+    setCompanyURL();
     // CrunchBase();
 }
 

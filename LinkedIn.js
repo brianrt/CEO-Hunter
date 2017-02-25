@@ -6,20 +6,6 @@ var employeeWindowId;
 var googleWindowId;
 var currWindowId;
 
-function setCompany(url){
-  companyURL = url;
-  if(url.includes("www.")){
-    url = url.substring(url.indexOf("www.")+4,url.length);
-  }
-  if(url.includes("://")){
-      url = url.substring(url.indexOf("://")+3,url.length);
-  }
-  companyDomain = url.substring(0,url.indexOf("/"))
-  companyName = url.substring(0,url.indexOf("."));
-  console.log("domain: "+companyDomain);
-  console.log("name: "+companyName);
-}
-
 function LinkedIn(){
   chrome.tabs.query({active:true,windowType:"normal", currentWindow: true},function(tabs){
         var url = tabs[0].url;

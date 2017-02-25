@@ -19,6 +19,7 @@ function CrunchBase() {
 	      var title = resp.items[0].title;
 	      title = title.toLowerCase();
 	      console.log("title: "+title);
+
 	      if(title=="crunchbase | crunchbase"){
 	      	console.log("Crunchbase: google result is just crunchbase");
 	      	LinkedIn();
@@ -34,8 +35,11 @@ function CrunchBase() {
 
 function crunchBaseCallBack(htmlData){
 	console.log("crunbase data:");
-	console.log(htmlData);
-
+	if(!(htmlData.innerHTML.includes(companyURL))){
+		console.log("Wrong cruchbase page, trying LinkedIn");
+		LinkedIn();
+		return;
+	}
 	var results = htmlData.getElementsByClassName("base info-tab people")[0];
 	if(results==undefined){
 		//next function

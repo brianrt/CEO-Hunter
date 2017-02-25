@@ -10,7 +10,6 @@ function whoIsCallBack(htmlData){
 	// for (var i = 0; i < result.length;i++){
 	// 	console.log(result[i].innerHTML);
 	// }
-	console.log(result[1].innerHTML);
 	var source = result[1].innerHTML;
 	var found = source.search("Name");
 	console.log(found);
@@ -24,6 +23,7 @@ function whoIsCallBack(htmlData){
 			displayNotFound();
 			return;
 		}
+		whoIsUsed = true;
 		listenerCallback({
 	        greeting: "ceo",
 	        message_ceo: name,
@@ -42,6 +42,7 @@ function whoIsCallBack(htmlData){
 			displayNotFound();
 			return;
 		}
+		whoIsUsed = true;
 		listenerCallback({
 	        greeting: "ceo",
 	        message_ceo: name,
@@ -52,18 +53,13 @@ function whoIsCallBack(htmlData){
 
 function verifyName(name){
 	name = name.toLowerCase();
-	if(name.includes("network"))
-		return false;
-	if(name.includes("services"))
-		return false;
-	if(name.includes("domain"))
-		return false;
-	if(name.includes("technologies"))
-		return false;
-	if(name.includes("host"))
-		return false;
-	if(name.includes("corporation"))
-		return false;
+	var words = ["Registration","Private","Admin","Perfect","System","Inc.","Inc","LLC","The","Group","network","services","domain","technologies","host","corporation"]
+	for(var i = 0; i < words.length; i++){
+		var word = words[i].toLowerCase();
+		if(name.includes(word)){
+			return false;
+		}
+	}
 	if(name.includes(companyName))
 		return false;
 	var test = /^[a-z A-Z]+$/.test(name);
