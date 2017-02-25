@@ -1,5 +1,5 @@
 function GoogleSearch(){
-	var query = "ceo+"+companyDomain;
+	var query = "ceo+"+companyName;
 	var access_key = 'AIzaSyBcBsQy0IOp-R2bZOi_hq6omvVVaA1Z1hA';
 	var engine_id = '005408335780428068463:obi6mjahzr4';
 	var url = "https://www.googleapis.com/customsearch/v1?key="+access_key+"&cx="+engine_id+"&q="+query+"&siteSearch=wikipedia.org&exactTerms="+companyName;

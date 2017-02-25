@@ -126,6 +126,7 @@ function setTerminatingConditions(){
       WhoIs();
     }else{
       displayNotFound();
+      whoIsUsed=false;
     }
   },12000);
 }
