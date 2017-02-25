@@ -26,20 +26,12 @@ function verifyEmail(name,email_address){
             return;
           }
           else{
-            if(whoIsUsed){
-              console.log("who.is used");
-              document.getElementById("LinkedInName").innerHTML = "Not Found";
-              document.getElementById("LinkedInDescription").innerHTML = "Not found";
-              displayNotFound();
-            }else{
               document.getElementById("personalEmail").innerHTML="<u>Possible Options:</u><br>"+name.first+"@"+companyDomain+"<br>"+name.first.charAt(0)+name.last.toLowerCase()+"@"+companyDomain+"<br>"+name.first+"."+name.last.toLowerCase()+"@"+companyDomain;
               document.getElementById("confidence").innerHTML="Risky";
               document.getElementById("confidence").style.color="#cccc00";
               chrome.tabs.sendMessage(tab_id, {greeting: "update data",message:document.getElementById("ceo_hunter").innerHTML});
-            }
-
-            done = true;
-            return;
+              done = true;
+              return;
           }
       }
       else{
