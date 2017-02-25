@@ -35,7 +35,10 @@ function CrunchBase() {
 
 function crunchBaseCallBack(htmlData){
 	console.log("crunbase data:");
-	if(!(htmlData.innerHTML.includes(companyURL))){
+	console.log(htmlData.innerHTML);
+	console.log(companyURL);
+	console.log(htmlData.innerHTML.includes(companyDomain));
+	if(!(htmlData.innerHTML.includes(companyDomain))){
 		console.log("Wrong cruchbase page, trying LinkedIn");
 		LinkedIn();
 		return;
