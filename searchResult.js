@@ -39,7 +39,7 @@ function search(){
                   message_ceo: result[0],
                   message_description: result[1]
                });
-               window.close();
+               // window.close();
             }
          }
       }
@@ -55,7 +55,7 @@ function search(){
                   message_ceo: result[0],
                   message_description: result[1]
                });
-               window.close();
+               // window.close();
             }
          } 
       }
@@ -85,7 +85,7 @@ function search(){
                      message_ceo: name,
                      message_description: description
                   });
-                  window.close();
+                  // window.close();
                }
             }
          },2000);
@@ -106,15 +106,15 @@ function search(){
                      message_ceo: name,
                      message_description: description
                   });
-                  window.close();
+                  // window.close();
                }
             }
-            window.close();
+            // window.close();
          },2000);
       }
       catch(err){
          console.log("there was another error: "+err.message);
-         window.close();
+         // window.close();
       }
       
 
