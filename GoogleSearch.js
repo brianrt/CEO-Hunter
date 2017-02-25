@@ -1,5 +1,5 @@
 function GoogleSearch(){
-	var query = "ceo";
+	var query = "ceo+"+companyDomain;
 	var access_key = 'AIzaSyBcBsQy0IOp-R2bZOi_hq6omvVVaA1Z1hA';
 	var engine_id = '005408335780428068463:obi6mjahzr4';
 	var url = "https://www.googleapis.com/customsearch/v1?key="+access_key+"&cx="+engine_id+"&q="+query+"&siteSearch=wikipedia.org&exactTerms="+companyName;
@@ -14,6 +14,14 @@ function GoogleSearch(){
 	          Bloomberg();
 	          return;
 	      	}
+	      	var title = resp.items[0].snippet; 	
+		    title = title.replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
+		    title = title.toLowerCase();
+		    if(!(title.includes(companyName))){
+		    	console.log("Google search title doesn't match, trying bloomberg");
+		    	Bloomberg();
+	          	return;
+		    }
 			var hcard = resp.items[0].pagemap.hcard;
 			console.log(hcard);
 			if (hcard!=undefined){
@@ -25,6 +33,24 @@ function GoogleSearch(){
 					if(hcard.role!=undefined){
 						role = hcard.role;
 					}
+
+					name = ceo.toLowerCase();
+					var words = ["Registration","Private","Admin","Perfect","System","Inc.","Inc","LLC","The","Group","network","services","domain","technologies","host","corporation","air"];
+					for(var i = 0; i < words.length; i++){
+						var word = words[i].toLowerCase();
+						if(name.includes(word)){
+							console.log("Ceo name didn't pass filter, trying bloomberg");
+							Bloomberg();
+							return;
+						}
+					}
+					var test = /^[a-z A-Z]+$/.test(ceo);
+					if(test==false){
+						console.log("Ceo name didn't pass filter, trying bloomberg");
+						Bloomberg();
+						return;
+					}
+
 					listenerCallback({
 						greeting: "ceo",
 						message_ceo: ceo,

@@ -53,7 +53,7 @@ function whoIsCallBack(htmlData){
 
 function verifyName(name){
 	name = name.toLowerCase();
-	var words = ["Registration","Private","Admin","Perfect","System","Inc.","Inc","LLC","The","Group","network","services","domain","technologies","host","corporation"]
+	var words = ["Registration","Private","Admin","Perfect","System","Inc.","Inc","LLC","The","Group","network","services","domain","technologies","host","corporation"];
 	for(var i = 0; i < words.length; i++){
 		var word = words[i].toLowerCase();
 		if(name.includes(word)){

@@ -31,6 +31,7 @@ function verifyEmail(name,email_address){
               document.getElementById("LinkedInName").innerHTML = "Not Found";
               document.getElementById("LinkedInDescription").innerHTML = "Not found";
               displayNotFound();
+              whoIsUsed=false;
             }else{
               document.getElementById("personalEmail").innerHTML="<u>Possible Options:</u><br>"+name.first+"@"+companyDomain+"<br>"+name.first.charAt(0)+name.last.toLowerCase()+"@"+companyDomain+"<br>"+name.first+"."+name.last.toLowerCase()+"@"+companyDomain;
               document.getElementById("confidence").innerHTML="Risky";
@@ -48,6 +49,7 @@ function verifyEmail(name,email_address){
           document.getElementById("LinkedInName").innerHTML = "Not Found";
           document.getElementById("LinkedInDescription").innerHTML = "Not found";
           displayNotFound();
+          whoIsUsed=false;
         } else{
           document.getElementById("personalEmail").innerHTML=name.first.charAt(0)+name.last.toLowerCase()+"@"+companyDomain;
           document.getElementById("confidence").innerHTML="Not Likely";
