@@ -22,7 +22,7 @@ function bingCallback(htmlData){
       return;
     }
   }
-  ZoomInfo();
+  LinkedIn();
 }
 
 function bloombergCallback(htmlData){
@@ -32,8 +32,8 @@ function bloombergCallback(htmlData){
   try{
     bloomberg_company_url = htmlData.getElementsByClassName("link_sb")[0].getAttribute("href");
   }catch(error){
-    console.log("bloomberg failed, trying ZoomInfo");
-    ZoomInfo();
+    console.log("bloomberg failed, trying LinkedIn");
+    LinkedIn();
     return;
   }
 
@@ -54,13 +54,13 @@ function bloombergCallback(htmlData){
         message_description: description
       });
     }catch(error){
-      ZoomInfo();
+      LinkedIn();
       return;
     }
   }
   else{
-    console.log("incorrect company on bloomberg, trying ZoomInfo");
-    ZoomInfo();
+    console.log("incorrect company on bloomberg, trying LinkedIn");
+    LinkedIn();
     return;
   }
 }
