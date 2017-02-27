@@ -9,7 +9,7 @@
   "description": "Find any CEO and his email in seconds",
   "version": "1.7",
   "minimum_chrome_version": "16.0.884",
-  "permissions": ["downloads", "<all_urls>","tabs","identity","*://*/*"],
+  "permissions": ["<all_urls>","tabs","identity","*://*/*"],
   "optional_permissions": ["tabs"],
   "browser_action": {},
   "manifest_version": 2

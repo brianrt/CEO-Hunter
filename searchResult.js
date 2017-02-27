@@ -39,7 +39,7 @@ function search(){
                   message_ceo: result[0],
                   message_description: result[1]
                });
-               window.close();
+               // window.close();
             }
          }
       }
@@ -55,7 +55,7 @@ function search(){
                   message_ceo: result[0],
                   message_description: result[1]
                });
-               window.close();
+               // window.close();
             }
          } 
       }
@@ -69,7 +69,8 @@ function search(){
          var i = 0;
          setTimeout(function(){
             var results = document.getElementsByClassName("search-result--person");
-            // console.log(results);
+            console.log("results: "+results);
+            console.log("num results: "+results.length);
             for(i=0;i<results.length;i++){
                var description = "";
                try{
@@ -85,7 +86,7 @@ function search(){
                      message_ceo: name,
                      message_description: description
                   });
-                  window.close();
+                  // window.close();
                }
             }
          },2000);
@@ -106,15 +107,15 @@ function search(){
                      message_ceo: name,
                      message_description: description
                   });
-                  window.close();
+                  // window.close();
                }
             }
-            window.close();
+            // window.close();
          },2000);
       }
       catch(err){
          console.log("there was another error: "+err.message);
-         window.close();
+         // window.close();
       }
       
 

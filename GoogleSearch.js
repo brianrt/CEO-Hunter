@@ -35,7 +35,7 @@ function GoogleSearch(){
 					}
 
 					name = ceo.toLowerCase();
-					var words = ["Registration","Private","Admin","Perfect","System","Inc.","Inc","LLC","The","Group","network","services","domain","technologies","host","corporation","air"];
+					var words = ["Registration","Private","Admin","Perfect","System","Inc.","Inc","LLC","The","Group","network","services","domain","technologies","host","corporation","surf"];
 					for(var i = 0; i < words.length; i++){
 						var word = words[i].toLowerCase();
 						if(name.includes(word)){
