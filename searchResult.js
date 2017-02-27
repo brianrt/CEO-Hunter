@@ -71,7 +71,6 @@ function search(){
             var results = document.getElementsByClassName("search-result--person");
             console.log("results: "+results);
             console.log("num results: "+results.length);
-            }
             for(i=0;i<results.length;i++){
                var description = "";
                try{
@@ -90,7 +89,7 @@ function search(){
                   // window.close();
                }
             }
-         },4000);
+         },6000);
          setTimeout(function(){
             var results = document.getElementsByClassName("search-result--person");
             for(i=0;i<results.length;i++){
@@ -112,7 +111,7 @@ function search(){
                }
             }
             // window.close();
-         },5000);
+         },7000);
       }
       catch(err){
          console.log("there was another error: "+err.message);

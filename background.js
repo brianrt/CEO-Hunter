@@ -128,7 +128,7 @@ function setTerminatingConditions(){
       displayNotFound();
       whoIsUsed=false;
     }
-  },12000);
+  },18000);
 }
 
 function displayNotFound(){         
