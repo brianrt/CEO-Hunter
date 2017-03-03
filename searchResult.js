@@ -123,6 +123,33 @@ function search(){
 }
 
 
-var result = search();
+// var result = search();
+console.log(document.body.innerHTML);
+console.log(document.body.innerHTML.includes("Alex"));
+
+// getHTML("https://www.linkedin.com/vsearch/p?f_CC=4869343",search);
+
+// function search(htmlData){
+//    console.log(htmlData);
+//    var results = htmlData.getElementsByClassName("search-result--person");
+//    console.log(results.innerHTML);
+
+// }
+
+// function getHTML(query,callback){
+//    var request = new XMLHttpRequest();
+//    request.open("GET", query, true);
+//    request.send(null);
+//    request.onreadystatechange = function() {
+//       if (request.readyState == 4){
+//          var d = document.createElement('div');
+//          d.innerHTML = request.responseText;
+//          callback(d);
+      
+//       }
+
+//    };
+// }
+
 
 
