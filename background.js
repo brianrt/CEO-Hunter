@@ -10,7 +10,7 @@ var employeepage = false;
 var toggle = true;
 var first = true;
 var toggle_dict = {};
-var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>CEO Hunter (BETA)</h1><t id=url></t><br><br><t id=LinkedInDescription class=title>Loading CEO Description...</t><br><t id=LinkedInName class=info>Loading CEO Name...</t><br><br><t class=title>Personal Email Address</t><br><t id=personalEmail class=info>Loading Email...</t><br><t id=confidence></t><br><br><t class=title>Company Email Address</t><br><t id=companyEmail class=info>Loading company email...</t><br><br><t class=title>Company Phone #</t><br><t id=companyPhone class=info>Loading phone...</t><br><br><a href="http://www.ceohunter.io/feedback/" style="color:blue;">Report bugs and request new features</a><br><br></div>';
+var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>CEO Hunter (BETA)</h1><p id=url></p><br><br><p id=LinkedInDescription class=ceo-hunter-title>Loading CEO Description...</p><br><p id=LinkedInName class=info>Loading CEO Name...</p><br><br><p class=ceo-hunter-title>Personal Email Address</p><br><p id=personalEmail class=info>Loading Email...</p><br><p id=confidence></p><br><br><p class=ceo-hunter-title>Company Email Address</p><br><p id=companyEmail class=info>Loading company email...</p><br><br><p class=ceo-hunter-title>Company Phone #</p><br><p id=companyPhone class=info>Loading phone...</p><br><br><a href="http://www.ceohunter.io/feedback/" style="color:blue;">Report bugs and request new features</a><br><br></div>';
 
 function getEmail(text){
   var emailRe = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
