@@ -39,7 +39,7 @@ function search(){
                   message_ceo: result[0],
                   message_description: result[1]
                });
-               window.close();
+               // window.close();
             }
          }
       }
@@ -55,7 +55,7 @@ function search(){
                   message_ceo: result[0],
                   message_description: result[1]
                });
-               window.close();
+               // window.close();
             }
          } 
       }
@@ -86,7 +86,7 @@ function search(){
                      message_ceo: name,
                      message_description: description
                   });
-                  window.close();
+                  // window.close();
                }
             }
          },2000);
@@ -107,15 +107,15 @@ function search(){
                      message_ceo: name,
                      message_description: description
                   });
-                  window.close();
+                  // window.close();
                }
             }
-            window.close();
+            // window.close();
          },3000);
       }
       catch(err){
          console.log("there was another error: "+err.message);
-         window.close();
+         // window.close();
       }
       
 
@@ -124,32 +124,95 @@ function search(){
 
 
 // var result = search();
-console.log(document.body.innerHTML);
-console.log(document.body.innerHTML.includes("Alex"));
+chrome.runtime.onMessage.addListener(
+function(request, sender, sendResponse) {
+   var companyName = request.greeting;
+   console.log("LinkedIn search script starting");
+   var html = document.body.innerHTML;
+   console.log(html);
+   var startIndex = html.indexOf('{"firstName":');
+   var newHTML = html.substring(startIndex+30);
+   var newStartIndex = newHTML.indexOf('{"firstName":');
+   var endIndex = newHTML.indexOf('sharedConnections');
+   var jsonEmployeesList = newHTML.substring(newStartIndex,endIndex);
+   jsonEmployeesList = jsonEmployeesList.substring(0,jsonEmployeesList.lastIndexOf("}")+1);
+   var jsonObject = JSON.parse('['+ jsonEmployeesList + ']');
+   console.log(jsonObject);
+   var names = [];
+   var descriptions = [];
+   for (var key in jsonObject) {
+      var employee = jsonObject[key];
+      var name = employee.firstName+" "+employee.lastName;
+      var occupation = employee.occupation;
+      var strippedOccupation = occupation.toLowerCase().replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
+      var strippedCompanyName = companyName.toLowerCase().replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
+      console.log(strippedOccupation);
+      console.log(strippedCompanyName);
+      if(name != undefined && strippedOccupation.includes(strippedCompanyName)){
+         names.push(name);
+         descriptions.push(occupation);
+      }
+   }
+   console.log(names);
+   console.log(descriptions);
+   var ceo_potential = checkNamesWithDesciptions(names,descriptions);
+   console.log(ceo_potential);
+   if(ceo_potential=="different lengths" || ceo_potential=="no match"){
+      console.log("no");
+      LinkedIn();
+      return;
+   }
+   chrome.runtime.sendMessage({
+      greeting: "ceo",
+      message_ceo: ceo_potential[0],
+      message_description: ceo_potential[1]
+   });
+});
 
-// getHTML("https://www.linkedin.com/vsearch/p?f_CC=4869343",search);
 
-// function search(htmlData){
-//    console.log(htmlData);
-//    var results = htmlData.getElementsByClassName("search-result--person");
-//    console.log(results.innerHTML);
+//From CheckDescriptions.js
+function firstPass(description){
+   description = description.toLowerCase();
+   if(description.includes("ceo"))
+      return true;
+   else if(description.includes("chief executive officer"))
+      return true;
+   else if(description.includes("president") && !(description.includes("vice")))
+      return true;
+   return false;
+}
 
-// }
+function secondPass(description){
+   description = description.toLowerCase();
+   if(description.includes("owner"))
+      return true;
+   else if(description.includes("founder"))
+      return true;
+   else if(description.includes("principal"))
+      return true;
+   else if(description.includes("partner") && !description.includes("partnership"))
+      return true;
+   return false;
+}
 
-// function getHTML(query,callback){
-//    var request = new XMLHttpRequest();
-//    request.open("GET", query, true);
-//    request.send(null);
-//    request.onreadystatechange = function() {
-//       if (request.readyState == 4){
-//          var d = document.createElement('div');
-//          d.innerHTML = request.responseText;
-//          callback(d);
-      
-//       }
+function checkNamesWithDesciptions(names,descriptions){
+   if(names.length!=descriptions.length){
+      return "different lengths";
+   }
 
-//    };
-// }
+   //Attempt first pass
+   for(var i = 0; i < names.length; i++){
+      if(firstPass(descriptions[i])){
+         return [names[i], descriptions[i]];
+      }
+   }
 
+   //Attempt second pass
+   for(var i = 0; i < names.length; i++){
+      if(secondPass(descriptions[i])){
+         return [names[i], descriptions[i]];
+      }
+   }
 
-
+   return "no match";
+}

@@ -90,7 +90,9 @@ function openEmployeePage(url){
           employeeWindowId = w.id;
           currWindowId = currentWindow.id;
             setTimeout(function(){
-              chrome.tabs.executeScript(newTab.id, {"file": "searchResult.js", allFrames: true});
+              chrome.tabs.executeScript(newTab.id, {"file": "searchResult.js", allFrames: true},function(){
+                chrome.tabs.sendMessage(newTab.id, {"greeting" : companyName});
+              });
             },000);
             chrome.windows.update(currentWindow.id, {focused:true});
         });
@@ -100,7 +102,9 @@ function openEmployeePage(url){
   else{
     chrome.tabs.create({ url: url, active: false, windowId : employeeWindowId }, function (newTab) {
       setTimeout(function(){
-        chrome.tabs.executeScript(newTab.id, {"file": "searchResult.js", allFrames: true});
+        chrome.tabs.executeScript(newTab.id, {"file": "searchResult.js", allFrames: true},function(){
+                chrome.tabs.sendMessage(newTab.id, {"greeting" : companyName});
+              });
       },000);
       chrome.windows.update(currWindowId, {focused:true});
     });
