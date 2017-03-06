@@ -1,63 +1,92 @@
-<html id = "ceo_hunter">
+<!DOCTYPE html>
+<html id="ceo_hunter">
 <head>
-<script src="jquery-3.1.1.min.js"></script>
-<script src='background.js'></script>
-<script src='emailVerifier.js'></script>
-<script src='LinkedIn.js'></script>
-<script src='Bloomberg.js'></script>
-<script src='ZoomInfo.js'></script>
-<script src='CrunchBase.js'></script>
-<script src='CheckDescriptions.js'></script>
-<script src='WhoIs.js'></script>
-<script src='GoogleSearch.js'></script>
+  <!--script src="jquery-3.1.1.min.js"></script-->
+  <script src='background.js'></script>
+  <script src='emailVerifier.js'></script>
+  <script src='LinkedIn.js'></script>
+  <script src='Bloomberg.js'></script>
+  <script src='ZoomInfo.js'></script>
+  <script src='CrunchBase.js'></script>
+  <script src='CheckDescriptions.js'></script>
+  <script src='WhoIs.js'></script>
+  <script src='GoogleSearch.js'></script>
 
-<style>
-#main_ceo_hunter {
-	font-family: "calibri";
-	text-align: center;
-}
+  <style>
+    #ceo-hunter-extension {
+      position: fixed !important;
+      top: 10px !important;
+      right: 10px !important;
+      width: 300px !important;
+      z-index: 9999 !important;
+      text-align: center !important;
+      background-color: white !important;
+      border: 1px solid #24292e !important;
+      border-radius: 4px !important;
+      font-family: "Helvetica Neue", sans-serif !important;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3) !important;
+    }
 
-#mainHeader {
-	background-color: #000000;
-    vertical-align: center;
-    text-align: center;
-    color: white;
-    font-size: 38px;
-    width: 300px;
-    height: 50px;
-    line-height: 50px;
-}
+    #ceo-hunter-extension p {
+      font-size: 14px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      height: auto !important;
+      color: #444 !important;
+    }
 
-#url {
-	font-size: 15px;
-    font-style: italic;
-}
+    #ceo-hunter-extension #main_ceo_hunter {
+      font-family: "calibri" !important;
+      text-align: center !important;
+      color: #444 !important;
+    }
 
-hr {
-	width: 300px;
-	border-color: #ffffff;
-}
+    #ceo-hunter-extension #mainHeader {
+      background-color: #24292e !important;
+      text-align: center !important;
+      font-size: 24px !important;
+      width: auto !important;
+      padding: 15px 10px !important;
+      color: #eee !important;
+      border-top-right-radius: 4px !important;
+      border-top-left-radius: 4px !important;
+      margin: 0 !important;
+    }
 
-.title {
-	font-size: 20px;
-	font-weight: bold;
-	margin-bottom:0;
-}
+    #ceo-hunter-extension #url {
+      font-size: 15px !important;
+      font-style: italic !important;
+      color: #0366d6;
+    }
 
-#confidence {
-	font-size: 13px;
-	margin-top: 0;
-}
+    #ceo-hunter-extension hr {
+      width: 100% !important;
+      border-color: #ffffff !important;
+    }
 
+    #ceo-hunter-extension .ceo-hunter-title {
+      font-size: 20px !important;
+      font-weight: bold !important;
+      margin-bottom: 0 !important;
+      height: auto !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      height: auto !important;
+    }
 
-.info {
-	font-size: 15px;
-	margin: 0;
-}
-</style>
+    #ceo-hunter-extension #confidence {
+      font-size: 13px !important;
+      margin-top: 0 !important;
+    }
+
+    #ceo-hunter-extension .info {
+      font-size: 15px !important;
+      margin: 0 !important;
+    }
+  </style>
 </head>
 <body id="body">
-	<div id="main_ceo_hunter">
-	</div>
+<div id="main_ceo_hunter">
+</div>
 </body>
 </html>
