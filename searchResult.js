@@ -1,3 +1,10 @@
+chrome.runtime.onMessage.addListener(
+function(request, sender, sendResponse) {
+   console.log("LinkedIn search script starting");
+   var companyName = request.greeting;
+   search(companyName);
+});
+
 function firstPass(description){
    description = description.toLowerCase();
    if(description.includes("ceo"))
@@ -22,7 +29,7 @@ function secondPass(description){
    return false
 }
 
-function search(){
+function search(companyName){
    console.log("in search");
    try{
       var results = document.getElementById("results");
@@ -39,7 +46,7 @@ function search(){
                   message_ceo: result[0],
                   message_description: result[1]
                });
-               // window.close();
+               window.close();
             }
          }
       }
@@ -55,7 +62,7 @@ function search(){
                   message_ceo: result[0],
                   message_description: result[1]
                });
-               // window.close();
+               window.close();
             }
          } 
       }
@@ -86,7 +93,7 @@ function search(){
                      message_ceo: name,
                      message_description: description
                   });
-                  // window.close();
+                  window.close();
                }
             }
          },2000);
@@ -107,27 +114,22 @@ function search(){
                      message_ceo: name,
                      message_description: description
                   });
-                  // window.close();
+                  window.close();
                }
             }
-            // window.close();
+            secondarySearch(companyName);
          },3000);
       }
       catch(err){
          console.log("there was another error: "+err.message);
-         // window.close();
+         secondarySearch(companyName);
       }
       
 
    }
 }
 
-
-// var result = search();
-chrome.runtime.onMessage.addListener(
-function(request, sender, sendResponse) {
-   var companyName = request.greeting;
-   console.log("LinkedIn search script starting");
+function secondarySearch(companyName){
    var html = document.body.innerHTML;
    console.log(html);
    var startIndex = html.indexOf('{"firstName":');
@@ -158,19 +160,41 @@ function(request, sender, sendResponse) {
    var ceo_potential = checkNamesWithDesciptions(names,descriptions);
    console.log(ceo_potential);
    if(ceo_potential=="different lengths" || ceo_potential=="no match"){
-      console.log("no");
-      LinkedIn();
-      return;
+      console.log("no linkedin matches");
+      window.close();
    }
    chrome.runtime.sendMessage({
       greeting: "ceo",
       message_ceo: ceo_potential[0],
       message_description: ceo_potential[1]
    });
-});
+   window.close();
+}
 
 
 //From CheckDescriptions.js
+function checkNamesWithDesciptions(names,descriptions){
+   if(names.length!=descriptions.length){
+      return "different lengths";
+   }
+
+   //Attempt first pass
+   for(var i = 0; i < names.length; i++){
+      if(firstPass(descriptions[i])){
+         return [names[i], descriptions[i]];
+      }
+   }
+
+   //Attempt second pass
+   for(var i = 0; i < names.length; i++){
+      if(secondPass(descriptions[i])){
+         return [names[i], descriptions[i]];
+      }
+   }
+
+   return "no match";
+}
+
 function firstPass(description){
    description = description.toLowerCase();
    if(description.includes("ceo"))
@@ -193,26 +217,4 @@ function secondPass(description){
    else if(description.includes("partner") && !description.includes("partnership"))
       return true;
    return false;
-}
-
-function checkNamesWithDesciptions(names,descriptions){
-   if(names.length!=descriptions.length){
-      return "different lengths";
-   }
-
-   //Attempt first pass
-   for(var i = 0; i < names.length; i++){
-      if(firstPass(descriptions[i])){
-         return [names[i], descriptions[i]];
-      }
-   }
-
-   //Attempt second pass
-   for(var i = 0; i < names.length; i++){
-      if(secondPass(descriptions[i])){
-         return [names[i], descriptions[i]];
-      }
-   }
-
-   return "no match";
 }
