@@ -22,7 +22,7 @@ function bingCallback(htmlData){
       return;
     }
   }
-  CrunchBase();
+  ZoomInfo();
 }
 
 function bloombergCallback(htmlData){
@@ -32,8 +32,8 @@ function bloombergCallback(htmlData){
   try{
     bloomberg_company_url = htmlData.getElementsByClassName("link_sb")[0].getAttribute("href");
   }catch(error){
-    console.log("bloomberg failed, trying CrunchBase");
-    CrunchBase();
+    console.log("bloomberg failed, trying ZoomInfo");
+    ZoomInfo();
     return;
   }
 
@@ -54,13 +54,13 @@ function bloombergCallback(htmlData){
         message_description: description
       });
     }catch(error){
-      CrunchBase();
+      ZoomInfo();
       return;
     }
   }
   else{
-    console.log("incorrect company on bloomberg, trying CrunchBase");
-    CrunchBase();
+    console.log("incorrect company on bloomberg, trying ZoomInfo");
+    ZoomInfo();
     return;
   }
 }
