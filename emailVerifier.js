@@ -18,7 +18,7 @@ function verifyEmail(name,email_address){
           if(resp.catch_all==false){
             console.log("verified true");
             document.getElementById("personalEmail").innerHTML=email_address;
-            document.getElementById("mailTo").href="mailto:"+email_address;
+            document.getElementById("mailTo").href="mailto:"+email_address+"?Body=%0A%0A%0A%0APowered by Ceo Hunter";
             document.getElementById("mailTo").innerHTML="Email CEO";
             document.getElementById("confidence").innerHTML="Verified";
             document.getElementById("confidence").style.color="green";
@@ -29,7 +29,7 @@ function verifyEmail(name,email_address){
           }
           else{
               document.getElementById("personalEmail").innerHTML="<u>Possible Options:</u><br>"+name.first+"@"+companyDomain+"<br>"+name.first.charAt(0)+name.last.toLowerCase()+"@"+companyDomain+"<br>"+name.first+"."+name.last.toLowerCase()+"@"+companyDomain;
-              document.getElementById("mailTo").href="mailto:"+name.first.charAt(0)+name.last.toLowerCase()+"@"+companyDomain;
+              document.getElementById("mailTo").href="mailto:"+name.first.charAt(0)+name.last.toLowerCase()+"@"+companyDomain+"?Body=%0A%0A%0A%0APowered by Ceo Hunter";
               document.getElementById("mailTo").innerHTML="Email CEO";
               document.getElementById("confidence").innerHTML="Risky";
               document.getElementById("confidence").style.color="#cccc00";
