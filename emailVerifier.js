@@ -20,8 +20,7 @@ function verifyEmail(name,email_address){
             document.getElementById("personalEmail").innerHTML=email_address;
             $("#mailTo").attr("type","button");
             $("#mailTo").val("Email CEO");
-            $("#mailTo").attr("target","_blank");
-            $("#mailTo").attr("onclick","window.open('mailto:"+email_address+"');");
+            $("#mailTo").attr("onclick","window.open('mailto:"+email_address+"','', 'top=300,left=400,width=500,height=500');");
             document.getElementById("confidence").innerHTML="Verified";
             document.getElementById("confidence").style.color="green";
             chrome.tabs.sendMessage(tab_id, {greeting: "update data",message:document.getElementById("ceo_hunter").innerHTML});
@@ -30,7 +29,7 @@ function verifyEmail(name,email_address){
           }
           else{
               document.getElementById("personalEmail").innerHTML="<u>Possible Options:</u><br>"+name.first+"@"+companyDomain+"<br>"+name.first.charAt(0)+name.last.toLowerCase()+"@"+companyDomain+"<br>"+name.first+"."+name.last.toLowerCase()+"@"+companyDomain;
-              $("#mailTo").attr("onclick","window.open('mailto:"+name.first.charAt(0)+name.last.toLowerCase()+"@"+companyDomain+"');");
+              $("#mailTo").attr("onclick","window.open('mailto:"+name.first.charAt(0)+name.last.toLowerCase()+"@"+companyDomain+"','', 'top=300,left=400,width=500,height=500');");
               $("#mailTo").attr("type","button");
               $("#mailTo").attr("target","_blank");
               document.getElementById("mailTo").value="Email CEO";
