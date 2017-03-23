@@ -30,6 +30,6 @@ if(result==undefined){
 }
 chrome.runtime.sendMessage({
 	greeting: "company linkedin page",
-	message: url
+	message: "https://www.linkedin.com"+url
 });
 window.close();

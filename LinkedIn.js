@@ -7,8 +7,9 @@ var googleWindowId;
 var currWindowId;
 
 function LinkedIn(){
-  chrome.tabs.query({active:true,windowType:"normal", currentWindow: true},function(tabs){
-        var url = tabs[0].url;
+  chrome.tabs.getSelected(null, function(tab) {
+        var url = tab.url;
+        console.log(url);
         document.getElementById("url").innerHTML="www."+companyDomain;
         document.getElementById("url").style.textDecoration = "underline";
         console.log(companyDomain);
