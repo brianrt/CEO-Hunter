@@ -20,7 +20,9 @@ function verifyEmail(name,email_address){
             document.getElementById("personalEmail").innerHTML=email_address;
             $("#mailTo").attr("type","button");
             $("#mailTo").val("Email CEO");
-            $("#mailTo").attr("onclick","window.open('mailto:"+email_address+"','', 'top=300,left=400,width=500,height=500');");
+            $("#withgmail").html("(With Gmail)");
+            //https://mail.google.com/mail/?view=cm&fs=1&to=someone@example.com
+            $("#mailTo").attr("onclick","window.open('https://mail.google.com/mail/?view=cm&fs=1&to="+email_address+"','', 'top=300,left=400,width=500,height=500');");
             document.getElementById("confidence").innerHTML="Verified";
             document.getElementById("confidence").style.color="green";
             chrome.tabs.sendMessage(tab_id, {greeting: "update data",message:document.getElementById("ceo_hunter").innerHTML});
@@ -29,10 +31,11 @@ function verifyEmail(name,email_address){
           }
           else{
               document.getElementById("personalEmail").innerHTML="<u>Possible Options:</u><br>"+name.first+"@"+companyDomain+"<br>"+name.first.charAt(0)+name.last.toLowerCase()+"@"+companyDomain+"<br>"+name.first+"."+name.last.toLowerCase()+"@"+companyDomain;
-              $("#mailTo").attr("onclick","window.open('mailto:"+name.first.charAt(0)+name.last.toLowerCase()+"@"+companyDomain+"','', 'top=300,left=400,width=500,height=500');");
+              $("#mailTo").attr("onclick","window.open('https://mail.google.com/mail/?view=cm&fs=1&to="+name.first.charAt(0)+name.last.toLowerCase()+"@"+companyDomain+"','', 'top=300,left=400,width=500,height=500');");
               $("#mailTo").attr("type","button");
               $("#mailTo").attr("target","_blank");
-              document.getElementById("mailTo").value="Email CEO";
+              $("#mailTo").val("Email CEO");
+              $("#withgmail").html("(With Gmail)");
               document.getElementById("confidence").innerHTML="Risky";
               document.getElementById("confidence").style.color="#cccc00";
               chrome.tabs.sendMessage(tab_id, {greeting: "update data",message:document.getElementById("ceo_hunter").innerHTML});

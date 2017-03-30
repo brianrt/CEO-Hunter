@@ -13,7 +13,7 @@ function LinkedIn(){
         document.getElementById("url").innerHTML="www."+companyDomain;
         document.getElementById("url").style.textDecoration = "underline";
         console.log(companyDomain);
-        var query = companyDomain+"+LinkedIn";
+        var query = "LinkedIn+"+companyDomain;
         openGooglePage(query);
     });
 }
