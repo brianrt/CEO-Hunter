@@ -35,9 +35,9 @@ function listenerCallback(request,sender,sendResponse){
   		var ceo_description = request.message_description;
   		document.getElementById("LinkedInName").innerHTML=ceo_name;
   		document.getElementById("LinkedInDescription").innerHTML=ceo_description;
+      refreshHTML();
   		generateEmails(ceo_name,ceo_description);
-  		console.log(document.getElementById("body"));
-      chrome.tabs.sendMessage(tab_id, {greeting: "update data",message:document.getElementById("ceo_hunter").innerHTML});
+      refreshHTML();
   	}
     else if (request.greeting == "company linkedin page" && !employeepage){
     	employeepage = true;
@@ -57,7 +57,7 @@ function listenerCallback(request,sender,sendResponse){
                 document.getElementById("companyPhone").innerHTML=element.substring(7);
               }
         }
-        chrome.tabs.sendMessage(tab_id, {greeting: "update data",message:document.getElementById("ceo_hunter").innerHTML});
+        refreshHTML();
     }
     else if(request.greeting == "contact urls" && !contact_url){
     	contact_url = true;
@@ -143,7 +143,7 @@ function displayNotFound(){
   if(document.getElementById("companyPhone").innerHTML == "Loading phone..."){
     document.getElementById("companyPhone").innerHTML = "Not found";
   }
-  chrome.tabs.sendMessage(tab_id, {greeting: "update data",message:document.getElementById("ceo_hunter").innerHTML});
+  refreshHTML();
 }
 
 function ajax_page(query,callback){
