@@ -144,6 +144,9 @@ function secondarySearch(companyName){
    var descriptions = [];
    for (var key in jsonObject) {
       var employee = jsonObject[key];
+      if(employee.firstName==""){
+         continue;
+      }
       var name = employee.firstName+" "+employee.lastName;
       var occupation = employee.occupation;
       var strippedOccupation = occupation.toLowerCase().replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
@@ -161,6 +164,7 @@ function secondarySearch(companyName){
    console.log(ceo_potential);
    if(ceo_potential=="different lengths" || ceo_potential=="no match"){
       console.log("no linkedin matches");
+      return;
       window.close();
    }
    chrome.runtime.sendMessage({

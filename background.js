@@ -10,7 +10,7 @@ var employeepage = false;
 var toggle = true;
 var first = true;
 var toggle_dict = {};
-var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>CEO Hunter (BETA)</h1><br><p id=url></p><p id=LinkedInDescription class=ceo-hunter-title>Loading CEO Description...</p><p id=LinkedInName class=info>Loading CEO Name...</p><br><p class=ceo-hunter-title>Personal Email Address</p><p id=personalEmail class=info>Loading Email...</p><t id=confidence></t><br><br><p class=ceo-hunter-title>Company Email Address</p><p id=companyEmail class=info>Loading company email...</p><br><p class=ceo-hunter-title>Company Phone #</p><p id=companyPhone class=info>Loading phone...</p><br><input type="hidden" id="mailTo"><p id="withgmail"></p><br><br><a href="http://www.ceohunter.io/feedback/" style="color:blue;">Report bugs and request new features</a></div><br>';
+var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>CEO Hunter (BETA)</h1><br><p id=url></p><p id=LinkedInDescription class=ceo-hunter-title>Loading CEO Description...</p><p id=LinkedInName class=info>Loading CEO Name...</p><br><p class=ceo-hunter-title>Personal Email Address</p><p id=personalEmail class=info>Loading Email...</p><t id=confidence></t><br><br><p class=ceo-hunter-title>Company Phone #</p><p id=companyPhone class=info>Loading phone...</p><br><input type="hidden" id="mailTo"><p id="withgmail"></p><br><br><a href="http://www.ceohunter.io/feedback/" style="color:blue;">Report bugs and request new features</a></div><br>';
 
 function getEmail(text){
   var emailRe = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -35,7 +35,7 @@ function listenerCallback(request,sender,sendResponse){
   		var ceo_description = request.message_description;
   		document.getElementById("LinkedInName").innerHTML=ceo_name;
   		document.getElementById("LinkedInDescription").innerHTML=ceo_description;
-  		generateEmails(ceo_name);
+  		generateEmails(ceo_name,ceo_description);
   		console.log(document.getElementById("body"));
       chrome.tabs.sendMessage(tab_id, {greeting: "update data",message:document.getElementById("ceo_hunter").innerHTML});
   	}
@@ -53,10 +53,9 @@ function listenerCallback(request,sender,sendResponse){
         var contacts = request.message;
         for (var index in contacts) {
             var element=contacts[index];
-            if(element.includes("Email"))
-                document.getElementById("companyEmail").innerHTML=element.substring(7);
-            else if(element.includes("Phone"))
+            if(element.includes("Phone")){
                 document.getElementById("companyPhone").innerHTML=element.substring(7);
+              }
         }
         chrome.tabs.sendMessage(tab_id, {greeting: "update data",message:document.getElementById("ceo_hunter").innerHTML});
     }
@@ -141,9 +140,6 @@ function displayNotFound(){
   if(document.getElementById("personalEmail").innerHTML == "Loading Email..."){
     document.getElementById("personalEmail").innerHTML = "Not found";
   }
-  if(document.getElementById("companyEmail").innerHTML == "Loading company email..."){
-    document.getElementById("companyEmail").innerHTML = "Not found";
-  }
   if(document.getElementById("companyPhone").innerHTML == "Loading phone..."){
     document.getElementById("companyPhone").innerHTML = "Not found";
   }
@@ -185,6 +181,10 @@ function setCompanyURL(){
 
     GoogleSearch();
     });
+}
+
+function refreshHTML(){
+  chrome.tabs.sendMessage(tab_id, {greeting: "update data",message:document.getElementById("ceo_hunter").innerHTML});
 }
 
 function initialize(){

@@ -1,5 +1,9 @@
 var done = false;
 var whoIsUsed = false;
+
+//Need these in case we get a non-verified first and these are erased and set to not found but we get a verified later
+var ceo_name;
+var ceo_description;
 function verifyEmail(name,email_address){
   console.log(email_address);
   // set endpoint and your access key
@@ -25,7 +29,12 @@ function verifyEmail(name,email_address){
             $("#mailTo").attr("onclick","window.open('https://mail.google.com/mail/?view=cm&fs=1&to="+email_address+"','', 'top=300,left=400,width=500,height=500');");
             document.getElementById("confidence").innerHTML="Verified";
             document.getElementById("confidence").style.color="green";
-            chrome.tabs.sendMessage(tab_id, {greeting: "update data",message:document.getElementById("ceo_hunter").innerHTML});
+
+            //Ensure ceo name and description are correct
+
+            document.getElementById("LinkedInName").innerHTML = ceo_name;
+            document.getElementById("LinkedInDescription").innerHTML = ceo_description;
+            refreshHTML();
             done = true;
             return;
           }
@@ -38,7 +47,7 @@ function verifyEmail(name,email_address){
               $("#withgmail").html("(With Gmail)");
               document.getElementById("confidence").innerHTML="Risky";
               document.getElementById("confidence").style.color="#cccc00";
-              chrome.tabs.sendMessage(tab_id, {greeting: "update data",message:document.getElementById("ceo_hunter").innerHTML});
+              refreshHTML();
               done = true;
               return;
           }
@@ -53,7 +62,7 @@ function verifyEmail(name,email_address){
           document.getElementById("personalEmail").innerHTML=name.first.charAt(0)+name.last.toLowerCase()+"@"+companyDomain;
           document.getElementById("confidence").innerHTML="Not Likely";
           document.getElementById("confidence").style.color="red";
-          chrome.tabs.sendMessage(tab_id, {greeting: "update data",message:document.getElementById("ceo_hunter").innerHTML});
+          refreshHTML();
         }
       }
     }
@@ -61,9 +70,13 @@ function verifyEmail(name,email_address){
   xhr.send();
 }
 
-function generateEmails(ceo){
+function generateEmails(ceo,description){
+  ceo_name = ceo;
+  ceo_description = description;
+
+
   done = false;
-  var possibleEmails = []
+  var possibleEmails = [];
   var tokens = ceo.split(" ");
   var name = {first:tokens[0],last:tokens[tokens.length-1]}
   possibleEmails.push(name.first+"@"+companyDomain);
