@@ -179,7 +179,8 @@ function setCompanyURL(){
     console.log("domain: "+companyDomain);
     console.log("name: "+companyName);
 
-    GoogleSearch();
+    // GoogleSearch();
+    LinkedIn();
     });
 }
 

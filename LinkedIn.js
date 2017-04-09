@@ -13,7 +13,7 @@ function LinkedIn(){
         document.getElementById("url").innerHTML="www."+companyDomain;
         document.getElementById("url").style.textDecoration = "underline";
         console.log(companyDomain);
-        var query = "LinkedIn+"+companyDomain;
+        var query = companyDomain;
         openGooglePage(query);
     });
 }
@@ -22,7 +22,7 @@ function LinkedIn(){
 function openGooglePage(query){
   var access_key = 'AIzaSyBcBsQy0IOp-R2bZOi_hq6omvVVaA1Z1hA';
   var engine_id = '005408335780428068463:obi6mjahzr4';
-  var url = "https://www.googleapis.com/customsearch/v1?key="+access_key+"&cx="+engine_id+"&q="+query;
+  var url = "https://www.googleapis.com/customsearch/v1?key="+access_key+"&cx="+engine_id+"&q="+query+"&exactTerms=LinkedIn";
   console.log(url);
   var xhr = new XMLHttpRequest();
   xhr.open("GET", url, true);
