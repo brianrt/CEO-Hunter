@@ -18,6 +18,7 @@ var database;
 var user_number = 0;
 var user_email = "";
 var user_hunts = 0;
+var global_tab;
 
 function getEmail(text){
   var emailRe = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -256,7 +257,7 @@ function fireBaseInit(){
  * Start the auth flow and authorizes to Firebase.
  * @param{boolean} interactive True if the OAuth flow should request with an interactive mode.
  */
-function startAuth(interactive) {
+function startAuth(interactive,tab) {
   // Request an OAuth token from the Chrome Identity API.
   chrome.identity.getAuthToken({interactive: !!interactive}, function(token) {
     if (chrome.runtime.lastError && !interactive) {
@@ -316,15 +317,8 @@ function startExtension(tab) {
   }
 }
 
-chrome.browserAction.onClicked.addListener(function(tab) {
-  if(!firebase_intialized){
-    fireBaseInit();
-    firebase_intialized=true;
-  }
-  if (firebase.auth().currentUser) { //signed in
-    database = firebase.database();
-    console.log("already signed in");
-    user_email = firebase.auth().currentUser.email;
+function initUser(){
+  user_email = firebase.auth().currentUser.email;
     console.log(user_email);
     var userId = firebase.auth().currentUser.uid;
     firebase.database().ref('/Users/').once('value').then(function(snapshot) {
@@ -357,12 +351,28 @@ chrome.browserAction.onClicked.addListener(function(tab) {
           hunts : user_hunts
         });
       }
+  });
+}
 
-      startExtension(tab);
-
-    });
-  } else { //Needs to login
-    startAuth(true);
-    alert("Logging in, Please click the extension again");
+chrome.browserAction.onClicked.addListener(function(tab) {
+  global_tab = tab;
+  if(!firebase_intialized){
+    fireBaseInit();
+    firebase_intialized=true;
   }
+  firebase.auth().onAuthStateChanged(function(user) {
+    if(user_email!=""){
+      console.log("signed in, can skip the hoopla");
+      startExtension(tab);
+    }
+    else if (user) {//logged in
+      console.log("we have a state change!");
+      initUser();
+      startExtension(tab);
+    }
+    else { //Needs to login
+      console.log("needs to login");
+      startAuth(true,tab);
+    }
+  });
 });
