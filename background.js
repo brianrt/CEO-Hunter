@@ -203,8 +203,8 @@ function setCompanyURL(){
     console.log("domain: "+companyDomain);
     console.log("name: "+companyName);
 
-    // GoogleSearch();
-    LinkedIn();
+    GoogleSearch();
+    // LinkedIn();
     });
 }
 
