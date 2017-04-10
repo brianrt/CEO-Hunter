@@ -1,6 +1,6 @@
 var done = false;
 var whoIsUsed = false;
-
+var count = 0;
 //Need these in case we get a non-verified first and these are erased and set to not found but we get a verified later
 var ceo_name;
 var ceo_description;
@@ -35,6 +35,7 @@ function verifyEmail(name,email_address){
             document.getElementById("LinkedInName").innerHTML = ceo_name;
             document.getElementById("LinkedInDescription").innerHTML = ceo_description;
             refreshHTML();
+            addSuccessFullHunt();
             done = true;
             return;
           }
@@ -48,6 +49,7 @@ function verifyEmail(name,email_address){
               document.getElementById("confidence").innerHTML="Risky";
               document.getElementById("confidence").style.color="#cccc00";
               refreshHTML();
+              addSuccessFullHunt();
               done = true;
               return;
           }
@@ -63,6 +65,10 @@ function verifyEmail(name,email_address){
           document.getElementById("confidence").innerHTML="Not Likely";
           document.getElementById("confidence").style.color="red";
           refreshHTML();
+          count++;
+          if(count==3){ //last one
+            addSuccessFullHunt();
+          }
         }
       }
     }

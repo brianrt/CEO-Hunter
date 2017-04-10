@@ -16,9 +16,6 @@ if(sign_in_three!=undefined){
 	alert("Please sign in to LinkedIn in a new tab. Then go back to the original webpage and try again.");
 	window.close();
 }
-// console.log("hi there!");
-// var html = document.body.innerHTML;
-// console.log(html);
 var result = document.getElementsByClassName("more")[0];
 if(result==undefined){
 	result = document.getElementsByClassName("snackbar-description-see-all-link")[0];
