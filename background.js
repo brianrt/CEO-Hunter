@@ -151,7 +151,7 @@ function setTerminatingConditions(){
       displayNotFound();
       whoIsUsed=false;
     }
-  },12000);
+  },15000);
 }
 
 function displayNotFound(){         
