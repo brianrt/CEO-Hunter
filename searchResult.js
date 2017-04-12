@@ -46,7 +46,7 @@ function search(companyName){
                   message_ceo: result[0],
                   message_description: result[1]
                });
-               // window.close();
+               window.close();
             }
          }
       }
@@ -62,7 +62,7 @@ function search(companyName){
                   message_ceo: result[0],
                   message_description: result[1]
                });
-               // window.close();
+               window.close();
             }
          } 
       }
@@ -93,7 +93,7 @@ function search(companyName){
                      message_ceo: name,
                      message_description: description
                   });
-                  // window.close();
+                  window.close();
                }
             }
          },2000);
@@ -114,7 +114,7 @@ function search(companyName){
                      message_ceo: name,
                      message_description: description
                   });
-                  // window.close();
+                  window.close();
                }
             }
             secondarySearch(companyName);
@@ -165,14 +165,14 @@ function secondarySearch(companyName){
    if(ceo_potential=="different lengths" || ceo_potential=="no match"){
       console.log("no linkedin matches");
       return;
-      // window.close();
+      window.close();
    }
    chrome.runtime.sendMessage({
       greeting: "ceo",
       message_ceo: ceo_potential[0],
       message_description: ceo_potential[1]
    });
-   // window.close();
+   window.close();
 }
 
 

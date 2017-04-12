@@ -203,8 +203,8 @@ function setCompanyURL(){
     console.log("domain: "+companyDomain);
     console.log("name: "+companyName);
 
-    GoogleSearch();
-    // LinkedIn();
+    // GoogleSearch();
+    LinkedIn();
     });
 }
 
@@ -360,19 +360,14 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     fireBaseInit();
     firebase_intialized=true;
   }
-  firebase.auth().onAuthStateChanged(function(user) {
-    if(user_email!=""){
+    if(firebase.auth().currentUser!=null){
+      user_email = firebase.auth().currentUser.email;
       console.log("signed in, can skip the hoopla");
-      startExtension(tab);
-    }
-    else if (user) {//logged in
-      console.log("we have a state change!");
-      initUser();
       startExtension(tab);
     }
     else { //Needs to login
       console.log("needs to login");
       startAuth(true,tab);
+      alert("Signing in, please click extension again");
     }
-  });
 });
