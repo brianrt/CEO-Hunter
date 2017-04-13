@@ -17,16 +17,27 @@ if(sign_in_three!=undefined){
 	window.close();
 }
 var html = document.body.innerHTML;
-var link = html.substring(html.indexOf("/search/results/people/?facet"));
-if(link==null){
-	console.log("The link was null, method doesn't work for this site");
+console.log(html);
+if(html.indexOf("/search/results/people/?facet")==-1){
+	console.log("The link was not found, method doesn't work for this site");
+	//window.close();
 }
 else{
+	console.log("It worked");
+	var link = html.substring(html.indexOf("/search/results/people/?facet"));
 	link = "https://www.linkedin.com"+link.substring(0,link.indexOf("\""));
 	console.log(link);
-	chrome.runtime.sendMessage({
-		greeting: "company linkedin page",
-		message: link
-	});
-	window.close();
 }
+// var link = html.substring(html.indexOf("/search/results/people/?facet"));
+// if(link==null){
+// 	console.log("The link was null, method doesn't work for this site");
+// }
+// else{
+// 	link = "https://www.linkedin.com"+link.substring(0,link.indexOf("\""));
+// 	console.log(link);
+// 	chrome.runtime.sendMessage({
+// 		greeting: "company linkedin page",
+// 		message: link
+// 	});
+// 	window.close();
+// }
