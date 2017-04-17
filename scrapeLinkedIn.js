@@ -27,6 +27,10 @@ if(html.indexOf("/search/results/people/?facet")!=-1){ //found a link through me
 	var link = html.substring(html.indexOf("/search/results/people/?facet"));
 	link = "https://www.linkedin.com"+link.substring(0,link.indexOf("\""));
 	console.log("here is the output link from method 1: "+link);
+	chrome.runtime.sendMessage({
+		greeting: "company linkedin page",
+		message: link
+	});
 	//window.close();
 }
 else if(html.indexOf("https://www.linkedin.com/vsearch/p?f_CC=")!=-1){ // try method 2 with vsearch without the ";"
@@ -40,14 +44,12 @@ else if(html.indexOf("https://www.linkedin.com/vsearch/p?f_CC=")!=-1){ // try me
 		console.log("current search item: "+result_link);
 	}
 	console.log("here is the output link from method 2: "+result_link);
+	chrome.runtime.sendMessage({
+		greeting: "company linkedin page",
+		message: result_link
+	});
+	//window.close();
 }
 else{
 	console.log("Neither method worked :(");
 }
-
-// 	chrome.runtime.sendMessage({
-// 		greeting: "company linkedin page",
-// 		message: link
-// 	});
-// 	window.close();
-// }
