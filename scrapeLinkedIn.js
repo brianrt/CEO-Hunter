@@ -31,7 +31,7 @@ if(html.indexOf("/search/results/people/?facet")!=-1){ //found a link through me
 		greeting: "company linkedin page",
 		message: link
 	});
-	//window.close();
+	window.close();
 }
 else if(html.indexOf("https://www.linkedin.com/vsearch/p?f_CC=")!=-1){ // try method 2 with vsearch without the ";"
 	console.log("method 1 didn't work, trying method 2...");
@@ -48,7 +48,7 @@ else if(html.indexOf("https://www.linkedin.com/vsearch/p?f_CC=")!=-1){ // try me
 		greeting: "company linkedin page",
 		message: result_link
 	});
-	//window.close();
+	window.close();
 }
 else{
 	console.log("Neither method worked :(");

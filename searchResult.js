@@ -2,7 +2,8 @@ chrome.runtime.onMessage.addListener(
 function(request, sender, sendResponse) {
    console.log("LinkedIn search script starting");
    var companyName = request.greeting;
-   search(companyName);
+   // search(companyName);
+   secondarySearch(companyName);
 });
 
 function firstPass(description){
@@ -46,7 +47,7 @@ function search(companyName){
                   message_ceo: result[0],
                   message_description: result[1]
                });
-               window.close();
+               // window.close();
             }
          }
       }
@@ -62,7 +63,7 @@ function search(companyName){
                   message_ceo: result[0],
                   message_description: result[1]
                });
-               window.close();
+               // window.close();
             }
          } 
       }
@@ -93,7 +94,7 @@ function search(companyName){
                      message_ceo: name,
                      message_description: description
                   });
-                  window.close();
+                  // window.close();
                }
             }
          },2000);
@@ -114,7 +115,7 @@ function search(companyName){
                      message_ceo: name,
                      message_description: description
                   });
-                  window.close();
+                  // window.close();
                }
             }
             secondarySearch(companyName);
@@ -131,12 +132,13 @@ function search(companyName){
 
 function secondarySearch(companyName){
    var html = document.body.innerHTML;
-   console.log(html);
+   // console.log(html);
    var startIndex = html.indexOf('{"firstName":');
    var newHTML = html.substring(startIndex+30);
    var newStartIndex = newHTML.indexOf('{"firstName":');
    var endIndex = newHTML.indexOf('sharedConnections');
    var jsonEmployeesList = newHTML.substring(newStartIndex,endIndex);
+   console.log("jsonEmployeesList: "+jsonEmployeesList);
    jsonEmployeesList = jsonEmployeesList.substring(0,jsonEmployeesList.lastIndexOf("}")+1);
    var jsonObject = JSON.parse('['+ jsonEmployeesList + ']');
    console.log(jsonObject);
@@ -165,14 +167,14 @@ function secondarySearch(companyName){
    if(ceo_potential=="different lengths" || ceo_potential=="no match"){
       console.log("no linkedin matches");
       return;
-      window.close();
+      // window.close();
    }
    chrome.runtime.sendMessage({
       greeting: "ceo",
       message_ceo: ceo_potential[0],
       message_description: ceo_potential[1]
    });
-   window.close();
+   // window.close();
 }
 
 
