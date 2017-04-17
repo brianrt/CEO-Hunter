@@ -132,16 +132,16 @@ function search(companyName){
 
 function secondarySearch(companyName){
    var html = document.body.innerHTML;
-   console.log("html: "+html);
+   // console.log("html: "+html);
    var startIndex = html.indexOf('{"firstName":');
    var newHTML = html.substring(startIndex+30);
-   console.log("newHTML: "+newHTML);
+   // console.log("newHTML: "+newHTML);
    var newStartIndex = newHTML.indexOf('{"firstName":');
    var endIndex = newHTML.indexOf('sharedConnections');
    var jsonEmployeesList = newHTML.substring(newStartIndex);
-
-   // var jsonEmployeesList = newHTML.substring(newStartIndex,endIndex);
-   console.log("jsonEmployeesList: "+jsonEmployeesList);
+   console.log("jsonEmployeesList - Just start: "+jsonEmployeesList);
+   jsonEmployeesList = newHTML.substring(newStartIndex,endIndex);
+   console.log("jsonEmployeesList - start and end: "+jsonEmployeesList);
    jsonEmployeesList = jsonEmployeesList.substring(0,jsonEmployeesList.lastIndexOf("}")+1);
    var jsonObject = JSON.parse('['+ jsonEmployeesList + ']');
    console.log(jsonObject);
