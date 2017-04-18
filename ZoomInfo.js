@@ -35,23 +35,27 @@ function ZoomInfo() {
 
 function zoomInfoCallBack(htmlData){
 	console.log(htmlData);
-	var result = htmlData.getElementsByClassName("similar_column");
-	if(result==undefined){
+	var columns = htmlData.getElementsByClassName("contacts");
+	if(columns==undefined || columns.length==0){
 		CrunchBase();
 		return;
 	}
 	var names = [];
 	var descriptions = [];
-	for(var i = 0; i < result.length; i++){
-		var divs = result[i].getElementsByTagName("div");
-		for(var j = 0; j < divs.length;j++){
-			var name = divs[j].getElementsByTagName("a")[0].innerHTML;
-			var description = divs[j].getElementsByTagName("span")[0].innerHTML;
-			description = description.substring(0,description.length-5);
-			names.push(name);
-			descriptions.push(description);
-		}
+	var column = columns[0];
+	//There are two columns
+	var hrefs = column.getElementsByTagName("a");
+	var paragraphs = column.getElementsByTagName("p");
+	for(var i = 0; i < hrefs.length; i++){
+		var name = hrefs[i].innerHTML;
+		names.push(name);
 	}
+	for(var j = 0; j < paragraphs.length;j++){
+		var description = paragraphs[j].innerHTML;
+		descriptions.push(description);
+	}
+	console.log(names);
+	console.log(descriptions);
 	var ceo_potential = checkNamesWithDesciptions(names,descriptions);
 	console.log(ceo_potential);
 	if(ceo_potential=="different lengths" || ceo_potential=="no match"){

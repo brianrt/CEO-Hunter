@@ -1,4 +1,4 @@
-function CrunchBase() {
+        function CrunchBase() {
 	//Google search url using the bloomberg custom search engine
     var access_key = 'AIzaSyBcBsQy0IOp-R2bZOi_hq6omvVVaA1Z1hA';
     var engine_id = '005408335780428068463:obi6mjahzr4';
@@ -35,8 +35,8 @@ function CrunchBase() {
 
 function crunchBaseCallBack(htmlData){
 	console.log("crunbase data:");
-	console.log(htmlData.innerHTML);
-	console.log(companyURL);
+	// console.log(htmlData.innerHTML);
+	console.log(companyDomain);
 	console.log(htmlData.innerHTML.includes(companyDomain));
 	if(!(htmlData.innerHTML.includes(companyDomain))){
 		console.log("Wrong cruchbase page, trying LinkedIn");
