@@ -317,7 +317,7 @@ function startExtension(tab) {
   }
 }
 
-function initUser(){
+function initUser(tab){
   user_email = firebase.auth().currentUser.email;
     console.log(user_email);
     var userId = firebase.auth().currentUser.uid;
@@ -351,6 +351,7 @@ function initUser(){
           hunts : user_hunts
         });
       }
+      startExtension(tab);
   });
 }
 
@@ -360,14 +361,18 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     fireBaseInit();
     firebase_intialized=true;
   }
-    if(firebase.auth().currentUser!=null){
-      user_email = firebase.auth().currentUser.email;
-      console.log("signed in, can skip the hoopla");
+  if(firebase.auth().currentUser!=null){
+    if(user_email==""){
+      initUser(tab);
+      console.log("signed in, user_email not in");
+    }else{
+      console.log("signed in, user_email already recorded");
       startExtension(tab);
     }
-    else { //Needs to login
-      console.log("needs to login");
-      startAuth(true,tab);
-      alert("Signing in, please click extension again");
-    }
+  }
+  else { //Needs to login
+    console.log("needs to login");
+    startAuth(true,tab);
+    alert("Signing in, please click extension again");
+  }
 });
