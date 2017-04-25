@@ -10,8 +10,8 @@ var employeepage = false;
 var toggle = true;
 var first = true;
 var toggle_dict = {};
-var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>CEO Hunter (BETA)</h1><br><p id=url></p><p id=LinkedInDescription class=ceo-hunter-title>Loading CEO Description...</p><p id=LinkedInName class=info>Loading CEO Name...</p><br><p class=ceo-hunter-title>Personal Email Address</p><p id=personalEmail class=info>Loading Email...</p><t id=confidence></t><br><br><p class=ceo-hunter-title>Company Phone #</p><p id=companyPhone class=info>Loading phone...</p><br><input type="hidden" id="mailTo"><p id="withgmail"></p><br><br><a href="http://www.ceohunter.io/feedback/" style="color:blue;">Report bugs and request new features</a></div><br>';
-
+var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><p id=url></p><p id=LinkedInDescription class=ceo-hunter-title>Loading CEO Description...</p><p id=LinkedInName class=info>Loading CEO Name...</p><br><p class=ceo-hunter-title>Personal Email Address</p><p id=personalEmail class=info>Loading Email...</p><t id=confidence></t><br><br><p class=ceo-hunter-title>Company Phone #</p><p id=companyPhone class=info>Loading phone...</p><br><input type="hidden" id="mailTo"><p id="withgmail"></p><br><br><a href="http://www.ceohunter.io/feedback/" style="color:blue;">Report bugs and request new features</a></div><br>';
+var checkBoxesHTML =' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><button id="test_button">Click me</button><br></div>'
 //Firebase vars
 var firebase_intialized = false;
 var database;
@@ -300,12 +300,14 @@ function startExtension(tab) {
     first=true;
   if(first){
     document.getElementById("body").innerHTML=templateHTML;
+    // document.getElementById("body").innerHTML=checkBoxesHTML;
     chrome.runtime.onMessage.addListener(listenerCallback);
     initialize();
     launchSequence();
   }
   else if(toggle){
     document.getElementById("body").innerHTML=templateHTML;
+    // document.getElementById("body").innerHTML=checkBoxesHTML;
     chrome.tabs.sendMessage(tab_id, {greeting: "toggle on",message:document.getElementById("ceo_hunter").innerHTML});
     launchSequence();
   }
@@ -327,8 +329,8 @@ function initUser(tab){
       var found = false;
       var i = 0;
       for (;i < users.length; i++){
-        console.log(users[i]);
-        console.log(users[i].email);
+        // console.log(users[i]);
+        // console.log(users[i].email);
         var email = users[i].email;
         if(email == user_email){//email already exist in database
           found = true;

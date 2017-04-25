@@ -9,6 +9,9 @@
         extensionDiv.id        = 'ceo-hunter-extension';
         extensionDiv.innerHTML = body;
         document.getElementsByTagName('body')[0].appendChild(extensionDiv);
+        var button = document.getElementById('test_button');
+        console.log(button);
+        document.getElementById('test_button').setAttribute("onclick", 'console.log("Plz work!")');
       }
 
       /*if (request.greeting == "initial load") {

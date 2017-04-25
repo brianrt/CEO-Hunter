@@ -86,8 +86,11 @@ function search(companyName){
                   description = results[i].getElementsByClassName("search-result__truncate")[0].innerHTML;
                }
                console.log(description);
+               console.log(firstPass(description));
                var name = results[i].getElementsByTagName("span")[1].innerHTML;
+               console.log(name);
                if(firstPass(description) && name!="LinkedIn Member"){
+                  console.log("got into it!");
                   chrome.runtime.sendMessage({
                      greeting: "ceo",
                      message_ceo: name,
@@ -160,8 +163,8 @@ function secondarySearch(companyName){
          descriptions.push(occupation);
       }
    }
-   console.log(names);
-   console.log(descriptions);
+   // console.log(names);
+   // console.log(descriptions);
    var ceo_potential = checkNamesWithDesciptions(names,descriptions);
    console.log(ceo_potential);
    if(ceo_potential=="different lengths" || ceo_potential=="no match"){
@@ -207,7 +210,7 @@ function firstPass(description){
       return true;
    else if(description.includes("chief executive officer"))
       return true;
-   else if(description.includes("president") && !(description.includes("vice")))
+   else if(description.includes("president") && !(description.includes("vice president")))
       return true;
    return false;
 }
