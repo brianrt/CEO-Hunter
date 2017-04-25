@@ -55,7 +55,7 @@ function removeSuccessfullHunt(){
 function listenerCallback(request,sender,sendResponse){
   	if (request.greeting == "ceo" && !ceoName){
   		ceoName=true;
-  		var ceo_name = request.message_ceo;
+  		var ceo_name = request.message_ceo.trim();
   		var ceo_description = request.message_description;
   		document.getElementById("LinkedInName").innerHTML=ceo_name;
   		document.getElementById("LinkedInDescription").innerHTML=ceo_description;
