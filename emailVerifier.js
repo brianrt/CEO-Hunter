@@ -66,6 +66,7 @@ function verifyEmail(name,email_address){
           document.getElementById("confidence").style.color="red";
           refreshHTML();
           count++;
+          console.log(count);
           if(count==3){ //last one
             addSuccessFullHunt();
           }
@@ -79,8 +80,7 @@ function verifyEmail(name,email_address){
 function generateEmails(ceo,description){
   ceo_name = ceo;
   ceo_description = description;
-
-
+  count = 0;
   done = false;
   var possibleEmails = [];
   var tokens = ceo.split(" ");
