@@ -9,8 +9,8 @@ var company = false;
 var employeepage = false;
 var toggle = true;
 var first = true;
-var toggle_dict = {};
-var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><p id=url></p><p id=LinkedInDescription class=ceo-hunter-title>Loading CEO Description...</p><p id=LinkedInName class=info>Loading CEO Name...</p><br><p class=ceo-hunter-title>Personal Email Address</p><p id=personalEmail class=info>Loading Email...</p><t id=confidence></t><br><br><p class=ceo-hunter-title>Company Phone #</p><p id=companyPhone class=info>Loading phone...</p><br><input type="hidden" id="mailTo"><p id="withgmail"></p><br><br><a href="http://www.ceohunter.io/feedback/" style="color:blue;">Report bugs and request new features</a></div><br>';
+var tab_dict = {};
+var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><br><p id=LinkedInDescription class=ceo-hunter-title>Loading CEO Description...</p><br><p id=LinkedInName class=info>Loading CEO Name...</p><br><br><p class=ceo-hunter-title>Personal Email Address</p><br><p id=personalEmail class=info>Loading Email...</p><br><t id=confidence></t><br><br><p class=ceo-hunter-title>Company Phone #</p><br><p id=companyPhone class=info>Loading phone...</p><br><br><input type="hidden" id="mailTo"><p id="withgmail"></p><br><br><a href="http://www.ceohunter.io/feedback/" style="color:blue;">Report bugs and request new features</a></div><br>';
 var checkBoxesHTML =' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><button id="test_button">Click me</button><br></div>'
 //Firebase vars
 var firebase_intialized = false;
@@ -59,9 +59,7 @@ function listenerCallback(request,sender,sendResponse){
   		var ceo_description = request.message_description;
   		document.getElementById("LinkedInName").innerHTML=ceo_name;
   		document.getElementById("LinkedInDescription").innerHTML=ceo_description;
-      refreshHTML();
   		generateEmails(ceo_name,ceo_description);
-      refreshHTML();
   	}
     else if (request.greeting == "company linkedin page" && !employeepage){
     	employeepage = true;
@@ -133,7 +131,7 @@ function getContactInfo(){
                 script = 'contactPageScript.js';
         });
         chrome.tabs.query({active: true, windowId: currentWindow.id},function(activeTabs) {
-            chrome.tabs.executeScript(activeTabs[0].id, {file: script, allFrames: true});
+            chrome.tabs.executeScript(activeTabs[0].id, {file: script, allFrames: false});
         });
     });
 }
@@ -149,6 +147,7 @@ function setTerminatingConditions(){
       WhoIs();
     }else{
       displayNotFound();
+      console.log("displayNotFound");
       whoIsUsed=false;
     }
   },15000);
@@ -216,18 +215,16 @@ function initialize(){
 	chrome.windows.getCurrent(function (currentWindow) {
         chrome.tabs.query({active: true, windowId: currentWindow.id},function(activeTabs) {
         	tab_id = activeTabs[0].id;
-            chrome.tabs.executeScript(tab_id, {file: "insertSideBar.js", allFrames: true},function(){
-            	chrome.tabs.sendMessage(tab_id, {greeting: "initial load",message:document.getElementById("ceo_hunter").innerHTML});
+            chrome.tabs.executeScript(tab_id, {file: "insertSideBar.js", allFrames: false},function(){//Inject the javascript
+              chrome.tabs.insertCSS(tab_id, {file: "extension.css", allFrames: true, runAt: "document_end"},function(){//Inject the CSS
+                chrome.tabs.sendMessage(tab_id, {greeting: "initial load",message:document.getElementById("ceo_hunter").innerHTML});
+              });
             });
         });
     });
-    setTerminatingConditions();
 }
 
 function launchSequence(){
-    toggle = false;
-    toggle_dict[tab_id]=toggle;
-    first = false;
     ceoName = false;
     contact = false;
     contact_url = false;
@@ -237,6 +234,7 @@ function launchSequence(){
     employeeWindowCreated = false;
     googleWindowCreated = false;
     whoIsUsed=false;
+    setTerminatingConditions();
     getContactInfo();
     setCompanyURL();
     // CrunchBase();
@@ -285,38 +283,29 @@ function startAuth(interactive,tab) {
 
 function startExtension(tab) {
   //start extension
-  console.log("toggle: "+toggle);
-  console.log("first: "+first);
-  console.log("tab.id: "+tab.id+"tab_id: "+tab_id);
-  if(tab.id!=tab_id){ //if we have switched tabs, we must relaunch the context script
-    if(tab.id in toggle_dict){ //we have already seen this tab before
-      toggle = !toggle_dict[tab.id];
-    }
-    else{
-      first=true;
-    }
-  }
-  if(tab.url != companyURL)
-    first=true;
+  console.log("tab id: "+tab.id);
+  document.getElementById("body").innerHTML=templateHTML;
   if(first){
-    document.getElementById("body").innerHTML=templateHTML;
-    // document.getElementById("body").innerHTML=checkBoxesHTML;
+    console.log("first");
     chrome.runtime.onMessage.addListener(listenerCallback);
-    initialize();
-    launchSequence();
+    first = false;
   }
-  else if(toggle){
-    document.getElementById("body").innerHTML=templateHTML;
-    // document.getElementById("body").innerHTML=checkBoxesHTML;
-    chrome.tabs.sendMessage(tab_id, {greeting: "toggle on",message:document.getElementById("ceo_hunter").innerHTML});
+  if(!(tab.id in tab_dict)){//First for this tab
+    console.log("first time for tab");
+    tab_dict[tab.id]=true;
+    initialize();//Initial load of context script for this tab
+    launchSequence();//Begin running rest of extension
+  }
+  else if(tab_dict[tab.id]){//If the toggle for this tab is turned on
+    chrome.tabs.sendMessage(tab.id, {greeting: "toggle on",message:document.getElementById("ceo_hunter").innerHTML});
+    console.log("toggle on");
     launchSequence();
   }
   else{
-      // console.log("literally calling the off function");
-      chrome.tabs.sendMessage(tab_id, {greeting: "toggle off",message:document.getElementById("ceo_hunter").innerHTML});
-      toggle = true;
-      toggle_dict[tab_id]=toggle;
+    console.log("toggle off");
+      chrome.tabs.sendMessage(tab.id, {greeting: "toggle off",message:document.getElementById("ceo_hunter").innerHTML});
   }
+  tab_dict[tab.id] = !tab_dict[tab.id];
 }
 
 function initUser(tab){

@@ -34,8 +34,8 @@ function verifyEmail(name,email_address){
 
             document.getElementById("LinkedInName").innerHTML = ceo_name;
             document.getElementById("LinkedInDescription").innerHTML = ceo_description;
-            refreshHTML();
             addSuccessFullHunt();
+            refreshHTML();
             done = true;
             return;
           }
@@ -48,8 +48,8 @@ function verifyEmail(name,email_address){
               $("#withgmail").html("(With Gmail)");
               document.getElementById("confidence").innerHTML="Risky";
               document.getElementById("confidence").style.color="#cccc00";
-              refreshHTML();
               addSuccessFullHunt();
+              refreshHTML();
               done = true;
               return;
           }
@@ -64,11 +64,11 @@ function verifyEmail(name,email_address){
           document.getElementById("personalEmail").innerHTML=name.first.charAt(0)+name.last.toLowerCase()+"@"+companyDomain;
           document.getElementById("confidence").innerHTML="Not Likely";
           document.getElementById("confidence").style.color="red";
-          refreshHTML();
           count++;
           console.log(count);
           if(count==3){ //last one
             addSuccessFullHunt();
+            refreshHTML();
           }
         }
       }

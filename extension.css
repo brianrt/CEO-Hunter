@@ -1,0 +1,95 @@
+    #ceo-hunter-extension {
+      font: initial !important;
+      position: fixed !important;
+      top: 10px !important;
+      right: 10px !important;
+      width: 300px !important;
+      z-index: 9999 !important;
+      text-align: center !important;
+      background-color: white !important;
+      border: 1px solid #24292e !important;
+      border-radius: 4px !important;
+      font-family: "Helvetica Neue", sans-serif !important;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    #ceo-hunter-extension p {
+      font: unset !important;
+      text-align: center !important;
+      font-size: 14px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      height: auto !important;
+      color: #444 !important;
+    }
+
+    #ceo-hunter-extension #main_ceo_hunter {
+      font: unset !important;
+      font-family: "calibri" !important;
+      text-align: center !important;
+      color: #444 !important;
+    }
+
+    #ceo-hunter-extension #mainHeader {
+      font: unset !important;
+      letter-spacing: unset !important;
+      text-transform: unset !important;
+      text-align: unset !important;
+      background-color: #24292e !important;
+      text-align: center !important;
+      font-size: 24px !important;
+      width: auto !important;
+      padding: 15px 10px !important;
+      color: #eee !important;
+      border-top-right-radius: 4px !important;
+      border-top-left-radius: 4px !important;
+      margin: 0 !important;
+    }
+
+    #ceo-hunter-extension #url {
+      all: unset !important;
+      font-size: 15px !important;
+      font-style: italic !important;
+      color: #0366d6;
+    }
+
+    #ceo-hunter-extension hr {
+      all: unset !important;
+      width: 100% !important;
+    }
+
+    #ceo-hunter-extension .ceo-hunter-title {
+      all: unset !important;
+      font-size: 20px !important;
+      font-weight: bold !important;
+      margin-bottom: 0 !important;
+      height: auto !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      height: auto !important;
+    }
+
+    #ceo-hunter-extension #confidence {
+      font-size: 13px !important;
+      margin-top: 0 !important;
+      color: #0366d6;
+    }
+
+    #ceo-hunter-extension #mailTo {
+      all: unset !important;
+      padding: 5px 20px 5px 20px !important;
+      background: initial !important;
+      font-size: 20px !important;
+      font-weight: bold !important;
+      margin-top: 0 !important;
+      border: 0 !important;
+      border-radius: 2px !important;
+      background-color: #FC6D26 !important;
+      color:#FFFFFF !important;
+    }
+
+    #ceo-hunter-extension .info {
+      all: unset !important;
+      font-size: 15px !important;
+      margin: 0 !important;
+    }

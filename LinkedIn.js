@@ -10,8 +10,8 @@ function LinkedIn(){
   chrome.tabs.getSelected(null, function(tab) {
         var url = tab.url;
         console.log(url);
-        document.getElementById("url").innerHTML="www."+companyDomain;
-        document.getElementById("url").style.textDecoration = "underline";
+        // document.getElementById("url").innerHTML="www."+companyDomain;
+        // document.getElementById("url").style.textDecoration = "underline";
         console.log(companyDomain);
         var query = companyDomain;
         openGooglePage(query);
