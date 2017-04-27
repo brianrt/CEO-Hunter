@@ -198,7 +198,9 @@ function setCompanyURL(){
         url = url.substring(url.indexOf("://")+3,url.length);
     }
     companyDomain = url.substring(0,url.indexOf("/"))
-    companyName = url.substring(0,url.indexOf("."));
+    parts = companyDomain.split(".")
+    companyDomain = parts[parts.length-2]+"."+parts[parts.length-1];
+    companyName = parts[parts.length-2];
     console.log("domain: "+companyDomain);
     console.log("name: "+companyName);
 
