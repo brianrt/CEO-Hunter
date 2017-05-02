@@ -18,6 +18,7 @@ var database;
 var user_number = 0;
 var user_email = "";
 var user_hunts = 0;
+var total_hunts = 0;
 var global_tab;
 
 function getEmail(text){
@@ -37,17 +38,25 @@ function getPhoneNumber(text){
 
 function addSuccessFullHunt(){
   user_hunts += 1;
-  firebase.database().ref('Users/' + user_number).set({
+  firebase.database().ref('Users/' + user_number).update({
     email: user_email,
     hunts : user_hunts
+  });
+  firebase.database().ref('Users/' + user_number+'/sites_visited/'+total_hunts).update({
+    url: companyURL,
+    status: "success",
   });
 }
 
 function removeSuccessfullHunt(){
   user_hunts -= 1;
-  firebase.database().ref('Users/' + user_number).set({
+  firebase.database().ref('Users/' + user_number).update({
     email: user_email,
     hunts : user_hunts
+  });
+  firebase.database().ref('Users/' + user_number+'/sites_visited/'+total_hunts).update({
+    url: companyURL,
+    status: "failed",
   });
 }
 
@@ -136,11 +145,6 @@ function getContactInfo(){
     });
 }
 
-function lastResortMantaAttempt(){
-}
-
-
-
 function setTerminatingConditions(){
   setTimeout(function(){
     if(document.getElementById("LinkedInName").innerHTML == "Loading CEO Name..."){
@@ -203,7 +207,11 @@ function setCompanyURL(){
     companyName = parts[parts.length-2];
     console.log("domain: "+companyDomain);
     console.log("name: "+companyName);
-
+    //Add company url to firebase account for logging
+    firebase.database().ref('Users/' + user_number+'/sites_visited/'+total_hunts).set({
+      url: companyURL,
+      status: "failed",
+    });
     GoogleSearch();
     // LinkedIn();
     });
@@ -227,6 +235,10 @@ function initialize(){
 }
 
 function launchSequence(){
+    total_hunts +=1;
+    firebase.database().ref('Users/' + user_number).update({
+      total_hunts : total_hunts
+    });
     ceoName = false;
     contact = false;
     contact_url = false;
@@ -323,6 +335,7 @@ function initUser(tab){
         // console.log(users[i]);
         // console.log(users[i].email);
         var email = users[i].email;
+        console.log("email searching for: "+email);
         if(email == user_email){//email already exist in database
           found = true;
           break;
@@ -333,15 +346,17 @@ function initUser(tab){
         user_number=i;
         console.log(user_number);
         user_hunts = users[i].hunts;
+        total_hunts = users[i].total_hunts;
         console.log("user hunts: "+user_hunts);
       } else{ //need to add to database
         user_number = i;
         console.log(user_number);
         user_hunts = 0;
-
+        total_hunts = 0;
         firebase.database().ref('Users/' + user_number).set({
           email: user_email,
-          hunts : user_hunts
+          hunts : user_hunts,
+          total_hunts : total_hunts
         });
       }
       startExtension(tab);

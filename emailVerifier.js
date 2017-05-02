@@ -7,12 +7,13 @@ var ceo_description;
 function verifyEmail(name,email_address){
   console.log(email_address);
   // set endpoint and your access key
-  var access_key = 'df707e20dd449f6e3e72a33230ff5de1';
+  var access_key = 'd7294b9f413ac4e844ac4105b73aa91c';
   var url = 'http://apilayer.net/api/check?access_key=' + access_key + '&email=' + email_address+'&catch_all=1';
   var xhr = new XMLHttpRequest();
   xhr.open("GET", url, true);
   xhr.onreadystatechange = function() {
     if (xhr.readyState == 4) {
+      console.log(done);
       if(done)
         return;
       console.log(xhr);
