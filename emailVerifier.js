@@ -13,7 +13,6 @@ function verifyEmail(name,email_address){
   xhr.open("GET", url, true);
   xhr.onreadystatechange = function() {
     if (xhr.readyState == 4) {
-      console.log(done);
       if(done)
         return;
       console.log(xhr);

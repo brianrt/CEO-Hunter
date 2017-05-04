@@ -20,7 +20,7 @@ function LinkedIn(){
 
 
 function openGooglePage(query){
-  var access_key = 'AIzaSyBcBsQy0IOp-R2bZOi_hq6omvVVaA1Z1hA';
+  var access_key = 'AIzaSyAiU6yCuGGU3Y06iHvlprmXsMlgVhswdAQ';
   var engine_id = '005408335780428068463:obi6mjahzr4';
   var url = "https://www.googleapis.com/customsearch/v1?key="+access_key+"&cx="+engine_id+"&q="+query+"&exactTerms=LinkedIn";
   console.log(url);
@@ -29,6 +29,9 @@ function openGooglePage(query){
   xhr.onreadystatechange = function() {
     if (xhr.readyState == 4) {
       var resp = JSON.parse(xhr.responseText);
+      if(resp.searchInformation.totalResults == 0){
+        return;
+      }
       var result = resp.items[0].link;
       console.log(result);
       listenerCallback({
