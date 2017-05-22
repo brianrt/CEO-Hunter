@@ -20,7 +20,7 @@ var user_number = 0;
 var user_email = "";
 var user_hunts = 0;
 var total_hunts = 0;
-var global_tab;
+var attempted_sign_in = false;
 
 function getEmail(text){
   var emailRe = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -272,6 +272,7 @@ function fireBaseInit(){
  * @param{boolean} interactive True if the OAuth flow should request with an interactive mode.
  */
 function startAuth(interactive,tab) {
+  attempted_sign_in = true;
   // Request an OAuth token from the Chrome Identity API.
   chrome.identity.getAuthToken({interactive: !!interactive}, function(token) {
     if (chrome.runtime.lastError && !interactive) {
@@ -375,7 +376,6 @@ function initUser(tab){
 }
 
 chrome.browserAction.onClicked.addListener(function(tab) {
-  global_tab = tab;
   if(!firebase_intialized){
     fireBaseInit();
     firebase_intialized=true;
@@ -388,6 +388,9 @@ chrome.browserAction.onClicked.addListener(function(tab) {
       console.log("signed in, user_email already recorded");
       startExtension(tab);
     }
+  }
+  else if(attempted_sign_in){ //If they attempted to sign in already but failed, don't keep asking them to sign in
+    startExtension(tab);
   }
   else { //Needs to login
     console.log("needs to login");
