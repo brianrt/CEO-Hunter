@@ -10,6 +10,7 @@ var employeepage = false;
 var toggle = true;
 var first = true;
 var tab_dict = {};
+var url_dict = {};
 var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><br><p id=LinkedInDescription class=ceo-hunter-title>Loading CEO Description...</p><br><p id=LinkedInName class=info>Loading CEO Name...</p><br><br><p class=ceo-hunter-title>Personal Email Address</p><br><p id=personalEmail class=info>Loading Email...</p><br><t id=confidence></t><br><br><p class=ceo-hunter-title>Company Phone #</p><br><p id=companyPhone class=info>Loading phone...</p><br><br><input type="hidden" id="mailTo"><p id="withgmail"></p><br><br><a href="http://www.ceohunter.io/feedback/" style="color:blue;">Report bugs and request new features</a></div><br>';
 var checkBoxesHTML =' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><button id="test_button">Click me</button><br></div>'
 //Firebase vars
@@ -194,6 +195,7 @@ function setCompanyURL(){
       
     //set global company information
     var url = tabs[0].url;
+    url_dict[tabs[0].id]=url;
     companyURL = url;
     if(url.includes("www.")){
       url = url.substring(url.indexOf("www.")+4,url.length);
@@ -311,13 +313,22 @@ function startExtension(tab) {
     launchSequence();//Begin running rest of extension
   }
   else if(tab_dict[tab.id]){//If the toggle for this tab is turned on
+    if(url_dict[tab.id] != tab.url){
+      initialize();
+    }
     chrome.tabs.sendMessage(tab.id, {greeting: "toggle on",message:document.getElementById("ceo_hunter").innerHTML});
     console.log("toggle on");
     launchSequence();
   }
   else{
-    console.log("toggle off");
+    if(url_dict[tab.id] != tab.url){ //If they changed urls without closing the tab, we can't toggle off. we need to launch it again
+      tab_dict[tab.id] = !tab_dict[tab.id];
+      initialize();
+      launchSequence();
+    } else {
+      console.log("toggle off");
       chrome.tabs.sendMessage(tab.id, {greeting: "toggle off",message:document.getElementById("ceo_hunter").innerHTML});
+    }
   }
   tab_dict[tab.id] = !tab_dict[tab.id];
 }
@@ -335,7 +346,7 @@ function initUser(tab){
         // console.log(users[i]);
         // console.log(users[i].email);
         var email = users[i].email;
-        console.log("email searching for: "+email);
+        //console.log("email searching for: "+email);
         if(email == user_email){//email already exist in database
           found = true;
           break;
