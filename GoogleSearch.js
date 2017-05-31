@@ -2,7 +2,7 @@ function GoogleSearch(){
 	var query = "ceo+"+companyName;
 	var access_key = 'AIzaSyAiU6yCuGGU3Y06iHvlprmXsMlgVhswdAQ';
 	var engine_id = '005408335780428068463:obi6mjahzr4';
-	var url = "https://www.googleapis.com/customsearch/v1?key="+access_key+"&cx="+engine_id+"&q="+query+"&siteSearch=wikipedia.org&exactTerms="+companyName;
+	var url = "https://www.googleapis.com/customsearch/v1?key="+access_key+"&cx="+engine_id+"&q="+query+"&siteSearch=en.wikipedia.org";
 	console.log(url);
 	var xhr = new XMLHttpRequest();
 	xhr.open("GET", url, true);

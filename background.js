@@ -1,5 +1,6 @@
 var companyDomain;
 var companyURL;
+var companyPhone;
 var companyName;
 var tab_id;
 var ceoName = false;
@@ -37,7 +38,7 @@ function getPhoneNumber(text){
   return "";
 }
 
-function addSuccessFullHunt(){
+function addSuccessFullHunt(ceo_name,ceo_description,email_address,confidence,was_cached){
   user_hunts += 1;
   firebase.database().ref('Users/' + user_number).update({
     email: user_email,
@@ -47,20 +48,44 @@ function addSuccessFullHunt(){
     url: companyURL,
     status: "success",
   });
+  if(!was_cached){
+    addCompany(ceo_name,ceo_description,email_address,confidence);
+  }
 }
 
-function removeSuccessfullHunt(){
-  user_hunts -= 1;
-  firebase.database().ref('Users/' + user_number).update({
-    email: user_email,
-    hunts : user_hunts
-  });
-  firebase.database().ref('Users/' + user_number+'/sites_visited/'+total_hunts).update({
-    url: companyURL,
-    status: "failed",
-  });
-}
+function addCompany(ceo_name,ceo_description,email_address,confidence){
+  firebase.database().ref('/Companies/Count/').once('value').then(function(snapshot) {
+    var numCompanies = snapshot.val();
+    console.log("Number of companies: "+numCompanies);
 
+    //Calculate hash of company domain
+    var key = md5(companyDomain);
+
+    //Update the company count (if it gets to this point, we've found a new company)
+    numCompanies+=1;
+    firebase.database().ref('/Companies/').update({Count:numCompanies});
+
+    var phone = companyPhone;
+    if(phone == undefined){
+      phone = "Not found";
+    }
+
+    //Add company to database
+    firebase.database().ref('Companies/List/'+key).update({
+      company_name: companyName,
+      url: companyURL,
+      confidence: confidence,
+      phone: phone,
+      ceo: {
+        name: ceo_name,
+        description: ceo_description,
+        email: email_address
+      }
+    });
+
+  });
+  
+}
 
 function listenerCallback(request,sender,sendResponse){
   	if (request.greeting == "ceo" && !ceoName){
@@ -86,7 +111,8 @@ function listenerCallback(request,sender,sendResponse){
         for (var index in contacts) {
             var element=contacts[index];
             if(element.includes("Phone")){
-                document.getElementById("companyPhone").innerHTML=element.substring(7);
+                companyPhone = element.substring(7);
+                document.getElementById("companyPhone").innerHTML=companyPhone;
               }
         }
         refreshHTML();
@@ -190,6 +216,62 @@ function ajax_page(query,callback){
   );
 }
 
+//Checks our database to see if the results have already been cached
+function checkDataBase(){
+  var key = md5(companyDomain);
+  firebase.database().ref('/Companies/List/'+key).once('value').then(function(snapshot) {
+    if(snapshot.val() == null){
+      //The company is not cached, need to proceed as normal
+      GoogleSearch();
+    }
+    else {
+      //We have found a cached result!
+      console.log("found cached result");
+      //Retrieve the data
+      var company = snapshot.val();
+      var ceo = company.ceo;
+
+      //Select color based on confidence of email
+      var color = "green";
+      switch(company.confidence){
+        case "Risky":
+          color = "#cccc00";
+          break;
+        case "Not Likely":
+          color = "red";
+          break;
+      }
+
+      //Update html directly
+      document.getElementById("LinkedInDescription").innerHTML = ceo.description;
+      document.getElementById("LinkedInName").innerHTML = ceo.name;
+      document.getElementById("personalEmail").innerHTML = ceo.email;
+      document.getElementById("companyPhone").innerHTML = company.phone;
+      document.getElementById("confidence").innerHTML = company.confidence;
+      document.getElementById("confidence").style.color = color;
+
+      //Add email ceo button TODO
+      var ceo_array = ceo.name.split(" ");
+      if(company.confidence == "Risky"){
+        $("#mailTo").attr("onclick","window.open('https://mail.google.com/mail/?view=cm&fs=1&to="+ceo_array[0].charAt(0)+ceo_array[ceo_array.length-1].toLowerCase()+"@"+companyDomain+"','', 'top=300,left=400,width=500,height=500');");
+      } else {
+        $("#mailTo").attr("onclick","window.open('https://mail.google.com/mail/?view=cm&fs=1&to="+ceo.email+"','', 'top=300,left=400,width=500,height=500');");
+      }
+      $("#mailTo").attr("type","button");
+      $("#mailTo").attr("target","_blank");
+      $("#mailTo").val("Email CEO");
+      $("#withgmail").html("(With Gmail)");
+      
+      //Send new HTML to window
+      refreshHTML();
+
+      //Add a hunt to our server for the user
+      addSuccessFullHunt(ceo.name,ceo.description,ceo.email,company.confidence,true);
+    }
+  });
+  
+}
+
 function setCompanyURL(){
   chrome.tabs.query({active:true,windowType:"normal", currentWindow: true},function(tabs){
       
@@ -214,8 +296,8 @@ function setCompanyURL(){
       url: companyURL,
       status: "failed",
     });
-    GoogleSearch();
-    // LinkedIn();
+    checkDataBase();
+    //GoogleSearch();
     });
 }
 
