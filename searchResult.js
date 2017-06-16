@@ -125,10 +125,13 @@ function search(companyName){
       }
       catch(err){
          console.log("there was another error: "+err.message);
-         secondarySearch(companyName);
+         try{
+            secondarySearch(companyName);
+         } catch(err){
+            console.log("there was another error: "+err.message);
+            window.close();
+         }
       }
-      
-
    }
 }
 
@@ -169,8 +172,8 @@ function secondarySearch(companyName){
    console.log(ceo_potential);
    if(ceo_potential=="different lengths" || ceo_potential=="no match"){
       console.log("no linkedin matches");
-      return;
       window.close();
+      return;
    }
    chrome.runtime.sendMessage({
       greeting: "ceo",

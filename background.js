@@ -298,6 +298,7 @@ function setCompanyURL(){
     });
     checkDataBase();
     //GoogleSearch();
+    // LinkedIn()
     });
 }
 
