@@ -51,6 +51,7 @@ function addSuccessFullHunt(ceo_name,ceo_description,email_address,confidence,wa
   if(!was_cached){
     addCompany(ceo_name,ceo_description,email_address,confidence);
   }
+  displayNotFound();
 }
 
 function addCompany(ceo_name,ceo_description,email_address,confidence){
@@ -88,7 +89,12 @@ function addCompany(ceo_name,ceo_description,email_address,confidence){
 }
 
 function listenerCallback(request,sender,sendResponse){
-  	if (request.greeting == "ceo" && !ceoName){
+    if (request.greeting == "who.is"){
+      console.log("who.is callback received")
+      WhoIs();
+    }
+  	else if (request.greeting == "ceo" && !ceoName){
+      console.log("ceo callback received")
   		ceoName=true;
   		var ceo_name = request.message_ceo.trim();
   		var ceo_description = request.message_description;
@@ -173,15 +179,15 @@ function getContactInfo(){
 }
 
 function setTerminatingConditions(){
-  setTimeout(function(){
-    if(document.getElementById("LinkedInName").innerHTML == "Loading CEO Name..."){
-      WhoIs();
-    }else{
-      displayNotFound();
-      console.log("displayNotFound");
-      whoIsUsed=false;
-    }
-  },15000);
+//   setTimeout(function(){
+//     if(document.getElementById("LinkedInName").innerHTML == "Loading CEO Name..."){
+//       WhoIs();
+//     }else{
+//       displayNotFound();
+//       console.log("displayNotFound");
+//       whoIsUsed=false;
+//     }
+//   },15000);
 }
 
 function displayNotFound(){         
@@ -251,16 +257,18 @@ function checkDataBase(){
       document.getElementById("confidence").style.color = color;
 
       //Add email ceo button TODO
-      var ceo_array = ceo.name.split(" ");
-      if(company.confidence == "Risky"){
-        $("#mailTo").attr("onclick","window.open('https://mail.google.com/mail/?view=cm&fs=1&to="+ceo_array[0].charAt(0)+ceo_array[ceo_array.length-1].toLowerCase()+"@"+companyDomain+"','', 'top=300,left=400,width=500,height=500');");
-      } else {
-        $("#mailTo").attr("onclick","window.open('https://mail.google.com/mail/?view=cm&fs=1&to="+ceo.email+"','', 'top=300,left=400,width=500,height=500');");
+      if (company.confidence != "Not Likely"){
+        var ceo_array = ceo.name.split(" ");
+        if(company.confidence == "Risky"){
+          $("#mailTo").attr("onclick","window.open('https://mail.google.com/mail/?view=cm&fs=1&to="+ceo_array[0].charAt(0)+ceo_array[ceo_array.length-1].toLowerCase()+"@"+companyDomain+"','', 'top=300,left=400,width=500,height=500');");
+        } else {
+          $("#mailTo").attr("onclick","window.open('https://mail.google.com/mail/?view=cm&fs=1&to="+ceo.email+"','', 'top=300,left=400,width=500,height=500');");
+        }
+        $("#mailTo").attr("type","button");
+        $("#mailTo").attr("target","_blank");
+        $("#mailTo").val("Email CEO");
+        $("#withgmail").html("(With Gmail)");
       }
-      $("#mailTo").attr("type","button");
-      $("#mailTo").attr("target","_blank");
-      $("#mailTo").val("Email CEO");
-      $("#withgmail").html("(With Gmail)");
       
       //Send new HTML to window
       refreshHTML();
@@ -297,7 +305,7 @@ function setCompanyURL(){
       status: "failed",
     });
     checkDataBase();
-    //GoogleSearch();
+    // GoogleSearch();
     // LinkedIn()
     });
 }
@@ -336,7 +344,6 @@ function launchSequence(){
     setTerminatingConditions();
     getContactInfo();
     setCompanyURL();
-    // CrunchBase();
 }
 
 function fireBaseInit(){

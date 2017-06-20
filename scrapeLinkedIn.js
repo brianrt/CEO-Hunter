@@ -52,5 +52,8 @@ else if(html.indexOf("https://www.linkedin.com/vsearch/p?f_CC=")!=-1){ // try me
 }
 else{
 	console.log("Neither method worked :(");
+	chrome.runtime.sendMessage({
+		greeting: "who.is",
+	});
 	window.close();
 }

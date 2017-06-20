@@ -129,6 +129,9 @@ function search(companyName){
             secondarySearch(companyName);
          } catch(err){
             console.log("there was another error: "+err.message);
+            chrome.runtime.sendMessage({
+               greeting: "who.is",
+            });
             window.close();
          }
       }
@@ -172,15 +175,18 @@ function secondarySearch(companyName){
    console.log(ceo_potential);
    if(ceo_potential=="different lengths" || ceo_potential=="no match"){
       console.log("no linkedin matches");
+      chrome.runtime.sendMessage({
+         greeting: "who.is",
+      });
       window.close();
-      return;
+   } else {
+      chrome.runtime.sendMessage({
+         greeting: "ceo",
+         message_ceo: ceo_potential[0],
+         message_description: ceo_potential[1]
+      });
+      window.close();
    }
-   chrome.runtime.sendMessage({
-      greeting: "ceo",
-      message_ceo: ceo_potential[0],
-      message_description: ceo_potential[1]
-   });
-   window.close();
 }
 
 
