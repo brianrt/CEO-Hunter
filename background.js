@@ -3,6 +3,7 @@ var companyURL;
 var companyPhone;
 var companyName;
 var tab_id;
+var main_tab;
 var ceoName = false;
 var contact = false;
 var contact_url = false;
@@ -10,6 +11,7 @@ var company = false;
 var employeepage = false;
 var toggle = true;
 var first = true;
+var targeted_position = "";    
 var tab_dict = {};
 var url_dict = {};
 var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><br><p id=LinkedInDescription class=ceo-hunter-title>Loading CEO Description...</p><br><p id=LinkedInName class=info>Loading CEO Name...</p><br><br><p class=ceo-hunter-title>Personal Email Address</p><br><p id=personalEmail class=info>Loading Email...</p><br><t id=confidence></t><br><br><p class=ceo-hunter-title>Company Phone #</p><br><p id=companyPhone class=info>Loading phone...</p><br><br><input type="hidden" id="mailTo"><p id="withgmail"></p><br><br><a href="http://www.ceohunter.io/feedback/" style="color:blue;">Report bugs and request new features</a></div><br>';
@@ -48,7 +50,7 @@ function addSuccessFullHunt(ceo_name,ceo_description,email_address,confidence,wa
     url: companyURL,
     status: "success",
   });
-  if(!was_cached){
+  if(!was_cached && targeted_position == "ceo_owner"){
     addCompany(ceo_name,ceo_description,email_address,confidence);
   }
   displayNotFound();
@@ -304,9 +306,13 @@ function setCompanyURL(){
       url: companyURL,
       status: "failed",
     });
-    checkDataBase();
-    // GoogleSearch();
-    // LinkedIn()
+    if(targeted_position == "ceo_owner"){
+      checkDataBase();
+      // GoogleSearch();
+    } else {
+      Bloomberg();
+      // LinkedIn();
+    }
     });
 }
 
@@ -319,7 +325,7 @@ function initialize(){
         chrome.tabs.query({active: true, windowId: currentWindow.id},function(activeTabs) {
         	tab_id = activeTabs[0].id;
             chrome.tabs.executeScript(tab_id, {file: "insertSideBar.js", allFrames: false},function(){//Inject the javascript
-              chrome.tabs.insertCSS(tab_id, {file: "extension.css", allFrames: true, runAt: "document_end"},function(){//Inject the CSS
+              chrome.tabs.insertCSS(tab_id, {file: "Styles/extension.css", allFrames: true, runAt: "document_end"},function(){//Inject the CSS
                 chrome.tabs.sendMessage(tab_id, {greeting: "initial load",message:document.getElementById("ceo_hunter").innerHTML});
               });
             });
@@ -388,7 +394,7 @@ function startAuth(interactive,tab) {
 }
 
 
-function startExtension(tab) {
+function startHunting(tab) {
   //start extension
   console.log("tab id: "+tab.id);
   document.getElementById("body").innerHTML=templateHTML;
@@ -401,21 +407,21 @@ function startExtension(tab) {
     console.log("first time for tab");
     tab_dict[tab.id]=true;
     initialize();//Initial load of context script for this tab
-    launchSequence();//Begin running rest of extension
+    checkIfPositionSelected();//Begin running rest of extension
   }
   else if(tab_dict[tab.id]){//If the toggle for this tab is turned on
     if(url_dict[tab.id] != tab.url){
       initialize();
     }
+    checkIfPositionSelected();
     chrome.tabs.sendMessage(tab.id, {greeting: "toggle on",message:document.getElementById("ceo_hunter").innerHTML});
     console.log("toggle on");
-    launchSequence();
   }
   else{
     if(url_dict[tab.id] != tab.url){ //If they changed urls without closing the tab, we can't toggle off. we need to launch it again
       tab_dict[tab.id] = !tab_dict[tab.id];
       initialize();
-      launchSequence();
+      checkIfPositionSelected();
     } else {
       console.log("toggle off");
       chrome.tabs.sendMessage(tab.id, {greeting: "toggle off",message:document.getElementById("ceo_hunter").innerHTML});
@@ -424,7 +430,7 @@ function startExtension(tab) {
   tab_dict[tab.id] = !tab_dict[tab.id];
 }
 
-function initUser(tab){
+function initUser(){
   user_email = firebase.auth().currentUser.email;
     console.log(user_email);
     var userId = firebase.auth().currentUser.uid;
@@ -461,26 +467,55 @@ function initUser(tab){
           total_hunts : total_hunts
         });
       }
-      startExtension(tab);
+      startHunting(main_tab);
+  });
+}
+
+function checkIfPositionSelected(){
+  setTargetedPosition();
+}
+
+function setPosition(position) {
+    console.log(position);
+    targeted_position = position;
+    launchSequence();
+};
+
+function setTargetedPosition(){
+  chrome.tabs.create({
+    url: chrome.extension.getURL('position_selection.html'),
+    active: false
+  }, function(tab) {
+    // After the tab has been created, open a window to inject the tab
+    chrome.windows.create({
+      tabId: tab.id,
+      type: 'popup',
+      focused: true,
+      height:400,
+      width:340,
+      top:400,
+      left:400
+    });
   });
 }
 
 chrome.browserAction.onClicked.addListener(function(tab) {
+  main_tab = tab;
   if(!firebase_intialized){
     fireBaseInit();
     firebase_intialized=true;
   }
   if(firebase.auth().currentUser!=null){
     if(user_email==""){
-      initUser(tab);
+      initUser();
       console.log("signed in, user_email not in");
     }else{
       console.log("signed in, user_email already recorded");
-      startExtension(tab);
+      startHunting(main_tab);
     }
   }
   else if(attempted_sign_in){ //If they attempted to sign in already but failed, don't keep asking them to sign in
-    startExtension(tab);
+    startHunting(main_tab);
   }
   else { //Needs to login
     console.log("needs to login");

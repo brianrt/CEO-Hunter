@@ -42,16 +42,30 @@ function bloombergCallback(htmlData){
   if(bloomberg_company_url.includes(companyDomain)){
     console.log("bloomberg success");
     try{
-      var name = htmlData.getElementsByClassName("link_sb")[1].innerHTML;
-      name = cleanName(name);
-      console.log("name from bloomberg: "+ name);
-      var description = htmlData.getElementsByClassName("officerInner")[0].getElementsByTagName("div")[1].innerHTML;
-      console.log("description from bloomberg: "+ description);
-      //send results to callback function
+      var name_elements = htmlData.getElementsByClassName("link_sb");
+      var names = [];
+      for(var i = 1; i < name_elements.length; i++){
+        names.push(cleanName(name_elements[i].innerHTML));
+      }
+      console.log(names);
+      var description_elements = htmlData.getElementsByClassName("officerInner");
+      var descriptions = [];
+      for(var i = 0; i < description_elements.length;i++){
+        descriptions.push(description_elements[i].getElementsByTagName("div")[1].innerHTML.trim());
+      }
+      console.log(descriptions);
+
+      var ceo_potential = checkNamesWithDesciptions(names,descriptions);
+      console.log(ceo_potential);
+      if(ceo_potential=="different lengths" || ceo_potential=="no match"){
+        console.log("no");
+        ZoomInfo();
+        return;
+      }
       listenerCallback({
         greeting: "ceo",
-        message_ceo: name,
-        message_description: description
+        message_ceo: ceo_potential[0],
+        message_description: ceo_potential[1]
       });
     }catch(error){
       ZoomInfo();
