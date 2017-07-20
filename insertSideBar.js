@@ -15,11 +15,9 @@
         extensionDiv.innerHTML = body;
       }
       else if (request.greeting == "toggle off") {
-        console.log("toggle off");
         extensionDiv.style.display = "none";
       }
       else if (request.greeting == "toggle on") {
-        console.log("toggle on");
         extensionDiv.innerHTML   = request.message;
         extensionDiv.style.display = "block";
       }

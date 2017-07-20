@@ -11,10 +11,11 @@ var company = false;
 var employeepage = false;
 var toggle = true;
 var first = true;
+var needsToChangePosition = true;
 var targeted_position = "";    
 var tab_dict = {};
 var url_dict = {};
-var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><br><p id=LinkedInDescription class=ceo-hunter-title>Loading CEO Description...</p><br><p id=LinkedInName class=info>Loading CEO Name...</p><br><br><p class=ceo-hunter-title>Personal Email Address</p><br><p id=personalEmail class=info>Loading Email...</p><br><t id=confidence></t><br><br><p class=ceo-hunter-title>Company Phone #</p><br><p id=companyPhone class=info>Loading phone...</p><br><br><input type="hidden" id="mailTo"><p id="withgmail"></p><br><br><a href="http://www.ceohunter.io/feedback/" style="color:blue;">Report bugs and request new features</a></div><br>';
+var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><br><p id=LinkedInDescription class=ceo-hunter-title>Loading CEO Description...</p><br><p id=LinkedInName class=info>Loading CEO Name...</p><br><br><p class=ceo-hunter-title>Personal Email Address</p><br><p id=personalEmail class=info>Loading Email...</p><br><t id=confidence></t><br><br><p class=ceo-hunter-title>Company Phone #</p><br><p id=companyPhone class=info>Loading phone...</p><br><br><input type="hidden" id="mailTo"><p id="withgmail"></p><br><br><input id="changePos" type="button" value = "Choose position for next launch" onclick = \'document.cookie = "needsToChangePosition=True";\'><br><br><a href="http://www.ceohunter.io/feedback/" style="color:blue;">Report bugs and request new features</a></div><br>';
 var checkBoxesHTML =' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><button id="test_button">Click me</button><br></div>'
 //Firebase vars
 var firebase_intialized = false;
@@ -407,13 +408,13 @@ function startHunting(tab) {
     console.log("first time for tab");
     tab_dict[tab.id]=true;
     initialize();//Initial load of context script for this tab
-    checkIfPositionSelected();//Begin running rest of extension
+    checkIfPositionSelected(tab.url);//Begin running rest of extension
   }
   else if(tab_dict[tab.id]){//If the toggle for this tab is turned on
     if(url_dict[tab.id] != tab.url){
       initialize();
     }
-    checkIfPositionSelected();
+    checkIfPositionSelected(tab.url);
     chrome.tabs.sendMessage(tab.id, {greeting: "toggle on",message:document.getElementById("ceo_hunter").innerHTML});
     console.log("toggle on");
   }
@@ -421,7 +422,7 @@ function startHunting(tab) {
     if(url_dict[tab.id] != tab.url){ //If they changed urls without closing the tab, we can't toggle off. we need to launch it again
       tab_dict[tab.id] = !tab_dict[tab.id];
       initialize();
-      checkIfPositionSelected();
+      checkIfPositionSelected(tab.url);
     } else {
       console.log("toggle off");
       chrome.tabs.sendMessage(tab.id, {greeting: "toggle off",message:document.getElementById("ceo_hunter").innerHTML});
@@ -471,8 +472,22 @@ function initUser(){
   });
 }
 
-function checkIfPositionSelected(){
-  setTargetedPosition();
+function checkIfPositionSelected(url){
+  if(needsToChangePosition){
+    needsToChangePosition = false;
+    setTargetedPosition();
+    chrome.cookies.onChanged.addListener(function (changeInfo){
+      if (changeInfo.cookie.name == "needsToChangePosition"){
+        needsToChangePosition = true;
+        $("#changePos").attr("id","changePosBye");
+        $("#changePosBye").hide();
+        refreshHTML();
+      }
+    });
+  }
+  else{
+    launchSequence();
+  }
 }
 
 function setPosition(position) {
@@ -498,6 +513,8 @@ function setTargetedPosition(){
     });
   });
 }
+
+
 
 chrome.browserAction.onClicked.addListener(function(tab) {
   main_tab = tab;

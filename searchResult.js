@@ -141,51 +141,58 @@ function search(companyName,targeted_position){
 }
 
 function secondarySearch(companyName,targeted_position){
-   var html = document.body.innerHTML;
-   // console.log("html: "+html);
-   var startIndex = html.indexOf('{"firstName":');
-   var newHTML = html.substring(startIndex+30);
-   // console.log("newHTML: "+newHTML);
-   var newStartIndex = newHTML.indexOf('{"firstName":');
-   var endIndex = newHTML.indexOf('sharedConnections');
-   jsonEmployeesList = newHTML.substring(newStartIndex,endIndex);
-   console.log("jsonEmployeesList: "+jsonEmployeesList);
-   jsonEmployeesList = jsonEmployeesList.substring(0,jsonEmployeesList.lastIndexOf("}")+1);
-   var jsonObject = JSON.parse('['+ jsonEmployeesList + ']');
-   console.log(jsonObject);
-   var names = [];
-   var descriptions = [];
-   for (var key in jsonObject) {
-      var employee = jsonObject[key];
-      if(employee.firstName==""){
-         continue;
+   try{
+      var html = document.body.innerHTML;
+      // console.log("html: "+html);
+      var startIndex = html.indexOf('{"firstName":');
+      var newHTML = html.substring(startIndex+30);
+      // console.log("newHTML: "+newHTML);
+      var newStartIndex = newHTML.indexOf('{"firstName":');
+      var endIndex = newHTML.indexOf('sharedConnections');
+      jsonEmployeesList = newHTML.substring(newStartIndex,endIndex);
+      console.log("jsonEmployeesList: "+jsonEmployeesList);
+      jsonEmployeesList = jsonEmployeesList.substring(0,jsonEmployeesList.lastIndexOf("}")+1);
+      var jsonObject = JSON.parse('['+ jsonEmployeesList + ']');
+      console.log(jsonObject);
+      var names = [];
+      var descriptions = [];
+      for (var key in jsonObject) {
+         var employee = jsonObject[key];
+         if(employee.firstName==""){
+            continue;
+         }
+         var name = employee.firstName+" "+employee.lastName;
+         var occupation = employee.occupation;
+         var strippedOccupation = occupation.toLowerCase().replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
+         var strippedCompanyName = companyName.toLowerCase().replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
+         console.log(strippedOccupation);
+         console.log(strippedCompanyName);
+         if(name != undefined && strippedOccupation.includes(strippedCompanyName)){
+            names.push(name);
+            descriptions.push(occupation);
+         }
       }
-      var name = employee.firstName+" "+employee.lastName;
-      var occupation = employee.occupation;
-      var strippedOccupation = occupation.toLowerCase().replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
-      var strippedCompanyName = companyName.toLowerCase().replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
-      console.log(strippedOccupation);
-      console.log(strippedCompanyName);
-      if(name != undefined && strippedOccupation.includes(strippedCompanyName)){
-         names.push(name);
-         descriptions.push(occupation);
+      // console.log(names);
+      // console.log(descriptions);
+      var ceo_potential = checkNamesWithDesciptions(names,descriptions,targeted_position);
+      console.log(ceo_potential);
+      if(ceo_potential=="different lengths" || ceo_potential=="no match"){
+         console.log("no linkedin matches");
+         chrome.runtime.sendMessage({
+            greeting: "who.is",
+         });
+         window.close();
+      } else {
+         chrome.runtime.sendMessage({
+            greeting: "ceo",
+            message_ceo: ceo_potential[0],
+            message_description: ceo_potential[1]
+         });
+         window.close();
       }
-   }
-   // console.log(names);
-   // console.log(descriptions);
-   var ceo_potential = checkNamesWithDesciptions(names,descriptions,targeted_position);
-   console.log(ceo_potential);
-   if(ceo_potential=="different lengths" || ceo_potential=="no match"){
-      console.log("no linkedin matches");
+   } catch (error) {
       chrome.runtime.sendMessage({
          greeting: "who.is",
-      });
-      window.close();
-   } else {
-      chrome.runtime.sendMessage({
-         greeting: "ceo",
-         message_ceo: ceo_potential[0],
-         message_description: ceo_potential[1]
       });
       window.close();
    }

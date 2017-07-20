@@ -88,6 +88,19 @@
       color:#FFFFFF !important;
     }
 
+    #ceo-hunter-extension #changePos {
+      all: unset !important;
+      padding: 5px 10px 5px 10px !important;
+      background: initial !important;
+      font-size: 20px !important;
+      font-weight: bold !important;
+      margin-top: 0 !important;
+      border: 0 !important;
+      border-radius: 2px !important;
+      background-color: #0083CB !important;
+      color:#FFFFFF !important;
+    }
+
     #ceo-hunter-extension .info {
       all: unset !important;
       font-size: 15px !important;
