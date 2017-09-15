@@ -1,0 +1,44 @@
+#emailCEO {
+	border: 0;
+    border-radius: 2px;
+    color: #fff;
+    line-height: 40px;
+    font-weight: 600;
+    height: 40px;
+    padding: 0 24px;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+	background-color: #FC6D26;
+	margin-left: 10px;
+	margin-top: 2px;
+}
+
+#hunterPopUp {
+	padding-top: 25px;
+	box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+	border-style: solid;
+	border-width: 2px;
+    border-radius: 4px;
+	position: fixed;
+    top: 45%;
+    left: 42.5%;
+    margin-top: -50px;
+    margin-left: -50px;
+    width: 300px;
+    height: 200px;
+    background-color: #FFF;
+    z-index: 9999;
+    text-align: center;
+    vertical-align: center;
+}
+
+#closeHunter {
+	color: #777;
+	font: 14px/100% arial, sans-serif;
+	position: absolute;
+	right: 5px;
+	text-decoration: none;
+	text-shadow: 0 1px 0 #fff;
+	top: 5px;
+}
