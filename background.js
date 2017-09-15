@@ -15,7 +15,10 @@ var needsToChangePosition = true;
 var targeted_position = "";    
 var tab_dict = {};
 var url_dict = {};
-var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><br><p id=LinkedInDescription class=ceo-hunter-title>Loading CEO Description...</p><br><p id=LinkedInName class=info>Loading CEO Name...</p><br><br><p class=ceo-hunter-title>Personal Email Address</p><br><p id=personalEmail class=info>Loading Email...</p><br><t id=confidence></t><br><br><p class=ceo-hunter-title>Company Phone #</p><br><p id=companyPhone class=info>Loading phone...</p><br><br><input type="hidden" id="mailTo"><p id="withgmail"></p><br><br><input id="changePos" type="button" value = "Choose position on next launch" onclick = \'document.cookie = "needsToChangePosition=True";\'><br><br><a href="http://www.ceohunter.io/feedback/" style="color:blue;">Report bugs and request new features</a></div><br>';
+
+//Use second link to change back TODO
+var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><br><p id=LinkedInDescription class=ceo-hunter-title>Loading CEO Description...</p><br><p id=LinkedInName class=info>Loading CEO Name...</p><br><br><p class=ceo-hunter-title>Personal Email Address</p><br><p id=personalEmail class=info>Loading Email...</p><br><t id=confidence></t><br><br><p class=ceo-hunter-title>Company Phone #</p><br><p id=companyPhone class=info>Loading phone...</p><br><br><input type="hidden" id="mailTo"><p id="withgmail"></p><br><br><br><a href="http://www.ceohunter.io/feedback/" style="color:blue;">Report bugs and request new features</a></div><br>';
+// var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><br><p id=LinkedInDescription class=ceo-hunter-title>Loading CEO Description...</p><br><p id=LinkedInName class=info>Loading CEO Name...</p><br><br><p class=ceo-hunter-title>Personal Email Address</p><br><p id=personalEmail class=info>Loading Email...</p><br><t id=confidence></t><br><br><p class=ceo-hunter-title>Company Phone #</p><br><p id=companyPhone class=info>Loading phone...</p><br><br><input type="hidden" id="mailTo"><p id="withgmail"></p><br><br><input id="changePos" type="button" value = "Choose position on next launch" onclick = \'document.cookie = "needsToChangePosition=True";\'><br><br><a href="http://www.ceohunter.io/feedback/" style="color:blue;">Report bugs and request new features</a></div><br>';
 var checkBoxesHTML =' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><button id="test_button">Click me</button><br></div>'
 //Firebase vars
 var firebase_intialized = false;
@@ -169,6 +172,11 @@ function listenerCallback(request,sender,sendResponse){
             }
         );
     }
+    else if (request.greeting == "emails"){
+        console.log(request.message);
+        verifyEmails(request.message,sendResponse);
+    }
+    return true;
 }
 
 function getContactInfo(){
@@ -263,7 +271,7 @@ function checkDataBase(){
       document.getElementById("confidence").innerHTML = company.confidence;
       document.getElementById("confidence").style.color = color;
 
-      //Add email ceo button TODO
+      //Add email ceo button
       if (company.confidence != "Not Likely"){
         var ceo_array = ceo.name.split(" ");
         if(company.confidence == "Risky"){
@@ -314,6 +322,7 @@ function setCompanyURL(){
     if(targeted_position == "ceo_owner"){
       checkDataBase();
       // GoogleSearch();
+      // LinkedIn();
     } else {
       Bloomberg();
       // LinkedIn();
@@ -477,6 +486,11 @@ function initUser(){
 }
 
 function checkIfPositionSelected(url){
+  //Get rid of this to enable position selection TODO
+  needsToChangePosition = false; 
+  targeted_position = "ceo_owner";
+
+
   if(needsToChangePosition){
     needsToChangePosition = false;
     setTargetedPosition();
@@ -518,7 +532,18 @@ function setTargetedPosition(){
   });
 }
 
-
+//Listen for activity on Linkedin.com
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+  if(tab.url.includes("https://www.linkedin.com/in/")){
+    console.log("hello!");
+    chrome.tabs.executeScript(tab.id, {file: "jquery-3.1.1.min.js", allFrames: false},function(){//Inject Jquery
+      chrome.tabs.executeScript(tab.id, {file: "injectLinkedIn.js", allFrames: false, runAt: "document_end"},function(){//Inject the javascript
+        chrome.tabs.insertCSS(tab.id, {file: "InjectLinkedIn.css", allFrames: false, runAt: "document_end"},function(){//Inject the CSS
+        });
+      });
+    });
+  }
+});
 
 chrome.browserAction.onClicked.addListener(function(tab) {
   main_tab = tab;
