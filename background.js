@@ -414,7 +414,6 @@ function startHunting(tab) {
   document.getElementById("body").innerHTML=templateHTML;
   if(first){
     console.log("first");
-    chrome.runtime.onMessage.addListener(listenerCallback);
     first = false;
   }
   if(!(tab.id in tab_dict)){//First for this tab
@@ -545,6 +544,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   }
 });
 
+chrome.runtime.onMessage.addListener(listenerCallback);
 chrome.browserAction.onClicked.addListener(function(tab) {
   main_tab = tab;
   if(!firebase_intialized){
