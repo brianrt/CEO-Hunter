@@ -58,7 +58,7 @@ setTimeout(function(){
 			// companySearchURL = "https://www.linkedin.com/search/results/companies/?keywords=Amazon";
 			console.log(companySearchURL);
 			ajax_page(companySearchURL,function(data){
-				// console.log(data.innerHTML);
+				console.log(data.innerHTML);
 				var dataText = data.innerHTML;
 				var startIndex = dataText.indexOf('"included":[{"$deletedFields');
 				var prunedData = dataText.substring(startIndex);
@@ -72,7 +72,7 @@ setTimeout(function(){
 						var name = element.name;
 						if(name != undefined){
 							name = name.trim().replace(/ /g,'').toLowerCase();
-							console.log(name);
+							// console.log(name);
 							if(name.includes(companyName)){
 								found = true;
 								var companyIdLink = element.objectUrn;
