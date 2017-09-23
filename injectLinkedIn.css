@@ -34,11 +34,30 @@
 }
 
 #closeHunter {
-	color: #777;
+	color: #eee;
 	font: 14px/100% arial, sans-serif;
 	position: absolute;
 	right: 5px;
 	text-decoration: none;
 	text-shadow: 0 1px 0 #fff;
 	top: 5px;
+}
+
+#mainHeader {
+    font: unset !important;
+    letter-spacing: unset !important;
+    text-transform: unset !important;
+    text-align: unset !important;
+    background-color: #24292e !important;
+    text-align: center !important;
+    font-size: 20px !important;
+    width: 100% !important;
+    padding: 15px 10px !important;
+    color: #eee !important;
+    border-top-right-radius: 0px !important;
+    border-top-left-radius: 0px !important;
+    margin: 0 !important;
+    position: absolute;
+    top: 0px;
+    right: 0px;
 }

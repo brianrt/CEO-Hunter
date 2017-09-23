@@ -2,7 +2,7 @@ setTimeout(function(){
 	if(document.getElementById("emailCEO") != undefined){
 		return;
 	}
-	var templateHTML = '<button id="closeHunter">✖</button><p id="hunterName">Loading...</p><br><p id="hunterEmail">Loading...</p><br><p id="hunterVerified">Loading...</p>';
+	var templateHTML = '<h1 id=mainHeader>Deal Hunter (BETA)</h1><br><br><button id="closeHunter">✖</button><p id="hunterName">Loading...</p><br><p id="hunterEmail">Loading...</p><br><p id="hunterVerified">Loading...</p>';
 	window.scrollTo(0,500);
 	var button = document.createElement('button');
 	button.innerHTML = "Find Email";
@@ -42,7 +42,7 @@ setTimeout(function(){
 			mostRecentPosition = experienceSection.getElementsByTagName("li")[0];
 		} catch(err){
 			console.log("Error: "+err);
-			updateResults("Email not found","");
+			updateResults("Email not found","",5);
 			return;
 		}
 		var linkedInCompanyURL = mostRecentPosition.getElementsByTagName("a")[0].href;
@@ -60,6 +60,9 @@ setTimeout(function(){
 			ajax_page(companySearchURL,function(data){
 				console.log(data.innerHTML);
 				var dataText = data.innerHTML;
+
+
+
 				var startIndex = dataText.indexOf('"included":[{"$deletedFields');
 				var prunedData = dataText.substring(startIndex);
 				var endIndex = prunedData.indexOf("}]}");
@@ -84,12 +87,12 @@ setTimeout(function(){
 						}
 					}
 					if(!found){
-						updateResults("Email not found","");
+						updateResults("Email not found","",5);
 			    		return;
 					}
 				} catch(err){
 					console.log("Error: "+err);
-					updateResults("Email not found","");
+					updateResults("Email not found","",5);
 		    		return;
 				}
 			});
@@ -131,7 +134,7 @@ setTimeout(function(){
 	    	var companyDomain = extractDomain(companyURL);
 		    console.log(companyDomain);
 		    if(companyDomain == "Not found"){
-		    	updateResults("Email not found","");
+		    	updateResults("Email not found","",5);
 		    	return;
 		    }
 
@@ -154,19 +157,19 @@ setTimeout(function(){
 				console.log(response);
 				switch(response.farewell){
 					case -1:
-						updateResults(possibleEmails[0],"Not Likely");
+						updateResults(possibleEmails[0],"Not Likely",0);
 						break;
 					case 0:
-						updateResults(possibleEmails[0],"Verified");
+						updateResults(possibleEmails[0],"Verified",1);
 						break;
 					case 1:
-						updateResults(possibleEmails[1],"Verified");
+						updateResults(possibleEmails[1],"Verified",2);
 						break;
 					case 2:
-						updateResults(possibleEmails[2],"Verified");
+						updateResults(possibleEmails[2],"Verified",3);
 						break;
 					case 3:
-						updateResults(possibleEmails[0]+"<br>"+possibleEmails[1]+"<br>"+possibleEmails[2],"Risky");
+						updateResults(possibleEmails[0]+"<br>"+possibleEmails[1]+"<br>"+possibleEmails[2],"Risky",4);
 						break;
 				}
 			});
@@ -190,9 +193,17 @@ setTimeout(function(){
 		}
 
 
-		function updateResults(email,verified){
+		function updateResults(email,verified,color_index){
+			var colors = ["red","green","green","green","#cccc00","black"];
 			document.getElementById("hunterEmail").innerHTML = email;
 			document.getElementById("hunterVerified").innerHTML = verified;
+			document.getElementById("hunterVerified").style.color = colors[color_index];
+			if(color_index==5){
+				document.getElementById("hunterPopUp").style.height = "150px";
+			}
+			else if(color_index==4){
+				document.getElementById("hunterPopUp").style.height = "250px";
+			}
 		}
 
 	});
