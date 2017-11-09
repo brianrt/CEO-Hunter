@@ -87,7 +87,7 @@ function generateEmails(ceo,description){
   var name = {first:tokens[0],last:tokens[tokens.length-1]}
   possibleEmails.push(name.first+"@"+companyDomain);
   possibleEmails.push(name.first.charAt(0)+name.last.toLowerCase()+"@"+companyDomain);
-  possibleEmails.push(name.first+"."+name.last.toLowerCase()+"@"+companyDomain);
+  // possibleEmails.push(name.first+"."+name.last.toLowerCase()+"@"+companyDomain);
   console.log(possibleEmails.length);
   for(var i = 0; i < possibleEmails.length;i++){
     console.log(possibleEmails[i]);
