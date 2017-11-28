@@ -66,7 +66,7 @@ function verifyEmail(name,email_address){
           document.getElementById("confidence").style.color="red";
           count++;
           console.log(count);
-          if(count==3){ //last one
+          if(count==2){ //last one
             addSuccessFullHunt(ceo_name,ceo_description,email_address,"Not Likely",false);
             refreshHTML();
           }
