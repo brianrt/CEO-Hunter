@@ -106,3 +106,10 @@
       font-size: 15px !important;
       margin: 0 !important;
     }
+
+    #ceo-hunter-extension .hunt_info {
+      all: unset !important;
+      font-size: 15px !important;
+      margin: 0 !important;
+      display: inline;
+    }

@@ -17,7 +17,7 @@ var tab_dict = {};
 var url_dict = {};
 
 //Use second link to change back TODO
-var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><br><p id=LinkedInDescription class=ceo-hunter-title>Loading CEO Description...</p><br><p id=LinkedInName class=info>Loading CEO Name...</p><br><br><p class=ceo-hunter-title>Personal Email Address</p><br><p id=personalEmail class=info>Loading Email...</p><br><t id=confidence></t><br><br><p class=ceo-hunter-title>Company Phone #</p><br><p id=companyPhone class=info>Loading phone...</p><br><br><input type="hidden" id="mailTo"><p id="withgmail"></p><br><br><br><a href="http://www.ceohunter.io/feedback/" style="color:blue;">Report bugs and request new features</a></div><br>';
+var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><br><p id=LinkedInDescription class=ceo-hunter-title>Loading CEO Description...</p><br><p id=LinkedInName class=info>Loading CEO Name...</p><br><br><p class=ceo-hunter-title>Personal Email Address</p><br><p id=personalEmail class=info>Loading Email...</p><br><t id=confidence></t><br><br><p class=ceo-hunter-title>Company Phone #</p><br><p id=companyPhone class=info>Loading phone...</p><br><br><input type="hidden" id="mailTo"><p id="withgmail"></p><br><br><a href="http://www.ceohunter.io/feedback/" style="color:blue;">Report bugs and request new features</a></div><br><p class="hunt_info" id="hunts_used">0</p><p class="hunt_info"> / </p><p class="hunt_info" id="total_hunts">0</p><p class = "hunt_info"> hunts used. </p><a target="_blank" href="https://ceohunter-a02da.firebaseapp.com/payment.html" style="color:blue;">Upgrade</a><br><br>';
 // var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><br><p id=LinkedInDescription class=ceo-hunter-title>Loading CEO Description...</p><br><p id=LinkedInName class=info>Loading CEO Name...</p><br><br><p class=ceo-hunter-title>Personal Email Address</p><br><p id=personalEmail class=info>Loading Email...</p><br><t id=confidence></t><br><br><p class=ceo-hunter-title>Company Phone #</p><br><p id=companyPhone class=info>Loading phone...</p><br><br><input type="hidden" id="mailTo"><p id="withgmail"></p><br><br><input id="changePos" type="button" value = "Choose position on next launch" onclick = \'document.cookie = "needsToChangePosition=True";\'><br><br><a href="http://www.ceohunter.io/feedback/" style="color:blue;">Report bugs and request new features</a></div><br>';
 var checkBoxesHTML =' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><button id="test_button">Click me</button><br></div>'
 //Firebase vars
@@ -49,9 +49,7 @@ function getPhoneNumber(text){
 function addSuccessFullHunt(ceo_name,ceo_description,email_address,confidence,was_cached){
   //TODO: add entry to stripe_customers/userID/success so back end knows to increment
 
-  firebase.database().ref('stripe_customers/' + userId + '/hunt').set({
-    success: true,
-  });
+  firebase.database().ref('stripe_customers/' + userId + '/success').set(true);
   if(!was_cached && targeted_position == "ceo_owner"){
     addCompany(ceo_name,ceo_description,email_address,confidence);
   }
@@ -355,7 +353,6 @@ function launchSequence(){
     employeeWindowCreated = false;
     googleWindowCreated = false;
     whoIsUsed=false;
-    setTerminatingConditions();
     getContactInfo();
     setCompanyURL();
 }
@@ -368,7 +365,6 @@ function fireBaseInit(){
   };
   firebase.initializeApp(config);
 }
-
 
 
 /**
@@ -412,6 +408,7 @@ function startHunting(tab) {
   }
   if(!(tab.id in tab_dict)){//First for this tab
     console.log("first time for tab");
+    initUser();
     tab_dict[tab.id]=true;
     initialize();//Initial load of context script for this tab
     checkIfPositionSelected(tab.url);//Begin running rest of extension
@@ -440,41 +437,23 @@ function startHunting(tab) {
 function initUser(){
   firebase.database().ref(`/stripe_customers/${userId}`).on('value', snapshot => {
     var data = snapshot.val();
-    console.log(data);
     if(data != null){
       if(data.total_hunts != null){
         total_hunts = data.total_hunts;
+        if(total_hunts == 4000000000){
+          $("#total_hunts").html("Unlimited");
+        } else {
+          $("#total_hunts").html(total_hunts);
+        }
       }
       if(data.hunts_used != null){
         hunts_used = data.hunts_used;
+        $("#hunts_used").html(hunts_used);
       }
     }
+    refreshHTML();
   });
 }
-
-
-
-//     if(found){
-//       console.log("found "+user_email);
-//       user_number=i;
-//       console.log(user_number);
-//       hunts_used = users[i].hunts;
-//       total_hunts = users[i].total_hunts;
-//       console.log("user hunts: "+hunts_used);
-//     } else{ //need to add to database
-//       user_number = i;
-//       console.log(user_number);
-//       hunts_used = 0;
-//       total_hunts = 0;
-//       firebase.database().ref('Users/' + user_number).set({
-//         email: user_email,
-//         hunts : hunts_used,
-//         total_hunts : total_hunts
-//       });
-//     }
-//     startHunting(main_tab);
-//   });
-// }
 
 function checkIfPositionSelected(url){
   //Get rid of this to enable position selection TODO
@@ -523,7 +502,7 @@ function setTargetedPosition(){
   });
 }
 
-//Listen for activity on Linkedin.com
+// Listen for activity on Linkedin.com
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   if(tab.url.includes("https://www.linkedin.com/in/")){
     console.log("hello!");
@@ -536,6 +515,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   }
 });
 
+// Begin Flow
 chrome.runtime.onMessage.addListener(listenerCallback);
 chrome.browserAction.onClicked.addListener(function(tab) {
   main_tab = tab;
@@ -558,24 +538,3 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     }
   });
 });
-
-
-
-
-//     if(user_email==""){
-//       initUser();
-//       console.log("signed in, user_email not in");
-//     }else{
-//       console.log("signed in, user_email already recorded");
-//       startHunting(main_tab);
-//     }
-//   }
-//   else if(attempted_sign_in){ //If they attempted to sign in already but failed, don't keep asking them to sign in
-//     startHunting(main_tab);
-//   }
-//   else { //Needs to login
-//     console.log("needs to login");
-//     startAuth(true,tab);
-//     alert("Signing in, please click extension again");
-//   }
-// });
