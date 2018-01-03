@@ -23,11 +23,13 @@ var checkBoxesHTML =' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (B
 //Firebase vars
 var firebase_intialized = false;
 var database;
+var userId;
 var user_number = 0;
 var user_email = "";
-var user_hunts = 0;
+var hunts_used = 0;
 var total_hunts = 0;
 var attempted_sign_in = false;
+var user_initialized = false;
 
 function getEmail(text){
   var emailRe = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -45,14 +47,10 @@ function getPhoneNumber(text){
 }
 
 function addSuccessFullHunt(ceo_name,ceo_description,email_address,confidence,was_cached){
-  user_hunts += 1;
-  firebase.database().ref('Users/' + user_number).update({
-    email: user_email,
-    hunts : user_hunts
-  });
-  firebase.database().ref('Users/' + user_number+'/sites_visited/'+total_hunts).update({
-    url: companyURL,
-    status: "success",
+  //TODO: add entry to stripe_customers/userID/success so back end knows to increment
+
+  firebase.database().ref('stripe_customers/' + userId + '/hunt').set({
+    success: true,
   });
   if(!was_cached && targeted_position == "ceo_owner"){
     addCompany(ceo_name,ceo_description,email_address,confidence);
@@ -348,10 +346,6 @@ function initialize(){
 }
 
 function launchSequence(){
-    total_hunts +=1;
-    firebase.database().ref('Users/' + user_number).update({
-      total_hunts : total_hunts
-    });
     ceoName = false;
     contact = false;
     contact_url = false;
@@ -444,45 +438,43 @@ function startHunting(tab) {
 }
 
 function initUser(){
-  user_email = firebase.auth().currentUser.email;
-    console.log(user_email);
-    var userId = firebase.auth().currentUser.uid;
-    firebase.database().ref('/Users/').once('value').then(function(snapshot) {
-      // var username = snapshot.val().username;
-      var users = snapshot.val();
-      var found = false;
-      var i = 0;
-      for (;i < users.length; i++){
-        // console.log(users[i]);
-        // console.log(users[i].email);
-        var email = users[i].email;
-        //console.log("email searching for: "+email);
-        if(email == user_email){//email already exist in database
-          found = true;
-          break;
-        }
+  firebase.database().ref(`/stripe_customers/${userId}`).on('value', snapshot => {
+    var data = snapshot.val();
+    console.log(data);
+    if(data != null){
+      if(data.total_hunts != null){
+        total_hunts = data.total_hunts;
       }
-      if(found){
-        console.log("found "+user_email);
-        user_number=i;
-        console.log(user_number);
-        user_hunts = users[i].hunts;
-        total_hunts = users[i].total_hunts;
-        console.log("user hunts: "+user_hunts);
-      } else{ //need to add to database
-        user_number = i;
-        console.log(user_number);
-        user_hunts = 0;
-        total_hunts = 0;
-        firebase.database().ref('Users/' + user_number).set({
-          email: user_email,
-          hunts : user_hunts,
-          total_hunts : total_hunts
-        });
+      if(data.hunts_used != null){
+        hunts_used = data.hunts_used;
       }
-      startHunting(main_tab);
+    }
   });
 }
+
+
+
+//     if(found){
+//       console.log("found "+user_email);
+//       user_number=i;
+//       console.log(user_number);
+//       hunts_used = users[i].hunts;
+//       total_hunts = users[i].total_hunts;
+//       console.log("user hunts: "+hunts_used);
+//     } else{ //need to add to database
+//       user_number = i;
+//       console.log(user_number);
+//       hunts_used = 0;
+//       total_hunts = 0;
+//       firebase.database().ref('Users/' + user_number).set({
+//         email: user_email,
+//         hunts : hunts_used,
+//         total_hunts : total_hunts
+//       });
+//     }
+//     startHunting(main_tab);
+//   });
+// }
 
 function checkIfPositionSelected(url){
   //Get rid of this to enable position selection TODO
@@ -551,21 +543,39 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     fireBaseInit();
     firebase_intialized=true;
   }
-  if(firebase.auth().currentUser!=null){
-    if(user_email==""){
-      initUser();
-      console.log("signed in, user_email not in");
-    }else{
-      console.log("signed in, user_email already recorded");
+  firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+      userId = user.uid;
+      console.log("User is signed in.");
+      if(!user_initialized){
+        user_initialized = true;
+        initUser();
+      }
       startHunting(main_tab);
+    } else {
+      console.log("User is not signed in.");
+      startAuth(true,tab);
     }
-  }
-  else if(attempted_sign_in){ //If they attempted to sign in already but failed, don't keep asking them to sign in
-    startHunting(main_tab);
-  }
-  else { //Needs to login
-    console.log("needs to login");
-    startAuth(true,tab);
-    alert("Signing in, please click extension again");
-  }
+  });
 });
+
+
+
+
+//     if(user_email==""){
+//       initUser();
+//       console.log("signed in, user_email not in");
+//     }else{
+//       console.log("signed in, user_email already recorded");
+//       startHunting(main_tab);
+//     }
+//   }
+//   else if(attempted_sign_in){ //If they attempted to sign in already but failed, don't keep asking them to sign in
+//     startHunting(main_tab);
+//   }
+//   else { //Needs to login
+//     console.log("needs to login");
+//     startAuth(true,tab);
+//     alert("Signing in, please click extension again");
+//   }
+// });
