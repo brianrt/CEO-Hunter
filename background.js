@@ -17,7 +17,7 @@ var tab_dict = {};
 var url_dict = {};
 
 //Use second link to change back TODO
-var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><br><p id=LinkedInDescription class=ceo-hunter-title>Loading CEO Description...</p><br><p id=LinkedInName class=info>Loading CEO Name...</p><br><br><p class=ceo-hunter-title>Personal Email Address</p><br><p id=personalEmail class=info>Loading Email...</p><br><t id=confidence></t><br><br><p class=ceo-hunter-title>Company Phone #</p><br><p id=companyPhone class=info>Loading phone...</p><br><br><input type="hidden" id="mailTo"><p id="withgmail"></p><br><br><a href="http://www.ceohunter.io/feedback/" style="color:blue;">Report bugs and request new features</a></div><br><p class="hunt_info" id="hunts_used">0</p><p class="hunt_info"> / </p><p class="hunt_info" id="total_hunts">0</p><p class = "hunt_info"> hunts used. </p><a target="_blank" href="https://ceohunter-a02da.firebaseapp.com/payment.html" style="color:blue;">Upgrade</a><br><br>';
+var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><br><p id=LinkedInDescription class=ceo-hunter-title>Loading CEO Description...</p><br><p id=LinkedInName class=info>Loading CEO Name...</p><br><br><p class=ceo-hunter-title id=huntsUsed>Personal Email Address</p><br><p id=personalEmail class=info>Loading Email...</p><br><t id=confidence></t><br><br><p class=ceo-hunter-title>Company Phone #</p><br><p id=companyPhone class=info>Loading phone...</p><br><br><input type="hidden" id="mailTo"><p id="withgmail"></p><br><br><a href="http://www.ceohunter.io/feedback/" style="color:blue;">Report bugs and request new features</a></div><br><p class="hunt_info" id="hunts_used">0</p><p class="hunt_info"> / </p><p class="hunt_info" id="total_hunts">0</p><p class = "hunt_info"> hunts used. </p><a target="_blank" href="https://ceohunter-a02da.firebaseapp.com/payment.html" style="color:blue;">Upgrade</a><br><br>';
 // var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><br><p id=LinkedInDescription class=ceo-hunter-title>Loading CEO Description...</p><br><p id=LinkedInName class=info>Loading CEO Name...</p><br><br><p class=ceo-hunter-title>Personal Email Address</p><br><p id=personalEmail class=info>Loading Email...</p><br><t id=confidence></t><br><br><p class=ceo-hunter-title>Company Phone #</p><br><p id=companyPhone class=info>Loading phone...</p><br><br><input type="hidden" id="mailTo"><p id="withgmail"></p><br><br><input id="changePos" type="button" value = "Choose position on next launch" onclick = \'document.cookie = "needsToChangePosition=True";\'><br><br><a href="http://www.ceohunter.io/feedback/" style="color:blue;">Report bugs and request new features</a></div><br>';
 var checkBoxesHTML =' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><button id="test_button">Click me</button><br></div>'
 //Firebase vars
@@ -28,8 +28,10 @@ var user_number = 0;
 var user_email = "";
 var hunts_used = 0;
 var total_hunts = 0;
+var all_hunts_used = false;
 var attempted_sign_in = false;
 var user_initialized = false;
+//LinkedIn page feature vars
 
 function getEmail(text){
   var emailRe = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -44,6 +46,10 @@ function getPhoneNumber(text){
   if (phoneRe.test(text))
     return text.match(phoneRe)[0];
   return "";
+}
+
+function addSuccessFullEmailLinkedIn(){
+  firebase.database().ref('stripe_customers/' + userId + '/success').set(true);
 }
 
 function addSuccessFullHunt(ceo_name,ceo_description,email_address,confidence,was_cached){
@@ -170,7 +176,12 @@ function listenerCallback(request,sender,sendResponse){
     }
     else if (request.greeting == "emails"){
         console.log(request.message);
-        verifyEmails(request.message,sendResponse);
+        if(all_hunts_used){
+          sendResponse({farewell: -2});
+        } else {
+          addSuccessFullEmailLinkedIn();
+          verifyEmails(request.message,sendResponse);
+        }
     }
     return true;
 }
@@ -327,7 +338,11 @@ function setCompanyURL(){
 }
 
 function refreshHTML(){
-  chrome.tabs.sendMessage(tab_id, {greeting: "update data",message:document.getElementById("ceo_hunter").innerHTML});
+  try{
+    chrome.tabs.sendMessage(tab_id, {greeting: "update data",message:document.getElementById("ceo_hunter").innerHTML});
+  } catch(err){
+    console.log("refreshHTML not ready yet");
+  }
 }
 
 function initialize(){
@@ -343,18 +358,33 @@ function initialize(){
     });
 }
 
+function remainingHuntsLeft(){
+  setNumHunts();
+  if(all_hunts_used){
+    $(".ceo-hunter-title").html("");
+    $(".info").html("");
+    $("#confidence").html("");
+    $("#huntsUsed").html("All hunts used! Please upgrade for more hunts.");
+    refreshHTML();
+    return false;
+  }
+  return true;
+}
+
 function launchSequence(){
-    ceoName = false;
-    contact = false;
-    contact_url = false;
-    company = false;
-    employeepage = false;
-    companyWindowCreated = false;
-    employeeWindowCreated = false;
-    googleWindowCreated = false;
-    whoIsUsed=false;
-    getContactInfo();
-    setCompanyURL();
+    if(remainingHuntsLeft()){
+      ceoName = false;
+      contact = false;
+      contact_url = false;
+      company = false;
+      employeepage = false;
+      companyWindowCreated = false;
+      employeeWindowCreated = false;
+      googleWindowCreated = false;
+      whoIsUsed=false;
+      getContactInfo();
+      setCompanyURL();
+    }
 }
 
 function fireBaseInit(){
@@ -408,7 +438,6 @@ function startHunting(tab) {
   }
   if(!(tab.id in tab_dict)){//First for this tab
     console.log("first time for tab");
-    initUser();
     tab_dict[tab.id]=true;
     initialize();//Initial load of context script for this tab
     checkIfPositionSelected(tab.url);//Begin running rest of extension
@@ -434,25 +463,37 @@ function startHunting(tab) {
   tab_dict[tab.id] = !tab_dict[tab.id];
 }
 
+// Adds a listener for changes to the number of hunts used
 function initUser(){
   firebase.database().ref(`/stripe_customers/${userId}`).on('value', snapshot => {
     var data = snapshot.val();
     if(data != null){
       if(data.total_hunts != null){
         total_hunts = data.total_hunts;
-        if(total_hunts == 4000000000){
-          $("#total_hunts").html("Unlimited");
-        } else {
-          $("#total_hunts").html(total_hunts);
-        }
       }
       if(data.hunts_used != null){
         hunts_used = data.hunts_used;
-        $("#hunts_used").html(hunts_used);
       }
+      if(data.all_hunts_used != null){
+        all_hunts_used = data.all_hunts_used;
+        if(!user_initialized){
+          user_initialized = true;
+          startHunting(main_tab);
+        }
+      }
+      setNumHunts();
     }
-    refreshHTML();
   });
+}
+
+function setNumHunts(){
+  if(total_hunts == 4000000000){
+    $("#total_hunts").html("Unlimited");
+  } else {
+    $("#total_hunts").html(total_hunts);
+  }
+  $("#hunts_used").html(hunts_used);
+  refreshHTML();
 }
 
 function checkIfPositionSelected(url){
@@ -502,17 +543,38 @@ function setTargetedPosition(){
   });
 }
 
+function addAllHuntsUsedListener(){
+  firebase.database().ref(`/stripe_customers/${userId}/all_hunts_used`).on('value', snapshot => {
+    all_hunts_used = snapshot.val();
+  });
+}
+
 // Listen for activity on Linkedin.com
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-  if(tab.url.includes("https://www.linkedin.com/in/")){
-    console.log("hello!");
-    chrome.tabs.executeScript(tab.id, {file: "jquery-3.1.1.min.js", allFrames: false},function(){//Inject Jquery
-      chrome.tabs.executeScript(tab.id, {file: "injectLinkedIn.js", allFrames: false, runAt: "document_end"},function(){//Inject the javascript
-        chrome.tabs.insertCSS(tab.id, {file: "InjectLinkedIn.css", allFrames: false, runAt: "document_end"},function(){//Inject the CSS
-        });
-      });
-    });
+  if(!firebase_intialized){
+    fireBaseInit();
+    firebase_intialized=true;
   }
+  firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+      userId = user.uid;
+      console.log("User is signed in.");
+      addAllHuntsUsedListener();
+      if(tab.url.includes("https://www.linkedin.com/in/")){
+        chrome.tabs.executeScript(tab.id, {file: "jquery-3.1.1.min.js", allFrames: false},function(){//Inject Jquery
+          chrome.tabs.executeScript(tab.id, {file: "injectLinkedIn.js", allFrames: false, runAt: "document_end"},function(){//Inject the javascript
+            chrome.tabs.insertCSS(tab.id, {file: "InjectLinkedIn.css", allFrames: false, runAt: "document_end"},function(){//Inject the CSS
+            });
+          });
+        });
+      }
+
+
+    } else {
+      console.log("User is not signed in.");
+      startAuth(true,tab);
+    }
+  });
 });
 
 // Begin Flow
@@ -528,10 +590,10 @@ chrome.browserAction.onClicked.addListener(function(tab) {
       userId = user.uid;
       console.log("User is signed in.");
       if(!user_initialized){
-        user_initialized = true;
         initUser();
+      } else {
+        startHunting(main_tab);
       }
-      startHunting(main_tab);
     } else {
       console.log("User is not signed in.");
       startAuth(true,tab);

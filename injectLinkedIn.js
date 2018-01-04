@@ -61,8 +61,6 @@ setTimeout(function(){
 				console.log(data.innerHTML);
 				var dataText = data.innerHTML;
 
-
-
 				var startIndex = dataText.indexOf('"included":[{"$deletedFields');
 				var prunedData = dataText.substring(startIndex);
 				var endIndex = prunedData.indexOf("}]}");
@@ -156,6 +154,9 @@ setTimeout(function(){
 			}, function(response){
 				console.log(response);
 				switch(response.farewell){
+					case -2:
+						updateResults('Out of hunts! <a target="_blank" href="https://ceohunter-a02da.firebaseapp.com/payment.html" style="color:blue;">Upgrade</a>', "",0);
+						break;
 					case -1:
 						updateResults(possibleEmails[0],"Not Likely",0);
 						break;
