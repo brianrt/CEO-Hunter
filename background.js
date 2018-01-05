@@ -464,10 +464,14 @@ function startHunting(tab) {
 }
 
 // Adds a listener for changes to the number of hunts used
-function initUser(){
+function initUser(email){
   firebase.database().ref(`/stripe_customers/${userId}`).on('value', snapshot => {
     var data = snapshot.val();
-    if(data != null){
+    if(data == null){
+      firebase.database().ref(`customers_to_be_created/${userId}`).set({email: email}).then(() => {
+          console.log("wrote value");
+      });
+    } else {
       if(data.total_hunts != null){
         total_hunts = data.total_hunts;
       }
@@ -478,6 +482,7 @@ function initUser(){
         all_hunts_used = data.all_hunts_used;
         if(!user_initialized){
           user_initialized = true;
+          console.log("got all the data, can start hunting");
           startHunting(main_tab);
         }
       }
@@ -590,7 +595,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
       userId = user.uid;
       console.log("User is signed in.");
       if(!user_initialized){
-        initUser();
+        initUser(user.email);
       } else {
         startHunting(main_tab);
       }
