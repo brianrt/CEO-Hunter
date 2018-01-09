@@ -2,7 +2,7 @@ setTimeout(function(){
 	if(document.getElementById("emailCEO") != undefined){
 		return;
 	}
-	var templateHTML = '<h1 id=mainHeader>Deal Hunter (BETA)</h1><br><br><button id="closeHunter">✖</button><p id="hunterName">Loading...</p><br><p id="hunterEmail">Loading...</p><br><p id="hunterVerified">Loading...</p>';
+	var templateHTML = '<h1 id=mainHeader>Deal Hunter (BETA)</h1><br><br><button id="closeHunter">✖</button><p id="hunterName">Loading...</p><br><p id="hunterEmail">Loading...</p><br><p id="hunterVerified">Loading...</p><br><p class="hunt_info" id="hunts_used_l">0</p><p class="hunt_info"> / </p><p class="hunt_info" id="total_hunts_l">0</p><p class = "hunt_info"> hunts used. </p><a target="_blank" href="https://ceohunter-a02da.firebaseapp.com/payment.html" style="color:blue;">Upgrade</a><br><br>';
 	window.scrollTo(0,500);
 	var button = document.createElement('button');
 	button.innerHTML = "Find Email";
@@ -155,22 +155,22 @@ setTimeout(function(){
 				console.log(response);
 				switch(response.farewell){
 					case -2:
-						updateResults('Out of hunts! <a target="_blank" href="https://ceohunter-a02da.firebaseapp.com/payment.html" style="color:blue;">Upgrade</a>', "",0);
+						updateResults('All hunts used! Please upgrade for more hunts.', "",0,response.hunts_used,response.total_hunts);
 						break;
 					case -1:
-						updateResults(possibleEmails[0],"Not Likely",0);
+						updateResults(possibleEmails[0],"Not Likely",0,response.hunts_used,response.total_hunts);
 						break;
 					case 0:
-						updateResults(possibleEmails[0],"Verified",1);
+						updateResults(possibleEmails[0],"Verified",1,response.hunts_used,response.total_hunts);
 						break;
 					case 1:
-						updateResults(possibleEmails[1],"Verified",2);
+						updateResults(possibleEmails[1],"Verified",2,response.hunts_used,response.total_hunts);
 						break;
 					case 2:
-						updateResults(possibleEmails[2],"Verified",3);
+						updateResults(possibleEmails[2],"Verified",3,response.hunts_used,response.total_hunts);
 						break;
 					case 3:
-						updateResults(possibleEmails[0]+"<br>"+possibleEmails[1]+"<br>"+possibleEmails[2],"Risky",4);
+						updateResults(possibleEmails[0]+"<br>"+possibleEmails[1]+"<br>"+possibleEmails[2],"Risky",4,response.hunts_used,response.total_hunts);
 						break;
 				}
 			});
@@ -194,16 +194,19 @@ setTimeout(function(){
 		}
 
 
-		function updateResults(email,verified,color_index){
+		function updateResults(email,verified,color_index,hunts_used,total_hunts){
+			console.log(hunts_used);
 			var colors = ["red","green","green","green","#cccc00","black"];
 			document.getElementById("hunterEmail").innerHTML = email;
 			document.getElementById("hunterVerified").innerHTML = verified;
 			document.getElementById("hunterVerified").style.color = colors[color_index];
+			document.getElementById("hunts_used_l").innerHTML = Math.min(hunts_used+1,total_hunts);
+			document.getElementById("total_hunts_l").innerHTML = total_hunts;
 			if(color_index==5){
-				document.getElementById("hunterPopUp").style.height = "150px";
+				document.getElementById("hunterPopUp").style.height = "190px";
 			}
 			else if(color_index==4){
-				document.getElementById("hunterPopUp").style.height = "250px";
+				document.getElementById("hunterPopUp").style.height = "260px";
 			}
 		}
 

@@ -26,7 +26,7 @@
     margin-top: -50px;
     margin-left: -50px;
     width: 300px;
-    height: 200px;
+    height: 220px;
     background-color: #FFF;
     z-index: 9999;
     text-align: center;
@@ -60,4 +60,11 @@
     position: absolute;
     top: 0px;
     right: 0px;
+}
+
+.hunt_info {
+    all: unset !important;
+    font-size: 15px !important;
+    margin: 0 !important;
+    display: inline;
 }

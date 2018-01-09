@@ -175,12 +175,11 @@ function listenerCallback(request,sender,sendResponse){
         );
     }
     else if (request.greeting == "emails"){
-        console.log(request.message);
         if(all_hunts_used){
-          sendResponse({farewell: -2});
+          sendResponse({farewell: -2,hunts_used: hunts_used,total_hunts: total_hunts});
         } else {
           addSuccessFullEmailLinkedIn();
-          verifyEmails(request.message,sendResponse);
+          verifyEmails(request.message,sendResponse,hunts_used,total_hunts);
         }
     }
     return true;
@@ -464,7 +463,7 @@ function startHunting(tab) {
 }
 
 // Adds a listener for changes to the number of hunts used
-function initUser(email){
+function initUser(email,callback){
   firebase.database().ref(`/stripe_customers/${userId}`).on('value', snapshot => {
     var data = snapshot.val();
     if(data == null){
@@ -483,7 +482,9 @@ function initUser(email){
         if(!user_initialized){
           user_initialized = true;
           console.log("got all the data, can start hunting");
-          startHunting(main_tab);
+          if(callback != null){
+            callback(main_tab);
+          }
         }
       }
       setNumHunts();
@@ -548,38 +549,31 @@ function setTargetedPosition(){
   });
 }
 
-function addAllHuntsUsedListener(){
-  firebase.database().ref(`/stripe_customers/${userId}/all_hunts_used`).on('value', snapshot => {
-    all_hunts_used = snapshot.val();
-  });
-}
-
 // Listen for activity on Linkedin.com
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-  if(!firebase_intialized){
-    fireBaseInit();
-    firebase_intialized=true;
-  }
-  firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
-      userId = user.uid;
-      console.log("User is signed in.");
-      addAllHuntsUsedListener();
-      if(tab.url.includes("https://www.linkedin.com/in/")){
+  if(tab.url.includes("https://www.linkedin.com/in/")){
+    if(!firebase_intialized){
+      fireBaseInit();
+      firebase_intialized=true;
+    }
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        userId = user.uid;
+        console.log("User is signed in.");
+        initUser(user.email,null);
+
         chrome.tabs.executeScript(tab.id, {file: "jquery-3.1.1.min.js", allFrames: false},function(){//Inject Jquery
           chrome.tabs.executeScript(tab.id, {file: "injectLinkedIn.js", allFrames: false, runAt: "document_end"},function(){//Inject the javascript
             chrome.tabs.insertCSS(tab.id, {file: "InjectLinkedIn.css", allFrames: false, runAt: "document_end"},function(){//Inject the CSS
             });
           });
         });
+      } else {
+        console.log("User is not signed in.");
+        startAuth(true,tab);
       }
-
-
-    } else {
-      console.log("User is not signed in.");
-      startAuth(true,tab);
-    }
-  });
+    }); 
+  }
 });
 
 // Begin Flow
@@ -595,7 +589,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
       userId = user.uid;
       console.log("User is signed in.");
       if(!user_initialized){
-        initUser(user.email);
+        initUser(user.email,startHunting);
       } else {
         startHunting(main_tab);
       }
