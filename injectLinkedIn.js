@@ -1,8 +1,27 @@
+var hunts_used = 0;
+var total_hunts = 0;
+
+//Add a listener for hunt info updates
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+	console.log("received "+hunts_used);
+	if(request.hunts_used != undefined){
+		hunts_used = request.hunts_used;
+	}
+	if(request.total_hunts != undefined){
+		total_hunts = request.total_hunts;
+	}
+	if(document.getElementById("hunts_used_l") != undefined){
+		document.getElementById("hunts_used_l").innerHTML = hunts_used;
+		document.getElementById("total_hunts_l").innerHTML = total_hunts;
+	}
+});
+
+
 setTimeout(function(){
 	if(document.getElementById("emailCEO") != undefined){
 		return;
 	}
-	var templateHTML = '<h1 id=mainHeader>Deal Hunter (BETA)</h1><br><br><button id="closeHunter">✖</button><p id="hunterName">Loading...</p><br><p id="hunterEmail">Loading...</p><br><p id="hunterVerified">Loading...</p><br><p class="hunt_info" id="hunts_used_l">0</p><p class="hunt_info"> / </p><p class="hunt_info" id="total_hunts_l">0</p><p class = "hunt_info"> hunts used. </p><a target="_blank" href="https://ceohunter-a02da.firebaseapp.com/payment.html" style="color:blue;">Upgrade</a><br><br>';
+	var templateHTML = '<h1 id=mainHeader_l>Deal Hunter (BETA)</h1><br><br><button id="closeHunter">✖</button><p id="hunterName">Loading...</p><br><p id="hunterEmail">Loading...</p><br><p id="hunterVerified">Loading...</p><br><p class="hunt_info" id="hunts_used_l">0</p><p class="hunt_info"> / </p><p class="hunt_info" id="total_hunts_l">0</p><p class = "hunt_info"> hunts used. </p><a target="_blank" href="http://www.dealhunter.io/pricing/" style="color:blue;">Upgrade</a><br><br>';
 	window.scrollTo(0,500);
 	var button = document.createElement('button');
 	button.innerHTML = "Find Email";
@@ -155,22 +174,24 @@ setTimeout(function(){
 				console.log(response);
 				switch(response.farewell){
 					case -2:
-						updateResults('All hunts used! Please upgrade for more hunts.', "",0,response.hunts_used,response.total_hunts);
+						hunts_used = response.hunts_used;
+						total_hunts = response.total_hunts;
+						updateResults('All hunts used! Please upgrade for more hunts.', "",0);
 						break;
 					case -1:
-						updateResults(possibleEmails[0],"Not Likely",0,response.hunts_used,response.total_hunts);
+						updateResults(possibleEmails[0],"Not Likely",0);
 						break;
 					case 0:
-						updateResults(possibleEmails[0],"Verified",1,response.hunts_used,response.total_hunts);
+						updateResults(possibleEmails[0],"Verified",1);
 						break;
 					case 1:
-						updateResults(possibleEmails[1],"Verified",2,response.hunts_used,response.total_hunts);
+						updateResults(possibleEmails[1],"Verified",2);
 						break;
 					case 2:
-						updateResults(possibleEmails[2],"Verified",3,response.hunts_used,response.total_hunts);
+						updateResults(possibleEmails[2],"Verified",3);
 						break;
 					case 3:
-						updateResults(possibleEmails[0]+"<br>"+possibleEmails[1]+"<br>"+possibleEmails[2],"Risky",4,response.hunts_used,response.total_hunts);
+						updateResults(possibleEmails[0]+"<br>"+possibleEmails[1]+"<br>"+possibleEmails[2],"Risky",4);
 						break;
 				}
 			});
@@ -194,13 +215,12 @@ setTimeout(function(){
 		}
 
 
-		function updateResults(email,verified,color_index,hunts_used,total_hunts){
-			console.log(hunts_used);
+		function updateResults(email,verified,color_index){
 			var colors = ["red","green","green","green","#cccc00","black"];
 			document.getElementById("hunterEmail").innerHTML = email;
 			document.getElementById("hunterVerified").innerHTML = verified;
 			document.getElementById("hunterVerified").style.color = colors[color_index];
-			document.getElementById("hunts_used_l").innerHTML = Math.min(hunts_used+1,total_hunts);
+			document.getElementById("hunts_used_l").innerHTML = hunts_used;
 			document.getElementById("total_hunts_l").innerHTML = total_hunts;
 			if(color_index==5){
 				document.getElementById("hunterPopUp").style.height = "190px";
