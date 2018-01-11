@@ -400,7 +400,7 @@ function fireBaseInit(){
  * Start the auth flow and authorizes to Firebase.
  * @param{boolean} interactive True if the OAuth flow should request with an interactive mode.
  */
-function startAuth(interactive,tab) {
+function startAuth(interactive) {
   attempted_sign_in = true;
   // Request an OAuth token from the Chrome Identity API.
   chrome.identity.getAuthToken({interactive: !!interactive}, function(token) {
@@ -513,28 +513,28 @@ function checkIfPositionSelected(url){
   targeted_position = "ceo_owner";
 
 
-  if(needsToChangePosition){
-    needsToChangePosition = false;
-    setTargetedPosition();
-    chrome.cookies.onChanged.addListener(function (changeInfo){
-      if (changeInfo.cookie.name == "needsToChangePosition"){
-        needsToChangePosition = true;
-        $("#changePos").attr("id","changePosBye");
-        $("#changePosBye").hide();
-        refreshHTML();
-      }
-    });
-  }
-  else{
+  // if(needsToChangePosition){
+  //   needsToChangePosition = false;
+  //   setTargetedPosition();
+  //   chrome.cookies.onChanged.addListener(function (changeInfo){
+  //     if (changeInfo.cookie.name == "needsToChangePosition"){
+  //       needsToChangePosition = true;
+  //       $("#changePos").attr("id","changePosBye");
+  //       $("#changePosBye").hide();
+  //       refreshHTML();
+  //     }
+  //   });
+  // }
+  // else{
     launchSequence();
-  }
+  // }
 }
 
-function setPosition(position) {
-    console.log(position);
-    targeted_position = position;
-    launchSequence();
-};
+// function setPosition(position) {
+//     console.log(position);
+//     targeted_position = position;
+//     launchSequence();
+// };
 
 function setTargetedPosition(){
   chrome.tabs.create({
@@ -565,7 +565,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
         userId = user.uid;
-        console.log("User is signed in.");
+        console.log("User is signed in l.");
         initUser(user.email,null);
 
         chrome.tabs.executeScript(tab.id, {file: "jquery-3.1.1.min.js", allFrames: false},function(){//Inject Jquery
@@ -575,8 +575,8 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
           });
         });
       } else {
-        console.log("User is not signed in.");
-        startAuth(true,tab);
+        console.log("User is not signed in l.");
+        startAuth(true);
       }
     }); 
   }
@@ -601,7 +601,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
       }
     } else {
       console.log("User is not signed in.");
-      startAuth(true,tab);
+      startAuth(true);
     }
   });
 });
