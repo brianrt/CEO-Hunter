@@ -576,7 +576,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
         });
       } else {
         console.log("User is not signed in l.");
-        startAuth(true);
+        startAuth(false);
       }
     }); 
   }
@@ -601,7 +601,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
       }
     } else {
       console.log("User is not signed in.");
-      startAuth(true);
+      startAuth(false);
     }
   });
 });
