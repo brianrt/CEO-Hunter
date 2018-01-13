@@ -415,8 +415,10 @@ function startAuth(interactive) {
       firebase.auth().signInWithCredential(credential).catch(function(error) {
         // The OAuth token might have been invalidated. Lets' remove it from cache.
         if (error.code === 'auth/invalid-credential') {
+          var current_time = new Date();
+          firebase.database().ref('/login_error_log/').push(current_time.toString());
           chrome.identity.removeCachedAuthToken({token: token}, function() {
-            // startAuth(interactive);
+            startAuth(interactive);
           });
         }
       });
