@@ -416,7 +416,7 @@ function startAuth(interactive) {
         // The OAuth token might have been invalidated. Lets' remove it from cache.
         if (error.code === 'auth/invalid-credential') {
           chrome.identity.removeCachedAuthToken({token: token}, function() {
-            startAuth(interactive);
+            // startAuth(interactive);
           });
         }
       });
