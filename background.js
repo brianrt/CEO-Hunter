@@ -401,30 +401,15 @@ function fireBaseInit(){
  * @param{boolean} interactive True if the OAuth flow should request with an interactive mode.
  */
 function startAuth(interactive) {
-  attempted_sign_in = true;
-  // Request an OAuth token from the Chrome Identity API.
-  chrome.identity.getAuthToken({interactive: !!interactive}, function(token) {
-    if (chrome.runtime.lastError && !interactive) {
-      console.log('It was not possible to get a token programmatically.');
-    } else if(chrome.runtime.lastError) {
-      console.error(chrome.runtime.lastError);
-    } else if (token) {
-      // Authrorize Firebase with the OAuth Access Token.
-      console.log("signing in");
-      var credential = firebase.auth.GoogleAuthProvider.credential(null, token);
-      firebase.auth().signInWithCredential(credential).catch(function(error) {
-        // The OAuth token might have been invalidated. Lets' remove it from cache.
-        if (error.code === 'auth/invalid-credential') {
-          var current_time = new Date();
-          firebase.database().ref('/login_error_log/').push(current_time.toString());
-          chrome.identity.removeCachedAuthToken({token: token}, function() {
-            startAuth(interactive);
-          });
-        }
-      });
-    } else {
-      console.error('The OAuth Token was null');
-    }
+  chrome.identity.launchWebAuthFlow({url: "https://ceohunter-a02da.firebaseapp.com/index.html?extension_login=true",interactive: true},function(responseUrl){
+    var url = new URL(responseUrl);
+    var token = url.searchParams.get("customToken");
+    console.log(token);
+    console.log(url);
+    firebase.auth().signInWithCustomToken(token).catch(function(error) {
+      var errorCode = error.code;
+      var errorMessage = error.message;
+    });
   });
 }
 
