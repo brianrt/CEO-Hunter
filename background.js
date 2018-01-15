@@ -409,13 +409,9 @@ function startAuth(interactive) {
         //User closed the window
         webFlowLaunched = false;
       } else{
-        console.log("response url: "+responseUrl);
         var url = new URL(responseUrl);
         var token = url.searchParams.get("customToken");
-        console.log(token);
-        console.log(url);
         firebase.auth().signInWithCustomToken(token).catch(function(error) {
-          console.log("Error!!!!");
           var errorCode = error.code;
           var errorMessage = error.message;
         });
@@ -588,10 +584,6 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     fireBaseInit();
     firebase_intialized=true;
   }
-  // else{
-  //   firebase.auth().signOut();
-  //   console.log("signed out");
-  // }
   firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
       userId = user.uid;
