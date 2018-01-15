@@ -33,6 +33,7 @@ var attempted_sign_in = false;
 var user_initialized = false;
 //LinkedIn page feature vars
 var linkedInTabId=-1;
+var webFlowLaunched = false;
 
 function getEmail(text){
   var emailRe = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -401,19 +402,26 @@ function fireBaseInit(){
  * @param{boolean} interactive True if the OAuth flow should request with an interactive mode.
  */
 function startAuth(interactive) {
-  chrome.identity.launchWebAuthFlow({url: "https://ceohunter-a02da.firebaseapp.com/index.html?extension_login=true",interactive: true},function(responseUrl){
-    if(responseUrl != undefined){
-      console.log("response url: "+responseUrl);
-      var url = new URL(responseUrl);
-      var token = url.searchParams.get("customToken");
-      console.log(token);
-      console.log(url);
-      firebase.auth().signInWithCustomToken(token).catch(function(error) {
-        var errorCode = error.code;
-        var errorMessage = error.message;
-      });
-    }
-  });
+  if(!webFlowLaunched){
+    webFlowLaunched = true;
+    chrome.identity.launchWebAuthFlow({url: "https://ceohunter-a02da.firebaseapp.com/index.html?extension_login=true",interactive: true},function(responseUrl){
+      if(responseUrl == undefined){
+        //User closed the window
+        webFlowLaunched = false;
+      } else{
+        console.log("response url: "+responseUrl);
+        var url = new URL(responseUrl);
+        var token = url.searchParams.get("customToken");
+        console.log(token);
+        console.log(url);
+        firebase.auth().signInWithCustomToken(token).catch(function(error) {
+          console.log("Error!!!!");
+          var errorCode = error.code;
+          var errorMessage = error.message;
+        });
+      }
+    });
+  }
 }
 
 
