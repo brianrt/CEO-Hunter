@@ -402,6 +402,7 @@ function fireBaseInit(){
  */
 function startAuth(interactive) {
   chrome.identity.launchWebAuthFlow({url: "https://ceohunter-a02da.firebaseapp.com/index.html?extension_login=true",interactive: true},function(responseUrl){
+    console.log("response url: "+responseUrl);
     var url = new URL(responseUrl);
     var token = url.searchParams.get("customToken");
     console.log(token);
@@ -582,7 +583,10 @@ chrome.browserAction.onClicked.addListener(function(tab) {
       userId = user.uid;
       console.log("User is signed in.");
       if(!user_initialized){
-        initUser(user.email,startHunting);
+        firebase.database().ref(`customers_to_sign_in/${user.uid}`).remove().then(() => {
+          console.log("removed customers_to_sign_in entry");
+          initUser(user.email,startHunting);
+        });
       } else {
         startHunting(main_tab);
       }
