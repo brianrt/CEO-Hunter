@@ -560,8 +560,12 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
       if (user) {
         userId = user.uid;
         console.log("User is signed in l.");
-        initUser(user.email,null);
-
+        if(!user_initialized){
+          firebase.database().ref(`customers_to_sign_in/${user.uid}`).remove().then(() => {
+            console.log("removed customers_to_sign_in entry");
+            initUser(user.email,null);
+          });
+        }
         chrome.tabs.executeScript(tab.id, {file: "jquery-3.1.1.min.js", allFrames: false},function(){//Inject Jquery
           chrome.tabs.executeScript(tab.id, {file: "injectLinkedIn.js", allFrames: false, runAt: "document_end"},function(){//Inject the javascript
             chrome.tabs.insertCSS(tab.id, {file: "InjectLinkedIn.css", allFrames: false, runAt: "document_end"},function(){//Inject the CSS
