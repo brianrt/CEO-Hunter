@@ -402,15 +402,17 @@ function fireBaseInit(){
  */
 function startAuth(interactive) {
   chrome.identity.launchWebAuthFlow({url: "https://ceohunter-a02da.firebaseapp.com/index.html?extension_login=true",interactive: true},function(responseUrl){
-    console.log("response url: "+responseUrl);
-    var url = new URL(responseUrl);
-    var token = url.searchParams.get("customToken");
-    console.log(token);
-    console.log(url);
-    firebase.auth().signInWithCustomToken(token).catch(function(error) {
-      var errorCode = error.code;
-      var errorMessage = error.message;
-    });
+    if(responseUrl != undefined){
+      console.log("response url: "+responseUrl);
+      var url = new URL(responseUrl);
+      var token = url.searchParams.get("customToken");
+      console.log(token);
+      console.log(url);
+      firebase.auth().signInWithCustomToken(token).catch(function(error) {
+        var errorCode = error.code;
+        var errorMessage = error.message;
+      });
+    }
   });
 }
 
@@ -578,6 +580,10 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     fireBaseInit();
     firebase_intialized=true;
   }
+  // else{
+  //   firebase.auth().signOut();
+  //   console.log("signed out");
+  // }
   firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
       userId = user.uid;
