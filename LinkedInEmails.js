@@ -14,9 +14,10 @@ function verifyEmails(possibleEmails, sendResponse){
 			//Check catch all first
 			if(resp.catch_all==true){
 				//send back 3
+				console.log("catch all");
 				sendResponse({farewell: 3});
 			}
-  			if(resp.smtp_check && resp.format_valid && resp.score>0.5){
+  			else if(resp.smtp_check && resp.format_valid && resp.score>0.5){
   					//send back 0
   					sendResponse({farewell: 0});
   			} else {
@@ -31,29 +32,31 @@ function verifyEmails(possibleEmails, sendResponse){
 				xhr1.onreadystatechange = function() {
 					if (xhr1.readyState == 4) {
 						var resp = JSON.parse(xhr1.responseText);
+						console.log("trying the next one");
 						if(resp.smtp_check && resp.format_valid && resp.score>0.5){
 			  				//send back 1
 			  				sendResponse({farewell: 1});
 			  			} else {
-			  				// wasn't valid email, try the next one
-							email_address = possibleEmails[2];
-							var access_key = 'd7294b9f413ac4e844ac4105b73aa91c';
-							var url = 'http://apilayer.net/api/check?access_key=' + access_key + '&email=' + email_address+'&catch_all=1';
-							var xhr2 = new XMLHttpRequest();
-							xhr2.open("GET", url, true);
-							xhr2.onreadystatechange = function() {
-								if (xhr2.readyState == 4) {
-									var resp = JSON.parse(xhr2.responseText);
-									if(resp.smtp_check && resp.format_valid && resp.score>0.5){
-					  					//send back 2
-					  					sendResponse({farewell: 2});
-						  			} else {
-						  				//send back -1
-						  				sendResponse({farewell: -1});
-						  			}
-								}
-							}
-							xhr2.send();
+			  				sendResponse({farewell: -1});
+			  		// 		// wasn't valid email, try the next one
+							// email_address = possibleEmails[2];
+							// var access_key = 'd7294b9f413ac4e844ac4105b73aa91c';
+							// var url = 'http://apilayer.net/api/check?access_key=' + access_key + '&email=' + email_address+'&catch_all=1';
+							// var xhr2 = new XMLHttpRequest();
+							// xhr2.open("GET", url, true);
+							// xhr2.onreadystatechange = function() {
+							// 	if (xhr2.readyState == 4) {
+							// 		var resp = JSON.parse(xhr2.responseText);
+							// 		if(resp.smtp_check && resp.format_valid && resp.score>0.5){
+					  // 					//send back 2
+					  // 					sendResponse({farewell: 2});
+						 //  			} else {
+						 //  				//send back -1
+						 //  				sendResponse({farewell: -1});
+						 //  			}
+							// 	}
+							// }
+							// xhr2.send();
   						}
 					}
 				}

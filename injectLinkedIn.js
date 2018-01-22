@@ -77,7 +77,7 @@ setTimeout(function(){
 			// companySearchURL = "https://www.linkedin.com/search/results/companies/?keywords=Amazon";
 			console.log(companySearchURL);
 			ajax_page(companySearchURL,function(data){
-				console.log(data.innerHTML);
+				// console.log(data.innerHTML);
 				var dataText = data.innerHTML;
 
 				var startIndex = dataText.indexOf('"included":[{"$deletedFields');
