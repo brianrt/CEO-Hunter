@@ -59,7 +59,7 @@ function addSuccessFullHunt(ceo_name,ceo_description,email_address,confidence,wa
 
   firebase.database().ref('stripe_customers/' + userId + '/success').set(true);
   if(!was_cached && targeted_position == "ceo_owner"){
-    addCompany(ceo_name,ceo_description,email_address,confidence);
+    // addCompany(ceo_name,ceo_description,email_address,confidence);
   }
   displayNotFound();
 }
@@ -328,7 +328,8 @@ function setCompanyURL(){
       status: "failed",
     });
     if(targeted_position == "ceo_owner"){
-      checkDataBase();
+      // checkDataBase();
+      Bloomberg();
       // GoogleSearch();
       // LinkedIn();
     } else {
