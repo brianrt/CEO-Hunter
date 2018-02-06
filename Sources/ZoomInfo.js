@@ -35,23 +35,38 @@ function ZoomInfo() {
 
 function zoomInfoCallBack(htmlData){
 	console.log(htmlData);
-	var columns = htmlData.getElementsByClassName("contacts");
-	if(columns==undefined || columns.length==0){
+	var peopleContainers = htmlData.getElementsByClassName("similar_profiles_container_list_profileBox");
+	if(peopleContainers==undefined || peopleContainers.length==0){
 		CrunchBase();
 		return;
 	}
 	var names = [];
 	var descriptions = [];
-	var column = columns[0];
-	//There are two columns
-	var hrefs = column.getElementsByTagName("a");
-	var paragraphs = column.getElementsByTagName("p");
-	for(var i = 0; i < hrefs.length; i++){
-		var name = hrefs[i].innerHTML;
+
+	for(var j = 0; j < peopleContainers.length;j++){
+
+		// Get name
+		var namesContainer = peopleContainers[j].getElementsByClassName("fullName");
+		if(namesContainer==undefined || namesContainer.length==0){
+			continue;
+		}
+		var hrefs = namesContainer[0].getElementsByTagName("a");
+		if(hrefs==undefined || hrefs.length==0){
+			continue;
+		}
+		var name = hrefs[0].innerHTML;
 		names.push(name);
-	}
-	for(var j = 0; j < paragraphs.length;j++){
-		var description = paragraphs[j].innerHTML;
+
+		// Get title
+		var titles = peopleContainers[j].getElementsByClassName("title");
+		if(titles==undefined || titles.length==0){
+			continue;
+		}
+		var paragraphs = titles[0].getElementsByTagName("p");
+		if(paragraphs==undefined || paragraphs.length==0){
+			continue;
+		}
+		var description = paragraphs[0].innerHTML;
 		descriptions.push(description);
 	}
 	console.log(names);
