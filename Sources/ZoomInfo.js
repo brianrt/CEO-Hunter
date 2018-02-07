@@ -2,7 +2,7 @@ function ZoomInfo() {
 	//Google search url using the zoominfo custom search engine
     var access_key = 'AIzaSyAiU6yCuGGU3Y06iHvlprmXsMlgVhswdAQ';
     var engine_id = '005408335780428068463:cfom544x5cg';
-    var query = companyDomain + "+Company+profile+zoominfo.com";
+    var query = companyDomain;
     var url = "https://www.googleapis.com/customsearch/v1?key="+access_key+"&cx="+engine_id+"&q="+query+"&excludeTerms=crunchbase";
     console.log("ZoomInfo google search: "+url);
 
