@@ -558,6 +558,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
       firebase_intialized=true;
     }
     firebase.auth().onAuthStateChanged(function(user) {
+      console.log("On auth change linkedin");
       if (user) {
         userId = user.uid;
         console.log("User is signed in l.");
@@ -590,6 +591,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     firebase_intialized=true;
   }
   firebase.auth().onAuthStateChanged(function(user) {
+    console.log("On auth change extension");
     if (user) {
       userId = user.uid;
       console.log("User is signed in.");

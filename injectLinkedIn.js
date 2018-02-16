@@ -231,7 +231,7 @@ setTimeout(function(){
 		}
 
 	});
-	var element = document.getElementsByClassName("pv-top-card-section__actions")[1];
+	var element = document.getElementsByClassName("pv-top-card-section__actions")[0];
 	element.appendChild(button);
 },1000);	
 
