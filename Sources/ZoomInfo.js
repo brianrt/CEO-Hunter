@@ -11,6 +11,11 @@ function ZoomInfo() {
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState == 4) {
 		  var resp = JSON.parse(xhr.responseText);
+		  if(resp.error != undefined){
+		  	  console.log("ZoomInfo google out of queries, trying Crunchbase");
+	          CrunchBase();
+	          return;
+		  }
 		  if(resp.searchInformation.totalResults==0){
 	          console.log("ZoomInfo google query no results, trying Crunchbase");
 	          CrunchBase();

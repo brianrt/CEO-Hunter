@@ -29,6 +29,9 @@ function openGooglePage(query){
   xhr.onreadystatechange = function() {
     if (xhr.readyState == 4) {
       var resp = JSON.parse(xhr.responseText);
+      if(resp.error != undefined){
+        return;
+      }
       if(resp.searchInformation.totalResults == 0){
         return;
       }

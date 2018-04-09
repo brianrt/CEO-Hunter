@@ -11,6 +11,11 @@
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState == 4) {
 		  var resp = JSON.parse(xhr.responseText);
+		  if(resp.error != undefined){
+		  	  console.log("Crunchbase google query failed, trying linkedin");
+              LinkedIn();
+	          return;
+	      }
 		  if(resp.searchInformation.totalResults==0){
 	          console.log("Crunchbase google query failed, trying linkedin");
 	          LinkedIn();
