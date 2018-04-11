@@ -30,9 +30,17 @@ function openGooglePage(query){
     if (xhr.readyState == 4) {
       var resp = JSON.parse(xhr.responseText);
       if(resp.error != undefined){
+        listenerCallback({
+          greeting: "who.is",
+          message: result
+        });
         return;
       }
       if(resp.searchInformation.totalResults == 0){
+        listenerCallback({
+          greeting: "who.is",
+          message: result
+        });
         return;
       }
       var result = resp.items[0].link;

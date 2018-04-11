@@ -12,7 +12,7 @@
 		if (xhr.readyState == 4) {
 		  var resp = JSON.parse(xhr.responseText);
 		  if(resp.error != undefined){
-		  	  console.log("Crunchbase google query failed, trying linkedin");
+		  	  console.log("Crunchbase google out of queries, trying linkedin");
               LinkedIn();
 	          return;
 	      }
