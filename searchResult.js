@@ -28,6 +28,10 @@ function search(companyName,targeted_position){
       }
       var ceo_potential = checkNamesWithDesciptions(names,descriptions,targeted_position);
       console.log(ceo_potential);
+      if(ceo_potential[1].includes(":\n")){
+         ceo_potential[1] = ceo_potential[1].substring(ceo_potential[1].indexOf(": ")+2);
+      }
+      console.log(ceo_potential);
       if(ceo_potential=="different lengths" || ceo_potential=="no match"){
          console.log("no linkedin matches");
          throw 'Round one not found';
@@ -66,6 +70,10 @@ function search(companyName,targeted_position){
             }
          }
          var ceo_potential = checkNamesWithDesciptions(names,descriptions,targeted_position);
+         console.log(ceo_potential);
+         if(ceo_potential[1].includes(":\n")){
+            ceo_potential[1] = ceo_potential[1].substring(ceo_potential[1].indexOf(": ")+2);
+         }
          console.log(ceo_potential);
          if(ceo_potential=="different lengths" || ceo_potential=="no match"){
             console.log("no linkedin matches");
@@ -127,6 +135,10 @@ function secondarySearch(companyName,targeted_position){
          }
       }
       var ceo_potential = checkNamesWithDesciptions(names,descriptions,targeted_position);
+      console.log(ceo_potential);
+      if(ceo_potential[1].includes(":\n")){
+         ceo_potential[1] = ceo_potential[1].substring(ceo_potential[1].indexOf(": ")+2);
+      }
       console.log(ceo_potential);
       if(ceo_potential=="different lengths" || ceo_potential=="no match"){
          console.log("no linkedin matches");

@@ -7,51 +7,40 @@ var googleWindowId;
 var currWindowId;
 
 function LinkedIn(){
-  chrome.tabs.getSelected(null, function(tab) {
-        var url = tab.url;
-        console.log(url);
-        // document.getElementById("url").innerHTML="www."+companyDomain;
-        // document.getElementById("url").style.textDecoration = "underline";
-        console.log(companyDomain);
-        var query = companyDomain;
-        openGooglePage(query);
-    });
+  var query = "http://www.bing.com/search?q="+companyDomain+"+LinkedIn";
+  console.log("LinkedIn bing search: "+query);
+  ajax_page(query,LinkedInBingCallBack);
 }
 
-
-function openGooglePage(query){
-  var access_key = 'AIzaSyAiU6yCuGGU3Y06iHvlprmXsMlgVhswdAQ';
-  var engine_id = '005408335780428068463:obi6mjahzr4';
-  var url = "https://www.googleapis.com/customsearch/v1?key="+access_key+"&cx="+engine_id+"&q="+query+"&exactTerms=LinkedIn";
-  console.log(url);
-  var xhr = new XMLHttpRequest();
-  xhr.open("GET", url, true);
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState == 4) {
-      var resp = JSON.parse(xhr.responseText);
-      if(resp.error != undefined){
-        listenerCallback({
-          greeting: "who.is",
-          message: result
-        });
-        return;
+function LinkedInBingCallBack(htmlData){
+    console.log(htmlData);
+    var search_results = htmlData.getElementsByClassName("b_algo");
+    for(var i = 0; i < search_results.length; i++){
+      var title_possibilites = search_results[i].getElementsByTagName("a");
+      for(var j = 0; j < title_possibilites.length; j++){
+        title = title_possibilites[j].innerHTML;
+        if(title != ""){
+          title = title.toLowerCase();
+          title = title.replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
+          console.log(title);
+          trimmedCompanyName = companyName.replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
+          console.log(trimmedCompanyName);
+          var link = title_possibilites[j].href;
+          if(link.includes("https://www.linkedin.com/company/") && title.includes("linkedin") && title.includes(trimmedCompanyName)){
+            console.log("link: "+link);
+            listenerCallback({
+              greeting: "search result",
+              message: link
+            });
+            return;
+          }
+        }
       }
-      if(resp.searchInformation.totalResults == 0){
-        listenerCallback({
-          greeting: "who.is",
-          message: result
-        });
-        return;
-      }
-      var result = resp.items[0].link;
-      console.log(result);
-      listenerCallback({
-        greeting: "search result",
-        message: result
-      });
     }
-  }
-  xhr.send();
+    listenerCallback({
+      greeting: "who.is",
+      message: "result"
+    });
 }
 
 function openCompanyPage(url){

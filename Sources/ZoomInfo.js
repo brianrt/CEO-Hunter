@@ -1,41 +1,33 @@
 function ZoomInfo() {
 	//Google search url using the zoominfo custom search engine
-    var access_key = 'AIzaSyAiU6yCuGGU3Y06iHvlprmXsMlgVhswdAQ';
-    var engine_id = '005408335780428068463:cfom544x5cg';
-    var query = companyDomain;
-    var url = "https://www.googleapis.com/customsearch/v1?key="+access_key+"&cx="+engine_id+"&q="+query+"&excludeTerms=crunchbase";
-    console.log("ZoomInfo google search: "+url);
+    var query = "http://www.bing.com/search?q=zoominfo.com+"+companyDomain;
+    console.log("ZoomInfo bing search: "+query);
+  	ajax_page(query,zoomInfoBingCallBack);
+}
 
-	var xhr = new XMLHttpRequest();
-	xhr.open("GET", url, true);
-	xhr.onreadystatechange = function() {
-		if (xhr.readyState == 4) {
-		  var resp = JSON.parse(xhr.responseText);
-		  if(resp.error != undefined){
-		  	  console.log("ZoomInfo google out of queries, trying Crunchbase");
-	          CrunchBase();
-	          return;
-		  }
-		  if(resp.searchInformation.totalResults==0){
-	          console.log("ZoomInfo google query no results, trying Crunchbase");
-	          CrunchBase();
-	          return;
-	      }
-	      var title = resp.items[0].title;
-	      title = title.replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
-	      title = title.toLowerCase();
-	      if(!(title.includes(companyName))){
-	      	console.log("wrong zoominfo page");
-	      	CrunchBase();
-	      	return;
-	      }
-	      console.log("title: "+title);
-		  var result = resp.items[0].link;
-		  console.log(result);
-		  ajax_page(result,zoomInfoCallBack);
-		}
-	}
-	xhr.send();
+function zoomInfoBingCallBack(htmlData){
+  	console.log(htmlData);
+  	var search_results = htmlData.getElementsByClassName("b_algo");
+  	for(var i = 0; i < search_results.length; i++){
+	    var title_possibilites = search_results[i].getElementsByTagName("a");
+	    for(var j = 0; j < title_possibilites.length; j++){
+	    	title = title_possibilites[j].innerHTML;
+	    	if(title != ""){
+			    title = title.toLowerCase();
+			    title = title.replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
+			    console.log(title);
+			    trimmedCompanyName = companyName.replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
+			    console.log(trimmedCompanyName);
+			    var link = title_possibilites[j].href;
+			    if(link.includes("https://www.zoominfo.com/c/") && title.includes("zoominfo") && title.includes(trimmedCompanyName)){
+			      console.log("link: "+link);
+			      ajax_page(link,zoomInfoCallBack);
+			      return;
+			    }
+	    	}
+	    }
+  	}
+  CrunchBase();
 }
 
 function zoomInfoCallBack(htmlData){

@@ -12,6 +12,7 @@ var employeepage = false;
 var toggle = true;
 var first = true;
 var needsToChangePosition = true;
+var preventFromLaunching = false;
 var targeted_position = "";    
 var tab_dict = {};
 var url_dict = {};
@@ -227,6 +228,8 @@ function displayNotFound(){
     document.getElementById("companyPhone").innerHTML = "Not found";
   }
   refreshHTML();
+  console.log("locking down");
+  preventFromLaunching = true;//prevent extension from launching until user clicks again
 }
 
 function ajax_page(query,callback){
@@ -323,10 +326,10 @@ function setCompanyURL(){
     console.log("domain: "+companyDomain);
     console.log("name: "+companyName);
     //Add company url to firebase account for logging
-    firebase.database().ref('Users/' + user_number+'/sites_visited/'+total_hunts).set({
-      url: companyURL,
-      status: "failed",
-    });
+    // firebase.database().ref('Users/' + user_number+'/sites_visited/'+total_hunts).set({
+    //   url: companyURL,
+    //   status: "failed",
+    // });
     if(targeted_position == "ceo_owner"){
       // checkDataBase();
       Bloomberg();
@@ -423,38 +426,44 @@ function startAuth(interactive) {
 
 
 function startHunting(tab) {
-  //start extension
-  console.log("tab id: "+tab.id);
-  document.getElementById("body").innerHTML=templateHTML;
-  if(first){
-    console.log("first");
-    first = false;
-  }
-  if(!(tab.id in tab_dict)){//First for this tab
-    console.log("first time for tab");
-    tab_dict[tab.id]=true;
-    initialize();//Initial load of context script for this tab
-    checkIfPositionSelected(tab.url);//Begin running rest of extension
-  }
-  else if(tab_dict[tab.id]){//If the toggle for this tab is turned on
-    if(url_dict[tab.id] != tab.url){
-      initialize();
+  if(!preventFromLaunching){//prevents from accidental launches
+    //start extension
+    console.log("tab id: "+tab.id);
+    document.getElementById("body").innerHTML=templateHTML;
+    if(first){
+      console.log("first");
+      first = false;
     }
-    checkIfPositionSelected(tab.url);
-    chrome.tabs.sendMessage(tab.id, {greeting: "toggle on",message:document.getElementById("ceo_hunter").innerHTML});
-    console.log("toggle on");
-  }
-  else{
-    if(url_dict[tab.id] != tab.url){ //If they changed urls without closing the tab, we can't toggle off. we need to launch it again
-      tab_dict[tab.id] = !tab_dict[tab.id];
-      initialize();
+    if(!(tab.id in tab_dict)){//First for this tab
+      console.log("first time for tab");
+      tab_dict[tab.id]=true;
+      initialize();//Initial load of context script for this tab
+      checkIfPositionSelected(tab.url);//Begin running rest of extension
+    }
+    else if(tab_dict[tab.id]){//If the toggle for this tab is turned on
+      if(url_dict[tab.id] != tab.url){
+        initialize();
+      }
       checkIfPositionSelected(tab.url);
-    } else {
-      console.log("toggle off");
-      chrome.tabs.sendMessage(tab.id, {greeting: "toggle off",message:document.getElementById("ceo_hunter").innerHTML});
+      chrome.tabs.sendMessage(tab.id, {greeting: "toggle on",message:document.getElementById("ceo_hunter").innerHTML});
+      console.log("toggle on");
     }
+    else{
+      if(url_dict[tab.id] != tab.url){ //If they changed urls without closing the tab, we can't toggle off. we need to launch it again
+        tab_dict[tab.id] = !tab_dict[tab.id];
+        initialize();
+        checkIfPositionSelected(tab.url);
+      } else {
+        console.log("toggle off");
+        console.log("locking down");
+        preventFromLaunching = true; // If they toggle off, we want to prevent launches
+        chrome.tabs.sendMessage(tab.id, {greeting: "toggle off",message:document.getElementById("ceo_hunter").innerHTML});
+      }
+    }
+    tab_dict[tab.id] = !tab_dict[tab.id];
+  } else {
+    console.log("prevented launch");
   }
-  tab_dict[tab.id] = !tab_dict[tab.id];
 }
 
 // Adds a listener for changes to the number of hunts used
@@ -585,6 +594,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 // Begin Flow
 chrome.runtime.onMessage.addListener(listenerCallback);
 chrome.browserAction.onClicked.addListener(function(tab) {
+  preventFromLaunching = false; //The user clicked, the extension will launch
   main_tab = tab;
   if(!firebase_intialized){
     fireBaseInit();

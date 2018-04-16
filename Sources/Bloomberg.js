@@ -9,17 +9,22 @@ function bingCallback(htmlData){
   console.log(htmlData);
   var search_results = htmlData.getElementsByClassName("b_algo");
   for(var i = 0; i < search_results.length; i++){
-    var title = search_results[i].getElementsByTagName("a")[0].innerHTML;
-    title = title.toLowerCase();
-    title = title.replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
-    console.log(title);
-    trimmedCompanyName = companyName.replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
-    if(title.includes("privatecompany") && (title.includes(trimmedCompanyName) || trimmedCompanyName.includes(title))){
-      var link = search_results[i].getElementsByTagName("a")[0];
-      link = link.getAttribute("href");
-      console.log(link);
-      ajax_page(link,bloombergCallback);
-      return;
+    var title_possibilites = search_results[i].getElementsByTagName("a");
+    for(var j = 0; j < title_possibilites.length; j++){
+      title = title_possibilites[j].innerHTML;
+      if(title != ""){
+        title = title.toLowerCase();
+        title = title.replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
+        console.log(title);
+        trimmedCompanyName = companyName.replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
+        if(title.includes("privatecompany") && (title.includes(trimmedCompanyName) || trimmedCompanyName.includes(title))){
+          var link = search_results[i].getElementsByTagName("a")[0];
+          link = link.getAttribute("href");
+          console.log(link);
+          ajax_page(link,bloombergCallback);
+          return;
+        }
+      }
     }
   }
   ZoomInfo();
