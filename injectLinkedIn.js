@@ -12,7 +12,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	}
 	if(document.getElementById("hunts_used_l") != undefined){
 		document.getElementById("hunts_used_l").innerHTML = hunts_used;
-		document.getElementById("total_hunts_l").innerHTML = total_hunts;
+		if(total_hunts == 4000000000){
+			document.getElementById("total_hunts_l").innerHTML = "Unlimited";
+		} else {
+			document.getElementById("total_hunts_l").innerHTML = total_hunts;
+		}
 	}
 });
 
@@ -21,7 +25,7 @@ setTimeout(function(){
 	if(document.getElementById("emailCEO") != undefined){
 		return;
 	}
-	var templateHTML = '<h1 id=mainHeader_l>Deal Hunter (BETA)</h1><br><br><button id="closeHunter">✖</button><p id="hunterName">Loading...</p><br><p id="hunterEmail">Loading...</p><br><p id="hunterVerified">Loading...</p><br><p class="hunt_info" id="hunts_used_l">0</p><p class="hunt_info"> / </p><p class="hunt_info" id="total_hunts_l">0</p><p class = "hunt_info"> hunts used. </p><a target="_blank" href="http://www.dealhunter.io/pricing/" style="color:blue;">Upgrade</a><br><br>';
+	var templateHTML = '<h1 id=mainHeader_l>Deal Hunter (BETA)</h1><br><br><button id="closeHunter">✖</button><p id="hunterName">Loading...</p><br><p id="hunterEmail">Loading...</p><br><p id="hunterVerified">Loading...</p><br><p class="hunt_info" id="hunts_used_l">0</p><p class="hunt_info"> / </p><p class="hunt_info" id="total_hunts_l">0</p><p class = "hunt_info"> hunts used. </p><a target="_blank" href="https://ceohunter-a02da.firebaseapp.com/" style="color:blue;">Upgrade</a><br><br>';
 	window.scrollTo(0,500);
 	var button = document.createElement('button');
 	button.innerHTML = "Find Email";
@@ -29,6 +33,7 @@ setTimeout(function(){
 	button.addEventListener("click",function(){
 		var popUp = document.createElement('div');
 		popUp.id = "hunterPopUp";
+		popUp.style.height = "250px"
 		popUp.innerHTML = templateHTML;
 		document.body.appendChild(popUp);
 
@@ -156,7 +161,7 @@ setTimeout(function(){
 		    }
 
 		    //Fetch name again
-		    var name = document.getElementsByClassName("pv-top-card-section__name")[0].innerHTML;
+		    var name = document.getElementsByClassName("pv-top-card-section__name")[0].innerHTML.trim();
 
 			//Generate emails
 			var possibleEmails = [];
@@ -221,17 +226,21 @@ setTimeout(function(){
 			document.getElementById("hunterVerified").innerHTML = verified;
 			document.getElementById("hunterVerified").style.color = colors[color_index];
 			document.getElementById("hunts_used_l").innerHTML = hunts_used;
-			document.getElementById("total_hunts_l").innerHTML = total_hunts;
+			if(total_hunts == 4000000000){
+				document.getElementById("total_hunts_l").innerHTML = "Unlimited";
+			} else {
+				document.getElementById("total_hunts_l").innerHTML = total_hunts;
+			}
 			if(color_index==5){
-				document.getElementById("hunterPopUp").style.height = "190px";
+				document.getElementById("hunterPopUp").style.height = "230px";
 			}
 			else if(color_index==4){
-				document.getElementById("hunterPopUp").style.height = "260px";
+				document.getElementById("hunterPopUp").style.height = "300px";
 			}
 		}
 
 	});
-	var element = document.getElementsByClassName("pv-top-card-section__actions")[0];
+	var element = document.getElementsByClassName("pv-top-card-v2-section__actions")[0];
 	element.appendChild(button);
 },1000);	
 
