@@ -26,7 +26,7 @@ function LinkedInBingCallBack(htmlData){
           trimmedCompanyName = companyName.replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
           console.log(trimmedCompanyName);
           var link = title_possibilites[j].href;
-          if(link.includes("https://www.linkedin.com/company/") && title.includes("linkedin") && title.includes(trimmedCompanyName)){
+          if(link.includes("linkedin.com/company/") && title.includes("linkedin") && title.includes(trimmedCompanyName)){
             console.log("link: "+link);
             listenerCallback({
               greeting: "search result",
