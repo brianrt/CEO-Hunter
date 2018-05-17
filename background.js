@@ -17,8 +17,15 @@ var targeted_position = "";
 var tab_dict = {};
 var url_dict = {};
 
+//Other Metrics, if they become -1 it's because they can't be found, 0 means not calculated yet
+var Revenue = "0";
+var Location = "0";
+var numEmployees = "0";
+var capitalRaised = "0";
+
 //Use second link to change back TODO
-var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><br><p id=LinkedInDescription class=ceo-hunter-title>Loading CEO Description...</p><br><p id=LinkedInName class=info>Loading CEO Name...</p><br><br><p class=ceo-hunter-title id=huntsUsed>Personal Email Address</p><br><p id=personalEmail class=info>Loading Email...</p><br><t id=confidence></t><br><br><p class=ceo-hunter-title>Company Phone #</p><br><p id=companyPhone class=info>Loading phone...</p><br><br><input type="hidden" id="mailTo"><p id="withgmail"></p><br><br><a href="http://www.dealhunter.io/feedback/" target="_blank" style="color:blue;">Report bugs and request new features</a></div><br><p class="hunt_info" id="hunts_used">0</p><p class="hunt_info"> / </p><p class="hunt_info" id="total_hunts">0</p><p class = "hunt_info"> hunts used. </p><a target="_blank" href="https://ceohunter-a02da.firebaseapp.com/" style="color:blue;">Upgrade</a><br><br>';
+var tableText = '<table class=hunter_table id=stats_table> <tr class=hunter_table> <td class=hunter_table_insides><t id=revenue class=table_results>Loading...</t><br><t>Revenue</t></td> <td class=hunter_table_insides><t id=employees class=table_results>Loading...</t><br><t>Employees</t></td> </tr> <tr class=hunter_table> <td class=hunter_table_insides><t id=capital_raised class=table_results>Loading...</t><br><t>Capital Raised</t></td> <td class=hunter_table_insides><t id=location class=table_results>Loading...</t><br><t>Location</t></td> </tr></table>';
+var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><br><p id=LinkedInDescription class=ceo-hunter-title>Loading CEO Description...</p><br><p id=LinkedInName class=info>Loading CEO Name...</p><br><br><p class=ceo-hunter-title id=huntsUsed>Personal Email Address</p><br><p id=personalEmail class=info>Loading Email...</p><br><t id=confidence></t><br><br><p class=ceo-hunter-title>Company Phone #</p><br><p id=companyPhone class=info>Loading phone...</p><br><br><input type="hidden" id="mailTo"><p id="withgmail"></p><br>'+tableText+'<br><a href="http://www.dealhunter.io/feedback/" target="_blank" style="color:blue;">Report bugs and request new features</a><br><p class="hunt_info" id="hunts_used">0</p><p class="hunt_info"> / </p><p class="hunt_info" id="total_hunts">0</p><p class = "hunt_info"> hunts used. </p><a target="_blank" href="https://ceohunter-a02da.firebaseapp.com/" style="color:blue;">Upgrade</a><br><br></div>';
 // var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><br><p id=LinkedInDescription class=ceo-hunter-title>Loading CEO Description...</p><br><p id=LinkedInName class=info>Loading CEO Name...</p><br><br><p class=ceo-hunter-title>Personal Email Address</p><br><p id=personalEmail class=info>Loading Email...</p><br><t id=confidence></t><br><br><p class=ceo-hunter-title>Company Phone #</p><br><p id=companyPhone class=info>Loading phone...</p><br><br><input type="hidden" id="mailTo"><p id="withgmail"></p><br><br><input id="changePos" type="button" value = "Choose position on next launch" onclick = \'document.cookie = "needsToChangePosition=True";\'><br><br><a href="http://www.ceohunter.io/feedback/" style="color:blue;">Report bugs and request new features</a></div><br>';
 var checkBoxesHTML =' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><button id="test_button">Click me</button><br></div>'
 //Firebase vars
@@ -108,8 +115,30 @@ function listenerCallback(request,sender,sendResponse){
         WhoIs();
       }
     }
+    else if (request.greeting == "log"){
+    	console.log(request.message);
+    }
+    else if (request.greeting == "linkedInMetrics" && Revenue == "0"){
+    	Revenue = request.messageRevenue;
+    	Location = request.messageLocation;
+    	numEmployees = request.messageNumEmployees;
+    }
+    else if (request.greeting == "linkedInMetricsFinal" && Revenue == "0"){
+    	Revenue = request.messageRevenue;
+    	Location = request.messageLocation;
+    	numEmployees = request.messageNumEmployees;
+    	getMetrics(false,false);
+    }
+    else if (request.greeting == "capital_raised" && capitalRaised == "0"){
+    	capitalRaised = request.message;
+    }
+    else if (request.greeting == "capital_raised_final" && capitalRaised == "0"){
+    	capitalRaised = request.message;
+  		var checkLinkedIn = Revenue == "0";
+    	getMetrics(false,checkLinkedIn);
+    }
   	else if (request.greeting == "ceo" && !ceoName){
-      console.log("ceo callback received")
+      	console.log("ceo callback received")
   		ceoName=true;
   		var ceo_name = request.message_ceo.trim();
   		var ceo_description = request.message_description;
@@ -121,10 +150,6 @@ function listenerCallback(request,sender,sendResponse){
     	employeepage = true;
         console.log(request.message);
         openEmployeePage(request.message);
-    }
-    else if (request.greeting == "search result" && !company){
-    	company = true;
-      openCompanyPage(request.message);
     }
     else if (request.greeting == "contacts"){
     	contact = true;
@@ -228,8 +253,25 @@ function displayNotFound(){
     document.getElementById("companyPhone").innerHTML = "Not found";
   }
   refreshHTML();
-  console.log("locking down");
-  preventFromLaunching = true;//prevent extension from launching until user clicks again
+
+  //Find additional metrics here
+  var checkCrunchBase = capitalRaised == "0";
+  var checkLinkedIn = Revenue == "0";
+  getMetrics(checkCrunchBase,checkLinkedIn);
+}
+
+function getRequestHTML(url,callback){
+	var xhr = new XMLHttpRequest();
+	xhr.open("GET", url, true);
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState == 4) {
+			var data = xhr.responseText;
+			var d = document.createElement('div');
+            d.innerHTML = data;
+            callback(d);
+		}
+	}
+	xhr.send();
 }
 
 function ajax_page(query,callback){
@@ -333,7 +375,7 @@ function setCompanyURL(){
     if(targeted_position == "ceo_owner"){
       // checkDataBase();
       Bloomberg();
-      // GoogleSearch();
+      // CrunchBase();
       // LinkedIn();
     } else {
       Bloomberg();
@@ -377,17 +419,21 @@ function remainingHuntsLeft(){
 
 function launchSequence(){
     if(remainingHuntsLeft()){
-      ceoName = false;
-      contact = false;
-      contact_url = false;
-      company = false;
-      employeepage = false;
-      companyWindowCreated = false;
-      employeeWindowCreated = false;
-      googleWindowCreated = false;
-      whoIsUsed=false;
-      getContactInfo();
-      setCompanyURL();
+		ceoName = false;
+		contact = false;
+		contact_url = false;
+		company = false;
+		employeepage = false;
+		companyWindowCreated = false;
+		employeeWindowCreated = false;
+		googleWindowCreated = false;
+		whoIsUsed=false;
+		Revenue = "0";
+		Location = "0";
+		numEmployees = "0";
+		capitalRaised = "0";
+		getContactInfo();
+		setCompanyURL();
     }
 }
 

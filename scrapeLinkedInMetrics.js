@@ -18,16 +18,13 @@ var sign_in_three = document.getElementsByClassName("join-linkedin-form float-la
 if(sign_in_three!=undefined){
 	alertSignIn();
 }
+
 var html = document.body.innerHTML;
 if(html.indexOf("Sign in")!=-1){
 	alertSignIn();
 }
-// chrome.runtime.sendMessage({
-// 	greeting: "log",
-// 	message: html
-// });
 
-//First attempt to find additional company metrics
+//Attempt to find additional company metrics
 var revenue = "-1";
 var employees = "-1";
 var companyLocation = "-1";
@@ -64,44 +61,9 @@ if(html.indexOf(queryString)!=-1){
 }
 
 chrome.runtime.sendMessage({
-	greeting: "linkedInMetrics",
+	greeting: "linkedInMetricsFinal",
 	messageRevenue: revenue,
 	messageLocation: companyLocation,
 	messageNumEmployees: employees
 });
-
-//Search for CEO
-if(html.indexOf("/search/results/people/?facet")!=-1){ //found a link through method 1
-	var link = html.substring(html.indexOf("/search/results/people/?facet"));
-	link = "https://www.linkedin.com"+link.substring(0,link.indexOf("\""));
-	console.log("here is the output link from method 1: "+link);
-	chrome.runtime.sendMessage({
-		greeting: "company linkedin page",
-		message: link
-	});
-	window.close();
-}
-else if(html.indexOf("https://www.linkedin.com/vsearch/p?f_CC=")!=-1){ // try method 2 with vsearch without the ";"
-	console.log("method 1 didn't work, trying method 2...");
-	var link = html.substring(html.indexOf("https://www.linkedin.com/vsearch/p?f_CC="));
-	var result_link = link.substring(0,link.indexOf("\""));
-	while(result_link.indexOf(";")!=-1){ //while there is a semicolon in the result, we want to search for the next one
-		link = link.substring(40); //cutoff the virst vsearch search result
-		link = link.substring(link.indexOf("https://www.linkedin.com/vsearch/p?f_CC="));
-		result_link = link.substring(0,link.indexOf("\""));
-		console.log("current search item: "+result_link);
-	}
-	console.log("here is the output link from method 2: "+result_link);
-	chrome.runtime.sendMessage({
-		greeting: "company linkedin page",
-		message: result_link
-	});
-	window.close();
-}
-else{
-	console.log("Neither method worked :(");
-	chrome.runtime.sendMessage({
-		greeting: "who.is",
-	});
-	window.close();
-}
+window.close();

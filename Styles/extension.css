@@ -23,6 +23,27 @@
       color: #444 !important;
     }
 
+    #ceo-hunter-extension .hunter_table .hunter_table_insides {
+      border: 1px solid black !important;
+      border-collapse: collapse !important;
+    }
+
+    #ceo-hunter-extension .table_results {
+      font-weight: bold !important;
+      line-height: 25px !important;
+    }
+
+    #ceo-hunter-extension .hunter_table_insides {
+      width: 50% !important;
+      height: 50px !important;
+      border-collapse: collapse !important;
+    }
+
+    #ceo-hunter-extension #stats_table {
+      font: unset !important;
+      width: 100% !important;
+    }
+
     #ceo-hunter-extension #main_ceo_hunter {
       font: unset !important;
       font-family: "calibri" !important;
