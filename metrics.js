@@ -12,7 +12,7 @@ function getMetrics(shouldCheckCrunchBase, shouldCheckLinkedIn){
 
 	//Update Metrics
 	if(capitalRaised == "-1"){
-		capitalRaised = "N/A";
+		capitalRaised = "None";
 	} else {
 		capitalRaised = capitalRaised.substring(1); // Remove '$''
 	}

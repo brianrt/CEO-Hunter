@@ -26,6 +26,7 @@
     #ceo-hunter-extension .hunter_table .hunter_table_insides {
       border: 1px solid black !important;
       border-collapse: collapse !important;
+      text-align: center !important;
     }
 
     #ceo-hunter-extension .table_results {
