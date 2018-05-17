@@ -21,12 +21,12 @@ var url_dict = {};
 var Revenue = "0";
 var Location = "0";
 var numEmployees = "0";
-var capitalRaised = "0";
+var dateFounded = "0";
 var getMetricsCalled = false;
 
 //Use second link to change back TODO
-var tableText = '<table class=hunter_table id=stats_table> <tr class=hunter_table> <td class=hunter_table_insides><t id=revenue class=table_results>Loading...</t><br><t>Revenue</t></td> <td class=hunter_table_insides><t id=employees class=table_results>Loading...</t><br><t>Employees</t></td> </tr> <tr class=hunter_table> <td class=hunter_table_insides><t id=capital_raised class=table_results>Loading...</t><br><t>Capital Raised</t></td> <td class=hunter_table_insides><t id=location class=table_results>Loading...</t><br><t>Location</t></td> </tr></table>';
-var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><br><p id=LinkedInDescription class=ceo-hunter-title>Loading CEO Description...</p><br><p id=LinkedInName class=info>Loading CEO Name...</p><br><br><p class=ceo-hunter-title id=huntsUsed>Email Address</p><br><p id=personalEmail class=info>Loading Email...</p><br><t id=confidence></t><br><br><p class=ceo-hunter-title>Company Phone #</p><br><p id=companyPhone class=info>Loading phone...</p><br><br><p class=ceo-hunter-title>Company Metrics</p><br>'+tableText+'<div id = account_info><p class="hunt_info" id="hunts_used">0</p><p class="hunt_info"> / </p><p class="hunt_info" id="total_hunts">0</p><p class = "hunt_info"> hunts used. </p><a target="_blank" href="https://ceohunter-a02da.firebaseapp.com/" style="color:blue;">Upgrade</a></div></div>';
+var tableText = '<table class=hunter_table id=stats_table> <tr class=hunter_table> <td class=hunter_table_insides><t id=revenue class=table_results>Loading...</t><br><t>Revenue</t></td> <td class=hunter_table_insides><t id=employees class=table_results>Loading...</t><br><t>Employees</t></td> </tr> <tr class=hunter_table> <td class=hunter_table_insides><t id=date_founded class=table_results>Loading...</t><br><t>Date Founded</t></td> <td class=hunter_table_insides><t id=location class=table_results>Loading...</t><br><t>Location</t></td> </tr></table>';
+var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><br><p id=LinkedInDescription class=ceo-hunter-title>Loading CEO Description...</p><br><p id=LinkedInName class=info>Loading CEO Name...</p><br><p id=personalEmail class=info>Loading Email...</p><br><t id=confidence></t><br><br><p class=ceo-hunter-title id=huntsUsed>Company Phone #</p><br><p id=companyPhone class=info>Loading phone...</p><br><br><p class=ceo-hunter-title>Company Metrics</p><br>'+tableText+'<div id = account_info><p class="hunt_info" id="hunts_used">0</p><p class="hunt_info"> / </p><p class="hunt_info" id="total_hunts">0</p><p class = "hunt_info"> hunts used. </p><a target="_blank" href="https://ceohunter-a02da.firebaseapp.com/" style="color:blue;">Upgrade</a></div></div>';
 // var templateHTML = ' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><br><p id=LinkedInDescription class=ceo-hunter-title>Loading CEO Description...</p><br><p id=LinkedInName class=info>Loading CEO Name...</p><br><br><p class=ceo-hunter-title>Personal Email Address</p><br><p id=personalEmail class=info>Loading Email...</p><br><t id=confidence></t><br><br><p class=ceo-hunter-title>Company Phone #</p><br><p id=companyPhone class=info>Loading phone...</p><br><br><input type="hidden" id="mailTo"><p id="withgmail"></p><br><br><input id="changePos" type="button" value = "Choose position on next launch" onclick = \'document.cookie = "needsToChangePosition=True";\'><br><br><a href="http://www.ceohunter.io/feedback/" style="color:blue;">Report bugs and request new features</a></div><br>';
 var checkBoxesHTML =' <div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br><button id="test_button">Click me</button><br></div>'
 //Firebase vars
@@ -117,26 +117,20 @@ function listenerCallback(request,sender,sendResponse){
       }
     }
     else if (request.greeting == "log"){
-    	console.log(request.message);
+    	console.log("log: "+request.message);
     }
     else if (request.greeting == "linkedInMetrics" && Revenue == "0"){
     	Revenue = request.messageRevenue;
     	Location = request.messageLocation;
+    	dateFounded = request.messageDateFounded;
     	numEmployees = request.messageNumEmployees;
     }
     else if (request.greeting == "linkedInMetricsFinal" && Revenue == "0"){
     	Revenue = request.messageRevenue;
     	Location = request.messageLocation;
+    	dateFounded = request.messageDateFounded;
     	numEmployees = request.messageNumEmployees;
-    	getMetrics(false,false);
-    }
-    else if (request.greeting == "capital_raised" && capitalRaised == "0"){
-    	capitalRaised = request.message;
-    }
-    else if (request.greeting == "capital_raised_final" && capitalRaised == "0"){
-    	capitalRaised = request.message;
-  		var checkLinkedIn = Revenue == "0";
-    	getMetrics(false,checkLinkedIn);
+    	getMetrics(false);
     }
   	else if (request.greeting == "ceo" && !ceoName){
       	console.log("ceo callback received")
@@ -259,9 +253,8 @@ function displayNotFound(){
 	if(!getMetricsCalled){
 		//Find additional metrics here
 		getMetricsCalled = true;
-		var checkCrunchBase = capitalRaised == "0";
 		var checkLinkedIn = Revenue == "0";
-		getMetrics(checkCrunchBase,checkLinkedIn);
+		getMetrics(checkLinkedIn);
 	}
 }
 
@@ -415,6 +408,7 @@ function remainingHuntsLeft(){
     $(".ceo-hunter-title").html("");
     $(".info").html("");
     $("#confidence").html("");
+    $("#stats_table").html("");
     $("#huntsUsed").html("All hunts used! Please upgrade for more hunts.");
     refreshHTML();
     return false;
@@ -436,7 +430,7 @@ function launchSequence(){
 		Revenue = "0";
 		Location = "0";
 		numEmployees = "0";
-		capitalRaised = "0";
+		dateFounded = "0";
 		getMetricsCalled = false;
 		getContactInfo();
 		setCompanyURL();

@@ -27,6 +27,14 @@
       padding: 5px !important;
     }
 
+    #ceo-hunter-extension #personalEmail {
+      color: #66B2CE !important;
+    }
+
+    #ceo-hunter-extension #LinkedInName {
+      font-size: 18px !important;
+    }
+
     #ceo-hunter-extension .hunter_table .hunter_table_insides {
       border: 1px solid black !important;
       border-collapse: collapse !important;
@@ -47,6 +55,7 @@
     #ceo-hunter-extension #stats_table {
       font: unset !important;
       width: 100% !important;
+      margin-bottom: 0px !important;
     }
 
     #ceo-hunter-extension #main_ceo_hunter {

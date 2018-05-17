@@ -39,6 +39,7 @@ function LinkedInBingCallBack(htmlData){
       greeting: "linkedInMetrics",
       messageRevenue: "-1",
       messageLocation: "-1",
+      messageDateFounded: "-1",
       messageNumEmployees: "-1"
     });
     

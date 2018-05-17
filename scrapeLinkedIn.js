@@ -31,6 +31,7 @@ if(html.indexOf("Sign in")!=-1){
 var revenue = "-1";
 var employees = "-1";
 var companyLocation = "-1";
+var dateFounded = "-1";
 
 //Calculate Revenue
 if(html.indexOf("See all ")!=-1){
@@ -63,10 +64,18 @@ if(html.indexOf(queryString)!=-1){
 	companyLocation = companyLocation.substring(0,companyLocation.indexOf("</p>")).trim();
 }
 
+//Find dateFounded
+queryString = '<p class="org-about-company-module__founded Sans-15px-black-70% mb3">';
+if(html.indexOf(queryString)!=-1){
+	dateFounded = html.substring(html.indexOf(queryString)+queryString.length);
+	dateFounded = dateFounded.substring(0,dateFounded.indexOf("</p>")).trim();
+}
+
 chrome.runtime.sendMessage({
 	greeting: "linkedInMetrics",
 	messageRevenue: revenue,
 	messageLocation: companyLocation,
+	messageDateFounded: dateFounded,
 	messageNumEmployees: employees
 });
 

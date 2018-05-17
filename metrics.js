@@ -1,9 +1,4 @@
-function getMetrics(shouldCheckCrunchBase, shouldCheckLinkedIn){
-	if(shouldCheckCrunchBase){
-		console.log("Need to perform CrunchBaseMetrics")
-		CrunchBaseMetrics();
-		return;
-	}
+function getMetrics(shouldCheckLinkedIn){
 	if(shouldCheckLinkedIn){
 		console.log("Need to perform LinkedInMetrics")
 		LinkedInMetrics();
@@ -11,10 +6,8 @@ function getMetrics(shouldCheckCrunchBase, shouldCheckLinkedIn){
 	}
 
 	//Update Metrics
-	if(capitalRaised == "-1"){
-		capitalRaised = "None";
-	} else {
-		capitalRaised = capitalRaised.substring(1); // Remove '$''
+	if(dateFounded == "-1"){
+		dateFounded = "N/A";
 	}
 	if(Revenue == "-1"){
 		Revenue = "N/A";
@@ -25,7 +18,7 @@ function getMetrics(shouldCheckCrunchBase, shouldCheckLinkedIn){
 	if(Location == "-1"){
 		Location = "N/A";
 	}
-  	$("#capital_raised").html(capitalRaised).css('color','#0061BC');
+  	$("#date_founded").html(dateFounded).css('color','#0061BC');
 	$("#revenue").html(Revenue).css('color','#00B247');
 	$("#employees").html(numEmployees).css('color','red');
 	$("#location").html(Location).css('color','#710097');
@@ -67,9 +60,10 @@ function LinkedInBingCallBackMetrics(htmlData){
     }
     //No linkedin bing results, send back failed metrics
     listenerCallback({
-      greeting: "linkedInMetrics",
+      greeting: "linkedInMetricsFinal",
       messageRevenue: "-1",
       messageLocation: "-1",
+      messageDateFounded: "-1",
       messageNumEmployees: "-1"
     });
 }

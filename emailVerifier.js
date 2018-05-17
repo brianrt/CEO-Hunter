@@ -36,9 +36,9 @@ function verifyEmail(name,email_address){
           }
           else{
               document.getElementById("personalEmail").innerHTML="<u>Possible Options:</u><br>"+name.first+"@"+companyDomain+"<br>"+name.first.charAt(0)+name.last.toLowerCase()+"@"+companyDomain+"<br>"+name.first+"."+name.last.toLowerCase()+"@"+companyDomain;
-              document.getElementById("confidence").innerHTML="Risky";
+              document.getElementById("confidence").innerHTML="Likely Emails";
               document.getElementById("confidence").style.color="#cccc00";
-              addSuccessFullHunt(ceo_name,ceo_description,document.getElementById("personalEmail").innerHTML,"Risky",false);
+              addSuccessFullHunt(ceo_name,ceo_description,document.getElementById("personalEmail").innerHTML,"Likely Emails",false);
               refreshHTML();
               done = true;
               return;

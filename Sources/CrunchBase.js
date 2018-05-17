@@ -26,41 +26,18 @@ function crunchBaseBingCallBack(htmlData){
 	    }
   	}
   	//Could not find in bing search
-	listenerCallback({
-		greeting: "capital_raised",
-		message: "-1"
-	});
   	LinkedIn();
 }
 
 function crunchBaseCallBack(htmlData){
 	console.log(htmlData.innerHTML);
-	var capitalRaisedCrunch = "-1";
 	console.log(htmlData.innerHTML.toLowerCase().includes(companyDomain));
 	if(!(htmlData.innerHTML.toLowerCase().includes(companyDomain))){
-		//If page is bad, send back N/A for capital raised
-		listenerCallback({
-	      greeting: "capital_raised",
-	      message: capitalRaisedCrunch
-	    });
-
 	    //Then call linkedin
 		console.log("Wrong cruchbase page, trying LinkedIn");
 		LinkedIn();
 		return;
 	}
-	//First, we attempt to get the capital raised
-	var capitalResults = htmlData.getElementsByClassName("cb-link component--field-formatter field-type-money ng-star-inserted");
-	if(capitalResults[0] != undefined){
-		capitalRaisedCrunch = capitalResults[0].innerHTML.trim();
-	}
-	listenerCallback({
-	  greeting: "capital_raised",
-	  message: capitalRaisedCrunch
-	});
-	console.log(capitalRaisedCrunch);
-
-	//Next, get the CEO
 	var results = htmlData.getElementsByClassName("flex cb-padding-large-left");
 	// console.log(results);
 	if(results==undefined){
