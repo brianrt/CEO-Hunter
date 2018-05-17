@@ -23,6 +23,10 @@
       color: #444 !important;
     }
 
+    #ceo-hunter-extension #account_info {
+      padding: 5px !important;
+    }
+
     #ceo-hunter-extension .hunter_table .hunter_table_insides {
       border: 1px solid black !important;
       border-collapse: collapse !important;
