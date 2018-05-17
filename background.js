@@ -22,6 +22,7 @@ var Revenue = "0";
 var Location = "0";
 var numEmployees = "0";
 var capitalRaised = "0";
+var getMetricsCalled = false;
 
 //Use second link to change back TODO
 var tableText = '<table class=hunter_table id=stats_table> <tr class=hunter_table> <td class=hunter_table_insides><t id=revenue class=table_results>Loading...</t><br><t>Revenue</t></td> <td class=hunter_table_insides><t id=employees class=table_results>Loading...</t><br><t>Employees</t></td> </tr> <tr class=hunter_table> <td class=hunter_table_insides><t id=capital_raised class=table_results>Loading...</t><br><t>Capital Raised</t></td> <td class=hunter_table_insides><t id=location class=table_results>Loading...</t><br><t>Location</t></td> </tr></table>';
@@ -240,24 +241,28 @@ function setTerminatingConditions(){
 }
 
 function displayNotFound(){         
-  if(document.getElementById("LinkedInDescription").innerHTML == "Loading CEO Description..."){
-    document.getElementById("LinkedInDescription").innerHTML = "Not found"
-  }
-  if(document.getElementById("LinkedInName").innerHTML == "Loading CEO Name..."){  
-    document.getElementById("LinkedInName").innerHTML = "Not Found";
-  }
-  if(document.getElementById("personalEmail").innerHTML == "Loading Email..."){
-    document.getElementById("personalEmail").innerHTML = "Not found";
-  }
-  if(document.getElementById("companyPhone").innerHTML == "Loading phone..."){
-    document.getElementById("companyPhone").innerHTML = "Not found";
-  }
-  refreshHTML();
+	if(document.getElementById("LinkedInDescription").innerHTML == "Loading CEO Description..."){
+		document.getElementById("LinkedInDescription").innerHTML = "Not found"
+	}
+	if(document.getElementById("LinkedInName").innerHTML == "Loading CEO Name..."){  
+		document.getElementById("LinkedInName").innerHTML = "Not Found";
+	}
+	if(document.getElementById("personalEmail").innerHTML == "Loading Email..."){
+		document.getElementById("personalEmail").innerHTML = "Not found";
+	}
+	if(document.getElementById("companyPhone").innerHTML == "Loading phone..."){
+		document.getElementById("companyPhone").innerHTML = "Not found";
+	}
+	refreshHTML();
 
-  //Find additional metrics here
-  var checkCrunchBase = capitalRaised == "0";
-  var checkLinkedIn = Revenue == "0";
-  getMetrics(checkCrunchBase,checkLinkedIn);
+	//Prevent from being called more than once with a flag
+	if(!getMetricsCalled){
+		//Find additional metrics here
+		getMetricsCalled = true;
+		var checkCrunchBase = capitalRaised == "0";
+		var checkLinkedIn = Revenue == "0";
+		getMetrics(checkCrunchBase,checkLinkedIn);
+	}
 }
 
 function getRequestHTML(url,callback){
@@ -432,6 +437,7 @@ function launchSequence(){
 		Location = "0";
 		numEmployees = "0";
 		capitalRaised = "0";
+		getMetricsCalled = false;
 		getContactInfo();
 		setCompanyURL();
     }

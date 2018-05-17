@@ -48,10 +48,10 @@ function crunchBaseCallBackMetrics(htmlDataMetrics){
 		if(capitalResults[0] != undefined){
 			capitalRaised = capitalResults[0].innerHTML.trim();
 		}
+		console.log(capitalRaised);
 		listenerCallback({
 		  greeting: "capital_raised_final",
 		  message: capitalRaised
 		});
-		console.log(capitalRaised);
 	}
 }
