@@ -45,6 +45,10 @@ if(html.indexOf("See all ")!=-1){
 		revenue = numEmployees.toString()+"M";
 	}
 }
+chrome.runtime.sendMessage({
+	greeting: "log",
+	message: "revenue: " + revenue
+});
 
 //Find Number of Employees
 var queryString = '<p class="org-about-company-module__company-staff-count-range Sans-15px-black-70% mb3">';
@@ -53,6 +57,10 @@ if(html.indexOf(queryString)!=-1){
 	employees = employees.substring(0,employees.indexOf(" employees")).trim();
 	employees = employees.replace("-"," - ");
 }
+chrome.runtime.sendMessage({
+	greeting: "log",
+	message: "employees: " + employees
+});
 
 //Find the companyLocation
 queryString = '<p class="org-about-company-module__headquarters Sans-15px-black-70% mb3">';
@@ -60,6 +68,10 @@ if(html.indexOf(queryString)!=-1){
 	companyLocation = html.substring(html.indexOf(queryString)+queryString.length);
 	companyLocation = companyLocation.substring(0,companyLocation.indexOf("</p>")).trim();
 }
+chrome.runtime.sendMessage({
+	greeting: "log",
+	message: "location: " + companyLocation
+});
 
 //Find dateFounded
 queryString = '<p class="org-about-company-module__founded Sans-15px-black-70% mb3">';
@@ -67,6 +79,10 @@ if(html.indexOf(queryString)!=-1){
 	dateFounded = html.substring(html.indexOf(queryString)+queryString.length);
 	dateFounded = dateFounded.substring(0,dateFounded.indexOf("</p>")).trim();
 }
+chrome.runtime.sendMessage({
+	greeting: "log",
+	message: "date founded: " + dateFounded
+});
 
 chrome.runtime.sendMessage({
 	greeting: "linkedInMetricsFinal",

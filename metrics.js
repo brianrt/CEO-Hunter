@@ -1,3 +1,5 @@
+var companyWindowCreated = false;
+
 function getMetrics(shouldCheckLinkedIn){
 	if(shouldCheckLinkedIn){
 		console.log("Need to perform LinkedInMetrics")
@@ -70,6 +72,7 @@ function LinkedInBingCallBackMetrics(htmlData){
 
 function openCompanyPageMetrics(url){
   if(!companyWindowCreated){
+  	console.log("creating a window");
     chrome.tabs.create({ url: url, active: false}, function (newTab) {
       chrome.windows.getCurrent(function(currentWindow) {
         chrome.windows.create({
@@ -93,9 +96,10 @@ function openCompanyPageMetrics(url){
     });
   }
   else{
+  	console.log("using an existing window");
     chrome.tabs.create({ url: url, active: false, windowId : companyWindowId }, function (newTab) {
       setTimeout(function(){
-        chrome.tabs.executeScript(newTab.id, {"file": "scrapeLinkedIn.js", allFrames: false});
+        chrome.tabs.executeScript(newTab.id, {"file": "scrapeLinkedInMetrics.js", allFrames: false});
       },3000);
       chrome.windows.update(currWindowId, {focused:true});
     });
