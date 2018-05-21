@@ -85,10 +85,10 @@ if(html.indexOf(queryString)!=-1){
 	dateFounded = html.substring(html.indexOf(queryString)+queryString.length);
 	dateFounded = dateFounded.substring(0,dateFounded.indexOf("</p>")).trim();
 }
-chrome.runtime.sendMessage({
-	greeting: "log",
-	message: "date founded: " + dateFounded
-});
+// chrome.runtime.sendMessage({
+// 	greeting: "log",
+// 	message: "date founded: " + dateFounded
+// });
 
 chrome.runtime.sendMessage({
 	greeting: "linkedInMetricsFinal",
