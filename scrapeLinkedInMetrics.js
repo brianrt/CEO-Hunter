@@ -24,6 +24,12 @@ if(html.indexOf("Sign in")!=-1){
 	alertSignIn();
 }
 
+
+chrome.runtime.sendMessage({
+	greeting: "log",
+	message: html
+});
+
 //Attempt to find additional company metrics
 var revenue = "-1";
 var employees = "-1";
@@ -45,10 +51,10 @@ if(html.indexOf("See all ")!=-1){
 		revenue = numEmployees.toString()+"M";
 	}
 }
-chrome.runtime.sendMessage({
-	greeting: "log",
-	message: "revenue: " + revenue
-});
+// chrome.runtime.sendMessage({
+// 	greeting: "log",
+// 	message: "revenue: " + revenue
+// });
 
 //Find Number of Employees
 var queryString = '<p class="org-about-company-module__company-staff-count-range Sans-15px-black-70% mb3">';
@@ -57,10 +63,10 @@ if(html.indexOf(queryString)!=-1){
 	employees = employees.substring(0,employees.indexOf(" employees")).trim();
 	employees = employees.replace("-"," - ");
 }
-chrome.runtime.sendMessage({
-	greeting: "log",
-	message: "employees: " + employees
-});
+// chrome.runtime.sendMessage({
+// 	greeting: "log",
+// 	message: "employees: " + employees
+// });
 
 //Find the companyLocation
 queryString = '<p class="org-about-company-module__headquarters Sans-15px-black-70% mb3">';
@@ -68,10 +74,10 @@ if(html.indexOf(queryString)!=-1){
 	companyLocation = html.substring(html.indexOf(queryString)+queryString.length);
 	companyLocation = companyLocation.substring(0,companyLocation.indexOf("</p>")).trim();
 }
-chrome.runtime.sendMessage({
-	greeting: "log",
-	message: "location: " + companyLocation
-});
+// chrome.runtime.sendMessage({
+// 	greeting: "log",
+// 	message: "location: " + companyLocation
+// });
 
 //Find dateFounded
 queryString = '<p class="org-about-company-module__founded Sans-15px-black-70% mb3">';
