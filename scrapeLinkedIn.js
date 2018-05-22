@@ -22,6 +22,9 @@ var html = document.body.innerHTML;
 if(html.indexOf("Sign in")!=-1){
 	alertSignIn();
 }
+
+var htmlLower = html.toLowerCase();
+
 // chrome.runtime.sendMessage({
 // 	greeting: "log",
 // 	message: html
@@ -50,25 +53,28 @@ if(html.indexOf("See all ")!=-1){
 }
 
 //Find Number of Employees
-var queryString = '<p class="org-about-company-module__company-staff-count-range Sans-15px-black-70% mb3">';
-if(html.indexOf(queryString)!=-1){
-	employees = html.substring(html.indexOf(queryString)+queryString.length);
+var queryString = 'size<';
+if(htmlLower.indexOf(queryString)!=-1){
+	employees = htmlLower.substring(htmlLower.indexOf(queryString)+queryString.length+10);
+	employees = employees.substring(employees.indexOf(">")+1);
 	employees = employees.substring(0,employees.indexOf(" employees")).trim();
 	employees = employees.replace("-"," - ");
 }
 
 //Find the companyLocation
-queryString = '<p class="org-about-company-module__headquarters Sans-15px-black-70% mb3">';
+queryString = 'Headquarters<';
 if(html.indexOf(queryString)!=-1){
-	companyLocation = html.substring(html.indexOf(queryString)+queryString.length);
-	companyLocation = companyLocation.substring(0,companyLocation.indexOf("</p>")).trim();
+	companyLocation = html.substring(html.indexOf(queryString)+queryString.length+10);
+	companyLocation = companyLocation.substring(companyLocation.indexOf(">")+1);
+	companyLocation = companyLocation.substring(0,companyLocation.indexOf("<")).trim();
 }
 
 //Find dateFounded
-queryString = '<p class="org-about-company-module__founded Sans-15px-black-70% mb3">';
-if(html.indexOf(queryString)!=-1){
-	dateFounded = html.substring(html.indexOf(queryString)+queryString.length);
-	dateFounded = dateFounded.substring(0,dateFounded.indexOf("</p>")).trim();
+queryString = 'year founded<';
+if(htmlLower.indexOf(queryString)!=-1){
+	dateFounded = htmlLower.substring(htmlLower.indexOf(queryString)+queryString.length+10);
+	dateFounded = dateFounded.substring(dateFounded.indexOf(">")+1);
+	dateFounded = dateFounded.substring(0,dateFounded.indexOf("<")).trim();
 }
 
 chrome.runtime.sendMessage({
