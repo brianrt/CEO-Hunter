@@ -375,6 +375,7 @@ function setCompanyURL(){
       Bloomberg();
       // CrunchBase();
       // LinkedIn();
+      // AngelList();
     } else {
       Bloomberg();
       // LinkedIn();

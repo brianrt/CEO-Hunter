@@ -26,23 +26,23 @@ function crunchBaseBingCallBack(htmlData){
 	    }
   	}
   	//Could not find in bing search
-  	LinkedIn();
+  	AngelList();
 }
 
 function crunchBaseCallBack(htmlData){
 	console.log(htmlData.innerHTML);
 	console.log(htmlData.innerHTML.toLowerCase().includes(companyDomain));
 	if(!(htmlData.innerHTML.toLowerCase().includes(companyDomain))){
-	    //Then call linkedin
-		console.log("Wrong cruchbase page, trying LinkedIn");
-		LinkedIn();
+	    //Then call AngelList
+		console.log("Wrong cruchbase page, trying AngelList");
+		AngelList();
 		return;
 	}
 	var results = htmlData.getElementsByClassName("flex cb-padding-large-left");
 	// console.log(results);
 	if(results==undefined){
 		console.log("Could not find");
-		LinkedIn();
+		AngelList();
 		return;
 	}
 
@@ -67,7 +67,7 @@ function crunchBaseCallBack(htmlData){
 	console.log(ceo_potential);
 	if(ceo_potential=="different lengths" || ceo_potential=="no match"){
 		console.log("no");
-		LinkedIn();
+		AngelList();
 		return;
 	}
 	listenerCallback({
