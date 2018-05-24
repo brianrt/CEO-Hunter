@@ -373,7 +373,6 @@ function setCompanyURL(){
     if(targeted_position == "ceo_owner"){
       // checkDataBase();
       Bloomberg();
-      // CrunchBase();
       // LinkedIn();
       // AngelList();
     } else {

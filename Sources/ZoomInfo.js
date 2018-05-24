@@ -27,14 +27,14 @@ function zoomInfoBingCallBack(htmlData){
 	    	}
 	    }
   	}
-  CrunchBase();
+  AngelList();
 }
 
 function zoomInfoCallBack(htmlData){
 	console.log(htmlData);
 	var peopleContainers = htmlData.getElementsByClassName("similar_profiles_container_list_profileBox");
 	if(peopleContainers==undefined || peopleContainers.length==0){
-		CrunchBase();
+		AngelList();
 		return;
 	}
 	var names = [];
@@ -72,7 +72,7 @@ function zoomInfoCallBack(htmlData){
 	console.log(ceo_potential);
 	if(ceo_potential=="different lengths" || ceo_potential=="no match"){
 		console.log("no");
-		CrunchBase();
+		AngelList();
 		return;
 	}
 	listenerCallback({

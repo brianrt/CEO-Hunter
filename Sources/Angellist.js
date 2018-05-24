@@ -4,6 +4,18 @@ function AngelList() {
 	getRequestHTML(url,angelListCallBack);
 }
 
+function getMoneyRep(money){
+	if((money/1000000000.0) >= 1.0){
+		return (money/1000000000.0).toString() + "B";
+	} else if((money/1000000.0) >= 1.0){
+		return (money/1000000.0).toString() + "M";
+	} else if((money/1000.0) >= 1.0){
+		return (money/1000.0).toString() + "K";
+	} else {
+		return "$"+money.toString();
+	}
+}
+
 function angelListCallBack(htmlData){
 	console.log(htmlData.innerHTML.toLowerCase().includes(companyDomain));
 	if(!(htmlData.innerHTML.toLowerCase().includes(companyDomain))){
@@ -15,17 +27,32 @@ function angelListCallBack(htmlData){
 	names = [];
 	descriptions = [];
 
-	var nameResults = htmlData.getElementsByClassName("profile-link");
-	for (var i = 0; i < nameResults.length; i++){
-		var nameResult = nameResults[i].innerHTML;
-		if(nameResult.indexOf("<img") == -1){
-			names.push(nameResult);
+	// Find Capital Raised
+	var capitalRaisedAngel = 0.0;
+	var capitals = htmlData.getElementsByClassName("raised");
+	for (var i = 0; i < capitals.length; i++){
+		var capital = capitals[i];
+		if(capital.className.indexOf("unknown") == -1){
+			var links = capital.getElementsByTagName("a");
+			var amount = 0.0;
+			if(links.length == 0){
+				amount = parseFloat(capital.innerHTML.replace(/\D/g,''));
+			} else {
+				amount = parseFloat(links[0].innerHTML.replace(/\D/g,''));
+			}
+			capitalRaisedAngel += amount;
 		}
 	}
+	//We don't use the capital Raised for now
 
-	var desctiptionResults = htmlData.getElementsByClassName("role_title");
-	for (var i = 0; i < desctiptionResults.length; i++){
-		descriptions.push(desctiptionResults[i].innerHTML);
+	//Then find CEO
+	var roles = htmlData.getElementsByClassName("role");
+	for (var i = 0; i < roles.length; i++){
+		var role = roles[i];
+		if(role.localName == "li" && role.innerHTML.indexOf("startup-link") == -1){
+			descriptions.push(role.getElementsByClassName("role_title")[0].innerHTML);
+			names.push(role.getElementsByClassName("profile-link")[1].innerHTML);
+		}
 	}
 
 	console.log("names: "+names);
