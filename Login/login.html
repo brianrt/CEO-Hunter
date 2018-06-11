@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html id="log_in">
+<head>
+  <script src="https://www.gstatic.com/firebasejs/3.7.5/firebase.js"></script>
+  <script src="../jquery-3.1.1.min.js"></script>
+  <link rel="stylesheet" href="login.css">
+</head>
+<div id="main_ceo_hunter"><h1 id=mainHeader>Deal Hunter (BETA)</h1><br>
+<body>
+	<div id="Init">
+		<br><br><br>
+	  <h1>Please Login</h1>
+	  <button type="button" id="new" >New User</button>
+  	<button type="button" id="returning" >Returning User</button>
+	</div>
+  <br><br>
+  <div class="form" id="NewEP" hidden>
+  	<h1>Create Account</h1>
+  	<p>Email</p><input id="new_email" type="text" name="email">
+  	<p>Password</p><input id="new_password" type="password" name="password">
+  	<p>Confirm Password</p><input id="new_confirm_password" type="password" name="password">
+  	<button type="button" class ="submit" id="createSubmit">Submit</button><br>
+  	<button type="button" class="back">Back</button>
+  </div>
+  <div class="form" id="ReturningEP" hidden>
+  	<h1>Login</h1>
+  	<p>Email</p><input id="email" type="text" name="email">
+  	<p>Password</p><input id="password" type="password" name="password"><br>
+  	<button type="button" id="Forgot">Forgot password?</button><br>
+  	<button type="button" class ="submit" id="signInSubmit">Submit</button><br>
+  	<button type="button" class="back">Back</button><br>
+  	<button type="button" id="GoogleButton">Haven't set up an email/password? Continue with Google.</button>
+  </div>
+</body>
+  <script src="login.js"></script>
+</html>
