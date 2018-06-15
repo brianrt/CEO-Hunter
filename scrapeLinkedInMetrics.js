@@ -26,6 +26,11 @@ if(html.indexOf("Sign in")!=-1){
 
 var htmlLower = html.toLowerCase();
 
+// chrome.runtime.sendMessage({
+// 	greeting: "log",
+// 	message: html
+// });
+
 var revenue = "-1";
 var employees = "-1";
 var companyLocation = "-1";
@@ -34,7 +39,10 @@ var dateFounded = "-1";
 //Calculate Revenue
 if(html.indexOf("See all ")!=-1){
 	var numEmployees = html.substring(html.indexOf("See all ")+8);
-	numEmployees = numEmployees.substring(0,numEmployees.indexOf(" ")).replace(/\D/g,'');;
+	if(!(numEmployees.substring(0,20).includes("employees"))){
+		numEmployees = numEmployees.substring(numEmployees.indexOf("See all ")+8);
+	}
+	numEmployees = numEmployees.substring(0,numEmployees.indexOf(" ")).replace(/\D/g,'');
 	numEmployees = parseFloat(numEmployees)/10.0;
 	if(numEmployees < 1.0){
 		revenue = "<1M";

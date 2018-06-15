@@ -57,12 +57,12 @@ function search(companyName,targeted_position){
          for(i=0;i<results.length;i++){
             var description = "";
             try{
-               description = results[i].getElementsByClassName("search-result__snippets")[0].innerHTML.substring(9);
+               description = results[i].getElementsByClassName("search-result__snippets")[0].innerHTML.substring(11);
             }catch(error){
-               description = results[i].getElementsByClassName("search-result__truncate")[0].innerHTML;
+               description = results[i].getElementsByClassName("search-result__truncate")[0].innerHTML.trim();
             }
             console.log(description);
-            var name = results[i].getElementsByTagName("span")[1].innerHTML;
+            var name = results[i].getElementsByClassName("actor-name")[0].innerHTML;
             console.log(name);
             if(name!="LinkedIn Member"){
                names.push(name);
@@ -105,6 +105,10 @@ function search(companyName,targeted_position){
 function secondarySearch(companyName,targeted_position){
    try{
       var html = document.body.innerHTML;
+      chrome.runtime.sendMessage({
+         greeting: "log",
+         message: html
+      });
       // console.log("html: "+html);
       var startIndex = html.indexOf('{"firstName":');
       var newHTML = html.substring(startIndex+30);

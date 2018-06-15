@@ -282,7 +282,10 @@ function ajax_page(query,callback){
               var d = document.createElement('div');
               d.innerHTML = data;
               callback(d);
-
+          },
+          error: function(data) {
+            console.log("Error");
+            callback("Error");
           }
       }
   );
@@ -373,6 +376,7 @@ function setCompanyURL(){
     if(targeted_position == "ceo_owner"){
       // checkDataBase();
       Bloomberg();
+      // ZoomInfo();
       // LinkedIn();
       // AngelList();
     } else {

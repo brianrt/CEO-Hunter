@@ -1,37 +1,37 @@
 function ZoomInfo() {
-	//Google search url using the zoominfo custom search engine
-    var query = "http://www.bing.com/search?q=zoominfo.com+"+companyDomain;
-    console.log("ZoomInfo bing search: "+query);
-  	ajax_page(query,zoomInfoBingCallBack);
+	//Create search url and get request!!!
+    var query = "https://www.google.com/search?q=zoominfo.com+" + companyDomain + "&oq=zoominfo.com+" + companyDomain + ""
+  	ajax_page(query,zoomInfoGoogleCallBack);
 }
 
-function zoomInfoBingCallBack(htmlData){
+function zoomInfoGoogleCallBack(htmlData){
   	console.log(htmlData);
-  	var search_results = htmlData.getElementsByClassName("b_algo");
+    if(htmlData == "Error"){
+      AngelList();
+      return;
+    }
+  	var search_results = htmlData.getElementsByTagName("cite");
+  	console.log(search_results);
   	for(var i = 0; i < search_results.length; i++){
-	    var title_possibilites = search_results[i].getElementsByTagName("a");
-	    for(var j = 0; j < title_possibilites.length; j++){
-	    	title = title_possibilites[j].innerHTML;
-	    	if(title != ""){
-			    title = title.toLowerCase();
-			    title = title.replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
-			    console.log(title);
-			    trimmedCompanyName = companyName.replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
-			    console.log(trimmedCompanyName);
-			    var link = title_possibilites[j].href;
-			    if(link.includes("https://www.zoominfo.com/c/") && title.includes("zoominfo") && title.includes(trimmedCompanyName)){
-			      console.log("link: "+link);
-			      ajax_page(link,zoomInfoCallBack);
-			      return;
-			    }
-	    	}
+	    var link = search_results[i].innerHTML;
+	    console.log(link);
+	    var trimmedCompanyName = companyName.replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
+	    console.log(trimmedCompanyName);
+	    if(link.includes("https://www.zoominfo.com/c/") && link.includes(trimmedCompanyName)){
+	      console.log("chosen link: "+link);
+	      ajax_page(link,zoomInfoCallBack);
+	      return;
 	    }
   	}
-  AngelList();
+  	AngelList();
 }
 
 function zoomInfoCallBack(htmlData){
 	console.log(htmlData);
+	if(htmlData == "Error"){
+		AngelList();
+		return;
+	}
 	var peopleContainers = htmlData.getElementsByClassName("similar_profiles_container_list_profileBox");
 	if(peopleContainers==undefined || peopleContainers.length==0){
 		AngelList();
