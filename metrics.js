@@ -31,16 +31,16 @@ function getMetrics(shouldCheckLinkedIn){
   	preventFromLaunching = true;//prevent extension from launching until user clicks again
 }
 
+//LinkedIn Helper functions
 function LinkedInMetrics(){
-  var query = "http://www.google.com/search?q="+companyDomain+"+LinkedIn"+"&oq="+companyDomain+"+LinkedIn";
-  console.log("LinkedIn Google search: "+query);
-  ajax_page(query,LinkedInGoogleCallBackMetrics);
+  var query = "http://www.bing.com/search?q="+companyDomain+"+LinkedIn";
+  console.log("LinkedIn bing search: "+query);
+  ajax_page(query,LinkedInBingCallBackMetrics);
 }
 
-function LinkedInGoogleCallBackMetrics(htmlData){
+function LinkedInBingCallBackMetrics(htmlData){
     console.log(htmlData);
     if(htmlData == "Error"){
-      //No linkedin google results, send back failed metrics
       listenerCallback({
         greeting: "linkedInMetricsFinal",
         messageRevenue: "-1",
@@ -50,22 +50,28 @@ function LinkedInGoogleCallBackMetrics(htmlData){
       });
       return;
     }
-    var search_results = htmlData.getElementsByClassName("r");
+
+    var search_results = htmlData.getElementsByClassName("b_algo");
     for(var i = 0; i < search_results.length; i++){
-      var result = search_results[i];
-      var title = result.getElementsByTagName("a")[0].innerHTML;
-      title = title.toLowerCase().replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
-      console.log(title);
-      var trimmedCompanyName = companyName.replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
-      console.log(trimmedCompanyName);
-      var link = result.getElementsByTagName("a")[0].href;
-      if(link.includes("linkedin.com/company/") && title.includes("linkedin") && title.includes(trimmedCompanyName)){
-        console.log("link: "+link);
-        openCompanyPageMetrics(link);
-        return;
+      var title_possibilites = search_results[i].getElementsByTagName("a");
+      for(var j = 0; j < title_possibilites.length; j++){
+        title = title_possibilites[j].innerHTML;
+        if(title != ""){
+          title = title.toLowerCase();
+          title = title.replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
+          console.log(title);
+          trimmedCompanyName = companyName.replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
+          console.log(trimmedCompanyName);
+          var link = title_possibilites[j].href;
+          if(link.includes("linkedin.com/company/") && title.includes("linkedin") && title.includes(trimmedCompanyName)){
+            console.log("link: "+link);
+            openCompanyPageMetrics(link);
+            return;
+          }
+        }
       }
     }
-    //No linkedin google results, send back failed metrics
+    //No linkedin bing results, send back failed metrics
     listenerCallback({
       greeting: "linkedInMetricsFinal",
       messageRevenue: "-1",

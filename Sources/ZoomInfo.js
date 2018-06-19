@@ -1,4 +1,39 @@
 function ZoomInfo() {
+	//Bing search url
+    var query = "http://www.bing.com/search?q=zoominfo.com+"+companyDomain;
+  	ajax_page(query,zoomInfoBingCallBack);
+}
+
+function zoomInfoBingCallBack(htmlData){
+  	console.log(htmlData);
+    if(htmlData == "Error"){
+      ZoomInfoGoogle();
+      return;
+    }
+  	var search_results = htmlData.getElementsByClassName("b_algo");
+  	for(var i = 0; i < search_results.length; i++){
+	    var title_possibilites = search_results[i].getElementsByTagName("a");
+	    for(var j = 0; j < title_possibilites.length; j++){
+	    	title = title_possibilites[j].innerHTML;
+	    	if(title != ""){
+			    title = title.toLowerCase();
+			    title = title.replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
+			    console.log(title);
+			    trimmedCompanyName = companyName.replace(/[.,\/#!' $%\^&\*;:{}=\-_`~()]/g,"");
+			    console.log(trimmedCompanyName);
+			    var link = title_possibilites[j].href;
+			    if(link.includes("https://www.zoominfo.com/c/") && title.includes("zoominfo") && title.includes(trimmedCompanyName)){
+			      console.log("link: "+link);
+			      ajax_page(link,zoomInfoCallBack);
+			      return;
+			    }
+	    	}
+	    }
+  	}
+  	ZoomInfoGoogle();
+}
+
+function ZoomInfoGoogle() {
 	//Create search url and get request!!!
     var query = "https://www.google.com/search?q=zoominfo.com+" + companyDomain + "&oq=zoominfo.com+" + companyDomain + ""
   	ajax_page(query,zoomInfoGoogleCallBack);
