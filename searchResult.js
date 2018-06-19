@@ -50,11 +50,10 @@ function search(companyName,targeted_position){
       try{
          //Trying agian
          //Changed to search for current position, then title if they don't have a current position
-         var i = 0;
          var results = document.getElementsByClassName("search-result--person");
          var descriptions = [];
          var names = [];
-         for(i=0;i<results.length;i++){
+         for(var i=0;i<results.length;i++){
             var description = "";
             try{
                description = results[i].getElementsByClassName("search-result__snippets")[0].innerHTML.substring(11);

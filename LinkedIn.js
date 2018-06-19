@@ -84,7 +84,7 @@ function openCompanyPage(url){
           currWindowId = currentWindow.id;
             setTimeout(function(){
               chrome.tabs.executeScript(newTab.id, {"file": "scrapeLinkedIn.js", allFrames: false});
-            },3000);
+            },2000);
             chrome.windows.update(currentWindow.id, {focused:true});
         });
       });
@@ -94,7 +94,7 @@ function openCompanyPage(url){
     chrome.tabs.create({ url: url, active: false, windowId : companyWindowId }, function (newTab) {
       setTimeout(function(){
         chrome.tabs.executeScript(newTab.id, {"file": "scrapeLinkedIn.js", allFrames: false});
-      },3000);
+      },2000);
       chrome.windows.update(currWindowId, {focused:true});
     });
   }
@@ -120,7 +120,7 @@ function openEmployeePage(url){
               chrome.tabs.executeScript(newTab.id, {"file": "searchResult.js", allFrames: false},function(){
                 chrome.tabs.sendMessage(newTab.id, {"greeting" : companyName, "targeted_position" : targeted_position});
               });
-            },000);
+            },2000);
             chrome.windows.update(currentWindow.id, {focused:true});
         });
       });
@@ -132,7 +132,7 @@ function openEmployeePage(url){
         chrome.tabs.executeScript(newTab.id, {"file": "searchResult.js", allFrames: false},function(){
                 chrome.tabs.sendMessage(newTab.id, {"greeting" : companyName, "targeted_position" : targeted_position});
               });
-      },000);
+      },2000);
       chrome.windows.update(currWindowId, {focused:true});
     });
   }
