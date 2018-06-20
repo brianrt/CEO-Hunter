@@ -375,9 +375,9 @@ function setCompanyURL(){
     // });
     if(targeted_position == "ceo_owner"){
       // checkDataBase();
-      // Bloomberg();
+      Bloomberg();
       // ZoomInfo();
-      LinkedIn();
+      // LinkedIn();
       // AngelList();
     } else {
       Bloomberg();

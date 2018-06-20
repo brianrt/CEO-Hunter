@@ -41,7 +41,7 @@ function search(companyName,targeted_position){
             message_ceo: ceo_potential[0],
             message_description: ceo_potential[1]
          });
-         // window.close();
+         window.close();
       }
    }
    catch(err){
@@ -83,7 +83,7 @@ function search(companyName,targeted_position){
                message_ceo: ceo_potential[0],
                message_description: ceo_potential[1]
             });
-            // window.close();
+            window.close();
          }
       }
       catch(err){
@@ -95,7 +95,7 @@ function search(companyName,targeted_position){
             chrome.runtime.sendMessage({
                greeting: "who.is",
             });
-            // window.close();
+            window.close();
          }
       }
    }
@@ -148,20 +148,20 @@ function secondarySearch(companyName,targeted_position){
          chrome.runtime.sendMessage({
             greeting: "who.is",
          });
-         // window.close();
+         window.close();
       } else {
          chrome.runtime.sendMessage({
             greeting: "ceo",
             message_ceo: ceo_potential[0],
             message_description: ceo_potential[1]
          });
-         // window.close();
+         window.close();
       }
    } catch (error) {
       chrome.runtime.sendMessage({
          greeting: "who.is",
       });
-      // window.close();
+      window.close();
    }
 }
 
