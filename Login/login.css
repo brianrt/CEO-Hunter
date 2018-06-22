@@ -1,0 +1,103 @@
+#log_in {
+    font: initial;
+    text-align: center;
+    background-color: white;
+    font-family: "Helvetica Neue", sans-serif;
+    background-color: #eee;
+}
+
+#mainHeader {
+    font: unset;
+    background-color: #24292e;
+    text-align: center;
+    font-size: 24px;
+    width: auto;
+    padding: 15px 10px;
+    color: #eee;
+    margin: -8px;
+}
+
+button {
+    width: 60%;
+    padding: 5px 20px 5px 20px;
+    font-size: 15px;
+    border: 0;
+    border-radius: 5px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+    margin-top: 20px;
+    cursor:pointer;
+}
+
+.form {
+    font-family: "Helvetica Neue", sans-serif;
+    margin-top: -35px;
+    text-align: center;
+    font-size: 15px;
+    border: 0;
+}
+
+.form h1{
+    text-align: center;
+    font-size: 25px;
+}
+
+.form p {
+    text-align: left;
+    margin-left: 10%;
+    margin-bottom: 2px;
+    font-size: 
+}
+
+.form input {
+    text-align: left;
+    border: 0px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+    width: 80%;
+    border-radius: 5px;
+    height: 20px;
+    font-size: 13px;
+    padding: 5px;
+}
+
+.form input:focus {
+    outline-color: #92a8d1;
+}
+
+.submit {
+    background-color: #668cff;
+    color: white;
+}
+
+.form .back {
+    all: unset;
+    margin-top: 5px;
+    cursor:pointer;
+    color: #4db8ff;
+}
+
+#GoogleButton {
+    all: unset;
+    margin-top: 20px;
+    font-size: 12.5px;
+    color: #ff4d4d;
+    cursor:pointer;
+    text-align: center;
+}
+
+#Forgot {
+    all: unset;
+    margin-top: 5px;
+    font-size: 12.5px;
+    color: #4db8ff;
+    cursor:pointer;
+    text-align: center;
+}
+
+#description {
+    margin-top: 50px;
+    font-size: 12px;
+    text-align: justify;
+    width: 80%;
+}
+
+

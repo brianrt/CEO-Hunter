@@ -3,6 +3,8 @@ var companyURL;
 var companyPhone;
 var companyName;
 var tab_id;
+var login_tab_id;
+var login_tab_ids = [];
 var main_tab;
 var ceoName = false;
 var contact = false;
@@ -118,6 +120,22 @@ function listenerCallback(request,sender,sendResponse){
     }
     else if (request.greeting == "log"){
     	console.log("log: "+request.message);
+    }
+    else if (request.greeting == "Google Login"){
+    	startAuthGoogle(true);
+    }
+    else if (request.greeting == "Link Account"){
+    	linkAccount(request.email, request.password);
+    }
+    else if (request.greeting == "Signout"){
+    	console.log("Signout");
+    	firebase.auth().signOut();
+    }
+    else if (request.greeting == "Create New User"){
+    	createUser(request.email, request.password);
+    }
+    else if (request.greeting == "Sign In EP"){
+    	signInUserEP(request.email, request.password);
     }
     else if (request.greeting == "linkedInMetrics" && Revenue == "0"){
     	Revenue = request.messageRevenue;
@@ -451,30 +469,6 @@ function fireBaseInit(){
 }
 
 
-/**
- * Start the auth flow and authorizes to Firebase.
- * @param{boolean} interactive True if the OAuth flow should request with an interactive mode.
- */
-function startAuth(interactive) {
-  if(!webFlowLaunched){
-    webFlowLaunched = true;
-    chrome.identity.launchWebAuthFlow({url: "https://ceohunter-a02da.firebaseapp.com/index.html?extension_login=true",interactive: true},function(responseUrl){
-      if(responseUrl == undefined){
-        //User closed the window
-        webFlowLaunched = false;
-      } else{
-        var url = new URL(responseUrl);
-        var token = url.searchParams.get("customToken");
-        firebase.auth().signInWithCustomToken(token).catch(function(error) {
-          var errorCode = error.code;
-          var errorMessage = error.message;
-        });
-      }
-    });
-  }
-}
-
-
 function startHunting(tab) {
   if(!preventFromLaunching){//prevents from accidental launches
     //start extension
@@ -522,7 +516,7 @@ function initUser(email,callback){
     var data = snapshot.val();
     if(data == null){
       firebase.database().ref(`customers_to_be_created/${userId}`).set({email: email}).then(() => {
-          console.log("wrote value");
+          console.log("wrote value to create a customer");
       });
     } else {
       if(data.total_hunts != null){
@@ -635,7 +629,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
         });
       } else {
         console.log("User is not signed in l.");
-        startAuth(true);
+        startAuthGoogle(true);
       }
     }); 
   }
@@ -650,22 +644,52 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     fireBaseInit();
     firebase_intialized=true;
   }
+  // firebase.auth().signOut();
   firebase.auth().onAuthStateChanged(function(user) {
     console.log("On auth change extension");
     if (user) {
       userId = user.uid;
-      console.log("User is signed in.");
-      if(!user_initialized){
-        firebase.database().ref(`customers_to_sign_in/${user.uid}`).remove().then(() => {
-          console.log("removed customers_to_sign_in entry");
-          initUser(user.email,startHunting);
-        });
+      //Check if google provider here
+      if(user.providerData[0].providerId == "google.com"){
+      	//Prompt user for new email/password login
+      	console.log("initiating google account link");
+      	chrome.windows.create({
+					url: chrome.extension.getURL('Login/link.html'),
+					type: 'popup',
+	        width: 300,
+	        height: 470,
+	        left: 400,
+	        top: 400
+	      }, function(wind){
+	      	login_tab_id = wind.tabs[0].id;
+	      	login_tab_ids.push(login_tab_id);
+	      });
       } else {
-        startHunting(main_tab);
+		  	console.log("User is signed in.");
+	      if(!user_initialized){
+	        firebase.database().ref(`customers_to_sign_in/${user.uid}`).remove().then(() => {
+	          console.log("removed customers_to_sign_in entry");
+	          initUser(user.email,startHunting);
+	        });
+	      } else {
+	      	console.log("user signed in and account exists");
+	        startHunting(main_tab);
+	      }
       }
+      
     } else {
       console.log("User is not signed in.");
-      startAuth(true);
+      //Launch new html page system
+	  chrome.windows.create({
+		url: chrome.extension.getURL('Login/login.html'),
+		type: 'popup',
+        width: 300,
+        height: 410,
+        left: 400,
+        top: 400
+      }, function(wind){
+      	login_tab_id = wind.tabs[0].id;
+      });
     }
   });
 });
