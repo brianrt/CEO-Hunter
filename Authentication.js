@@ -64,7 +64,7 @@ function linkAccount(email, password){
 	console.log("Linking account");
 	var credential = firebase.auth.EmailAuthProvider.credential(email, password);
 	firebase.auth().currentUser.link(credential).then(function(usercred) {
-		//Success, unlinking google.com auth provider
+		//Success, now we are unlinking google.com auth provider
 		firebase.auth().currentUser.unlink("google.com").then(function() {
 			//Close any login windows that may have opened up
 			for(var i = 0; i < login_tab_ids.length; i++){
