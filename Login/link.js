@@ -1,4 +1,11 @@
+//Setup callback triggers
 $(".submit").click(createAccount);
+chrome.runtime.onMessage.addListener(listenerCallback);
+$("#confirm_password").keypress(function(e) {
+    if(e.which == 13) {
+        createAccount();
+    }
+});
 
 //Set up a callback for the background script to send us messages
 function listenerCallback(request,sender,sendResponse){
@@ -7,20 +14,16 @@ function listenerCallback(request,sender,sendResponse){
 	} else if(request.greeting=="success"){
 		window.close();
 	} else if(request.greeting=="unlink"){
-		alert("Succesful, you will be prompted to login with the new email and password now. Select returning user.");
-		chrome.runtime.sendMessage({
-			greeting: "Signout"
-		});
+		alert("Succesfully linked account. Please click extension to continue normal use.");
 		window.close();
 	} else if(request.greeting=="recent"){
-		alert("This operation is sensitive and requires recent authentication. Click Ok, select returning user and re-login with google.");
+		alert("PLEASE READ: Linking accounts requires you to have signed in recently. Click OK and you will be prompted to login with your current google account. After that you will be asked to repeat this step.");
 		chrome.runtime.sendMessage({
-			greeting: "Signout"
+			greeting: "Recent"
 		});
 		window.close();
 	}
 }
-chrome.runtime.onMessage.addListener(listenerCallback);
 
 function createAccount(){
 	var email = $("#email").val();

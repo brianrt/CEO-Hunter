@@ -3,7 +3,19 @@ $("#returning").click(returnSignin);
 $(".back").click(backToInit);
 $("#GoogleButton").click(signInWithGoogle);
 $("#createSubmit").click(createAccount);
+$("#new_confirm_password").keypress(function(e) {
+    if(e.which == 13) {
+        createAccount();
+    }
+});
 $("#signInSubmit").click(signIn);
+$("#password").keypress(function(e) {
+    if(e.which == 13) {
+        signIn();
+    }
+});
+$("#Forgot").click(forgotPassword);
+
 
 //Set up a callback for the background script to send us messages
 function listenerCallback(request,sender,sendResponse){
@@ -11,6 +23,8 @@ function listenerCallback(request,sender,sendResponse){
 		alert(request.message);
 	} else if(request.greeting=="success"){
 		window.close();
+	} else if(request.greeting=="forgot"){
+		alert(request.message);
 	}
 }
 chrome.runtime.onMessage.addListener(listenerCallback);
@@ -63,4 +77,16 @@ function signIn(){
 		email: email,
 		password: password
 	});
+}
+
+function forgotPassword(){
+	var email = $("#email").val();
+	if (email == ""){
+		alert("Please provide your email");
+	} else {
+		chrome.runtime.sendMessage({
+			greeting: "Forgot Password",
+			email: email
+		});
+	}
 }

@@ -65,7 +65,9 @@ function linkAccount(email, password){
 	var credential = firebase.auth.EmailAuthProvider.credential(email, password);
 	firebase.auth().currentUser.link(credential).then(function(usercred) {
 		//Success, now we are unlinking google.com auth provider
+		console.log("Success, now we are unlinking google.com auth provider");
 		firebase.auth().currentUser.unlink("google.com").then(function() {
+			console.log("Success, now we are closing the tabs");
 			//Close any login windows that may have opened up
 			for(var i = 0; i < login_tab_ids.length; i++){
 				var l_tab = login_tab_ids[i];
@@ -102,4 +104,21 @@ function linkAccount(email, password){
 			});
 		}
 	});
+}
+
+//Send email a link to reset password
+function forgotPassword(email){
+	firebase.auth().sendPasswordResetEmail(email).then(function() {
+    	// Password reset email sent.
+    	chrome.tabs.sendMessage(login_tab_id, {
+			greeting: "forgot",
+			message: "Password reset email sent"
+		});
+    }).catch(function(error) {
+    	// Error occurred. Inspect error.code.
+    	chrome.tabs.sendMessage(login_tab_id, {
+			greeting: "forgot",
+			message: error.message
+		});
+    });
 }

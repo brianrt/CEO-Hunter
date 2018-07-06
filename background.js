@@ -42,6 +42,7 @@ var total_hunts = 0;
 var all_hunts_used = false;
 var attempted_sign_in = false;
 var user_initialized = false;
+var recentSignOut = false;
 //LinkedIn page feature vars
 var linkedInTabId=-1;
 var webFlowLaunched = false;
@@ -125,11 +126,19 @@ function listenerCallback(request,sender,sendResponse){
     	startAuthGoogle(true);
     }
     else if (request.greeting == "Link Account"){
-    	linkAccount(request.email, request.password);
+      linkAccount(request.email, request.password);
+    }
+    else if (request.greeting == "Forgot Password"){
+      forgotPassword(request.email);
     }
     else if (request.greeting == "Signout"){
     	console.log("Signout");
     	firebase.auth().signOut();
+    }
+    else if (request.greeting == "Recent"){
+      console.log("Recent");
+      recentSignOut = true;
+      firebase.auth().signOut();
     }
     else if (request.greeting == "Create New User"){
     	createUser(request.email, request.password);
@@ -677,12 +686,17 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 	      }
       }
       
+    } else if(recentSignOut){
+      //User needs to login with google due to recent authentication error
+      console.log("Recent error, signing in with google.");
+      recentSignOut = false;
+      startAuthGoogle(true);
     } else {
       console.log("User is not signed in.");
       //Launch new html page system
-	  chrome.windows.create({
-		url: chrome.extension.getURL('Login/login.html'),
-		type: 'popup',
+  	  chrome.windows.create({
+  		url: chrome.extension.getURL('Login/login.html'),
+  		type: 'popup',
         width: 300,
         height: 410,
         left: 400,
