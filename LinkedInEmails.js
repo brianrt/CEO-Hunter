@@ -38,26 +38,25 @@ function verifyEmails(possibleEmails, sendResponse){
 			  				sendResponse({farewell: 1});
 			  			} else {
 			  				sendResponse({farewell: -1});
-			  				// wasn't valid email, try the next one
-							email_address = possibleEmails[2];
-							var access_key = 'd7294b9f413ac4e844ac4105b73aa91c';
-							var url = 'http://apilayer.net/api/check?access_key=' + access_key + '&email=' + email_address+'&catch_all=1';
-							var xhr2 = new XMLHttpRequest();
-							xhr2.open("GET", url, true);
-							xhr2.onreadystatechange = function() {
-								if (xhr2.readyState == 4) {
-									var resp = JSON.parse(xhr2.responseText);
-									console.log("trying the last one");
-									if(resp.smtp_check && resp.format_valid && resp.score>0.5){
-					  					//send back 2
-					  					sendResponse({farewell: 2});
-						  			} else {
-						  				//send back -1
-						  				sendResponse({farewell: -1});
-						  			}
-								}
-							}
-							xhr2.send();
+			  		// 		// wasn't valid email, try the next one
+							// email_address = possibleEmails[2];
+							// var access_key = 'd7294b9f413ac4e844ac4105b73aa91c';
+							// var url = 'http://apilayer.net/api/check?access_key=' + access_key + '&email=' + email_address+'&catch_all=1';
+							// var xhr2 = new XMLHttpRequest();
+							// xhr2.open("GET", url, true);
+							// xhr2.onreadystatechange = function() {
+							// 	if (xhr2.readyState == 4) {
+							// 		var resp = JSON.parse(xhr2.responseText);
+							// 		if(resp.smtp_check && resp.format_valid && resp.score>0.5){
+					  // 					//send back 2
+					  // 					sendResponse({farewell: 2});
+						 //  			} else {
+						 //  				//send back -1
+						 //  				sendResponse({farewell: -1});
+						 //  			}
+							// 	}
+							// }
+							// xhr2.send();
   						}
 					}
 				}
