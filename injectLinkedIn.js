@@ -57,6 +57,11 @@ setTimeout(function(){
 
 		//Scrape name
 		var name = document.getElementsByClassName("pv-top-card-section__name")[0].innerHTML;
+		//Gets rid of things after comma in name if there is one
+		if(name.includes(",")){
+	        name = name.substring(0,name.indexOf(","));
+	    }
+
 		document.getElementById("hunterName").innerHTML = name;
 
 		//Scrape most recent position, get the Linkedin Company URL
@@ -118,8 +123,7 @@ setTimeout(function(){
 		    		return;
 				}
 			});
-		}
-		else{
+		} else{
 			ajax_page(linkedInCompanyURL,generateEmails);
 		}
 
@@ -146,7 +150,7 @@ setTimeout(function(){
 
 			//Find company URL
 			var dataHTML = data.innerHTML;
-			var startIndex = dataHTML.indexOf('companyPageUrl":"');
+			var startIndex = dataHTML.lastIndexOf('companyPageUrl":"');
 			var prunedData = dataHTML.substring(startIndex);
 			var endIndex = prunedData.indexOf('","');
 			var companyURL = prunedData.substring(17,endIndex);
@@ -162,6 +166,10 @@ setTimeout(function(){
 
 		    //Fetch name again
 		    var name = document.getElementsByClassName("pv-top-card-section__name")[0].innerHTML.trim();
+			//Gets rid of things after comma in name if there is one
+			if(name.includes(",")){
+		        name = name.substring(0,name.indexOf(","));
+		    }
 
 			//Generate emails
 			var possibleEmails = [];
@@ -204,18 +212,18 @@ setTimeout(function(){
 
 		function extractDomain(url){
 			if(url.length > 100){
-				return "Not found";
+			    return "Not found";
 			}
 			if(url.includes("www.")){
-		      url = url.substring(url.indexOf("www.")+4,url.length);
+		        url = url.substring(url.indexOf("www.")+4,url.length);
 		    }
 		    if(url.includes("://")){
 		        url = url.substring(url.indexOf("://")+3,url.length);
 		    }
-		    if(url.slice(-1) == "/"){
-		    	url = url.substring(0,url.length-1);
+		    if(url.includes("/")){
+		        url = url.substring(0,url.indexOf("/"));
 		    }
-		    parts = url.split(".")
+		    parts = url.split(".");
 		    return parts[parts.length-2]+"."+parts[parts.length-1];
 		}
 
