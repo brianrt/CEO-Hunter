@@ -659,7 +659,22 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     if (user) {
       userId = user.uid;
       //Check if google provider here
-      if(user.providerData[0].providerId == "google.com"){
+      if(user.providerData.length == 2){
+        console.log("user has email and google account");
+        //Need to unlink google account
+        firebase.auth().currentUser.unlink("google.com").then(function() {
+          console.log("unlinked google account, can proceed as usual");
+          if(!user_initialized){
+            firebase.database().ref(`customers_to_sign_in/${user.uid}`).remove().then(() => {
+              console.log("removed customers_to_sign_in entry");
+              initUser(user.email,startHunting);
+            });
+          } else {
+            console.log("user signed in and account exists");
+            startHunting(main_tab);
+          }
+        });
+      } else if(user.providerData[0].providerId == "google.com"){
       	//Prompt user for new email/password login
       	console.log("initiating google account link");
       	chrome.windows.create({
@@ -685,7 +700,6 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 	        startHunting(main_tab);
 	      }
       }
-      
     } else if(recentSignOut){
       //User needs to login with google due to recent authentication error
       console.log("Recent error, signing in with google.");

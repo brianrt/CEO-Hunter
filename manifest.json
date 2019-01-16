@@ -7,7 +7,7 @@
     "128": "Images/MainIcon.png"
   },
   "description": "Find any CEO and his/her email in seconds",
-  "version": "3.8.3",
+  "version": "3.8.5",
   "minimum_chrome_version": "16.0.884",
   "permissions": ["cookies","storage","<all_urls>","tabs","identity","*://*/*"],
   "optional_permissions": ["tabs"],
